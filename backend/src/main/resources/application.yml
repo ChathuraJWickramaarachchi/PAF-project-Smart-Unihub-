@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: smart-campus-hub
+  
+  # Database Configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/smart_campus_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root          # Your MySQL username
+    password: 2002 # ← CHANGE THIS to your actual MySQL root password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    show-sql: false
+    open-in-view: false
+  
+  # File Upload Configuration
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  
+  # OAuth2 Configuration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:400294214813-m9kj6polprom5i6kvb770imsd1pkso87.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            scope:
+              - email
+              - profile
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
+# Google OAuth Configuration
+google:
+  client:
+    id: ${GOOGLE_CLIENT_ID:400294214813-m9kj6polprom5i6kvb770imsd1pkso87.apps.googleusercontent.com}
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.smartcampus: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
