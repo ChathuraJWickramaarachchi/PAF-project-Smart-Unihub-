@@ -16,10 +16,11 @@ export default function Footer() {
     '/profile',
     '/bookings',
     '/resources',
-    '/tickets',
-    '/notifications'
+    '/admin/tickets',
+    '/notifications',
+    '/admin/analytics'
   ]
-  
+
   if (dashboardPages.includes(location.pathname)) {
     return null
   }

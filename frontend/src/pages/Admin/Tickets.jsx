@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { TicketAPI, CommentAPI, ResourceAPI } from '../services/api'
-import './Pages.css'
+import { TicketAPI, CommentAPI, ResourceAPI } from '../../services/api'
+import AdminSidebar from '../../components/AdminSidebar'
+import '../Pages.css'
+import '../AdminDashboard.css'
 
 export default function Tickets() {
   const [tickets, setTickets] = useState([])
@@ -99,13 +101,21 @@ export default function Tickets() {
   }
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1 className="page-title">Incident Tickets</h1>
-        <div className="page-actions">
-          <button className="btn-primary" onClick={() => setShowCreateModal(true)}>Create Ticket</button>
+    <div className="admin-dashboard">
+      <AdminSidebar />
+      
+      <main className="admin-main-content">
+        <div className="admin-header">
+          <div className="header-title">Incident Tickets</div>
+          <div className="header-actions">
+            <button className="btn-primary" onClick={() => setShowCreateModal(true)} style={{ marginRight: '1rem' }}>+ Create Ticket</button>
+            <button className="header-icon-btn">🔔</button>
+            <button className="header-icon-btn">👤</button>
+          </div>
         </div>
-      </div>
+
+        <div className="admin-content">
+          <div className="page-container" style={{ margin: 0, width: '100%', maxWidth: 'none', padding: 0 }}>
 
       {error && <div className="error-message">{error}</div>}
 
@@ -335,6 +345,9 @@ export default function Tickets() {
           </div>
         </div>
       )}
+    </div>
+        </div>
+      </main>
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { ResourceAPI } from '../services/api'
-import './Pages.css'
+import { ResourceAPI } from '../../services/api'
+import AdminSidebar from '../../components/AdminSidebar'
+import '../Pages.css'
+import '../AdminDashboard.css'
 
 export default function Resources() {
   const [resources, setResources] = useState([])
@@ -78,13 +80,21 @@ export default function Resources() {
   }
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1 className="page-title">Facilities & Assets</h1>
-        <div className="page-actions">
-          <button className="btn-primary" onClick={() => setShowAddModal(true)}>Add Resource</button>
+    <div className="admin-dashboard">
+      <AdminSidebar />
+      
+      <main className="admin-main-content">
+        <div className="admin-header">
+          <div className="header-title">Facilities & Assets</div>
+          <div className="header-actions">
+            <button className="btn-primary" onClick={() => setShowAddModal(true)} style={{ marginRight: '1rem' }}>+ Add Resource</button>
+            <button className="header-icon-btn">🔔</button>
+            <button className="header-icon-btn">👤</button>
+          </div>
         </div>
-      </div>
+
+        <div className="admin-content">
+          <div className="page-container" style={{ margin: 0, width: '100%', maxWidth: 'none', padding: 0 }}>
 
       {error && <div className="error-message">{error}</div>}
 
@@ -220,6 +230,9 @@ export default function Resources() {
           </div>
         </div>
       )}
+    </div>
+        </div>
+      </main>
     </div>
   )
 }

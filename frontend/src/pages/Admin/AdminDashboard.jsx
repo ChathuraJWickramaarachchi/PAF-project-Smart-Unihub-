@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ResourceAPI, BookingAPI, TicketAPI, UserAPI } from '../services/api'
-import { useAuth } from '../context/AuthContext'
-import AdminSidebar from '../components/AdminSidebar'
-import './AdminDashboard.css'
+import { ResourceAPI, BookingAPI, TicketAPI, UserAPI } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import AdminSidebar from '../../components/AdminSidebar'
+import '../AdminDashboard.css'
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth()

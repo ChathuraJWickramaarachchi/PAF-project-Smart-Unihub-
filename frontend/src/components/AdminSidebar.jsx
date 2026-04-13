@@ -51,7 +51,7 @@ export default function AdminSidebar() {
             <span className="item-icon">🏢</span>
             <span className="item-label">Facilities & Assets</span>
           </Link>
-           <Link to="/bookings" className={`nav-item ${isActive('/bookings') ? 'active' : ''}`}>
+          <Link to="/bookings" className={`nav-item ${isActive('/bookings') ? 'active' : ''}`}>
             <span className="item-icon">📅</span>
             <span className="item-label">Bookings</span>
           </Link>
@@ -60,7 +60,7 @@ export default function AdminSidebar() {
         {/* Maintenance Section */}
         <div className="nav-section">
           <div className="nav-section-label">MAINTENANCE</div>
-          <Link to="/tickets" className={`nav-item ${isActive('/tickets') ? 'active' : ''}`}>
+          <Link to="/admin/tickets" className={`nav-item ${isActive('/admin/tickets') ? 'active' : ''}`}>
             <span className="nav-icon">🎫</span>
             <span className="nav-label">Tickets</span>
           </Link>
@@ -73,7 +73,7 @@ export default function AdminSidebar() {
             <span className="nav-icon">🔔</span>
             <span className="nav-label">Notifications</span>
           </Link>
-          <Link to="/admin/users" className={`nav-item ${isActive('/admin/') ? 'active' : ''}`}>
+          <Link to="/admin/analytics" className={`nav-item ${isActive('/admin/analytics') ? 'active' : ''}`}>
             <span className="nav-icon">📊</span>
             <span className="nav-label">Analytics</span>
           </Link>

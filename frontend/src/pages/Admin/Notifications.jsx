@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { NotificationAPI } from '../services/api'
-import { useAuth } from '../context/AuthContext'
-import './Pages.css'
+import { NotificationAPI } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import AdminSidebar from '../../components/AdminSidebar'
+import '../Pages.css'
+import '../AdminDashboard.css'
 
 export default function Notifications() {
   const { user } = useAuth()
@@ -63,18 +65,21 @@ export default function Notifications() {
   }
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1 className="page-title">Notifications</h1>
-        <div className="page-actions">
-          <button 
-            className="btn-secondary"
-            onClick={handleMarkAllAsRead}
-          >
-            Mark All as Read
-          </button>
+    <div className="admin-dashboard">
+      <AdminSidebar />
+      
+      <main className="admin-main-content">
+        <div className="admin-header">
+          <div className="header-title">Notifications</div>
+          <div className="header-actions">
+            <button className="btn-secondary" onClick={handleMarkAllAsRead} style={{ marginRight: '1rem' }}>Mark All as Read</button>
+            <button className="header-icon-btn">🔔</button>
+            <button className="header-icon-btn">👤</button>
+          </div>
         </div>
-      </div>
+
+        <div className="admin-content">
+          <div className="page-container" style={{ margin: 0, width: '100%', maxWidth: 'none', padding: 0 }}>
 
       {error && <div className="error-message">{error}</div>}
 
@@ -139,6 +144,9 @@ export default function Notifications() {
           ))}
         </div>
       )}
+    </div>
+        </div>
+      </main>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import apiClient from '../services/api'
-import './Pages.css'
-import '../pages/AdminDashboard.css'
-import AdminSidebar from '../components/AdminSidebar'
+import apiClient from '../../services/api'
+import '../Pages.css'
+import '../../pages/AdminDashboard.css'
+import AdminSidebar from '../../components/AdminSidebar'
 
 export default function UserManagement() {
   const [users, setUsers] = useState([])
