@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { BookingAPI, ResourceAPI } from '../services/api'
-import { useAuth } from '../context/AuthContext'
-import AdminSidebar from '../components/AdminSidebar'
-import './AdminDashboard.css'
-import './Bookings.css'
+import { BookingAPI, ResourceAPI } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import AdminSidebar from '../../components/AdminSidebar'
+import '../AdminDashboard.css'
+import '../Bookings.css'
 
 export default function Bookings() {
   const { user, logout } = useAuth()

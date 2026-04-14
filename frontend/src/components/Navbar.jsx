@@ -45,10 +45,11 @@ export default function Navbar() {
     '/profile',
     '/bookings',
     '/resources',
-    '/tickets',
-    '/notifications'
+    '/admin/tickets',
+    '/notifications',
+    '/admin/analytics'
   ]
-  
+
   if (dashboardPages.includes(location.pathname)) {
     return null
   }
@@ -61,7 +62,7 @@ export default function Navbar() {
           SmartUni Portal
         </Link>
 
-        <button 
+        <button
           className="mobile-menu-toggle"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -71,38 +72,38 @@ export default function Navbar() {
         <div className={`navbar-menu ${isMobileMenuOpen ? 'active' : ''}`}>
           {isAuthenticated ? (
             <>
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className={`nav-link ${isActive('/') ? 'active' : ''}`}
               >
                 Home
               </Link>
-              <Link 
-                to="/resources" 
-                className={`nav-link ${isActive('/resources') ? 'active' : ''}`}
+              <Link
+                to="/facilities"
+                className={`nav-link ${isActive('/facilities') ? 'active' : ''}`}
               >
                 Facilities
               </Link>
-              <Link 
-                to="/tickets" 
+              <Link
+                to="/tickets"
                 className={`nav-link ${isActive('/tickets') ? 'active' : ''}`}
               >
                 Tickets
               </Link>
-              <Link 
-                to="/contact" 
+              <Link
+                to="/contact"
                 className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
               >
                 Contact Us
               </Link>
-              <Link 
-                to="/about" 
+              <Link
+                to="/about"
                 className={`nav-link ${isActive('/about') ? 'active' : ''}`}
               >
                 About Us
               </Link>
-              <Link 
-                to="/profile" 
+              <Link
+                to="/profile"
                 className={`nav-link profile-link ${isActive('/profile') ? 'active' : ''}`}
               >
                 👤 Profile
