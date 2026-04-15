@@ -20,8 +20,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
@@ -30,15 +29,14 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
                 "Access Denied: " + ex.getMessage(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex, WebRequest request) {
-        
+
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
@@ -50,8 +48,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed",
                 errors,
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -60,8 +57,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An unexpected error occurred: " + ex.getMessage(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
@@ -95,7 +91,8 @@ public class GlobalExceptionHandler {
         public Map<String, String> errors;
         public LocalDateTime timestamp;
 
-        public ValidationErrorResponse(int status, String message, Map<String, String> errors, LocalDateTime timestamp) {
+        public ValidationErrorResponse(int status, String message, Map<String, String> errors,
+                LocalDateTime timestamp) {
             this.status = status;
             this.message = message;
             this.errors = errors;

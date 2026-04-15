@@ -29,7 +29,7 @@ export default function Login() {
       } else {
         redirectPath = '/user-dashboard'
       }
-      
+
       console.log('Redirecting to:', redirectPath)
       navigate(redirectPath, { replace: true })
     }
@@ -98,9 +98,9 @@ export default function Login() {
 
     try {
       const result = await login(email, password)
-      
+
       console.log('Regular login successful - Role from backend:', result.data.role)
-      
+
       // Redirect based on role
       const userRole = result.data.role.toLowerCase()
       let redirectPath = '/'
@@ -113,7 +113,7 @@ export default function Login() {
       } else {
         redirectPath = '/user-dashboard'
       }
-      
+
       navigate(redirectPath, { replace: true })
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.')
@@ -127,14 +127,14 @@ export default function Login() {
     setLoading(true)
     try {
       console.log('Google login response:', response)
-      
+
       // The response object contains the credential (ID token)
       const idToken = response.credential || response.id_token
-      
+
       if (!idToken) {
         throw new Error('No credential received from Google')
       }
-      
+
       // Get the selected role mapping
       const roleMapping = {
         'admin': 'ADMIN',
@@ -142,16 +142,16 @@ export default function Login() {
         'technician': 'TECHNICIAN',
         'manager': 'MANAGER'
       }
-      
+
       const selectedRoleName = roleMapping[selectedRole] || 'USER'
-      
+
       console.log('Selected role for OAuth:', selectedRoleName)
-      
+
       // Use AuthContext's googleLogin method to properly update state
       const data = await googleLogin(idToken, selectedRoleName)
-      
+
       console.log('Backend response:', data)
-      
+
       // Check if role matches selected role (show warning if user tried to change role)
       if (data.role !== selectedRoleName && localStorage.getItem('authUser')) {
         // User already exists and role didn't change
@@ -159,11 +159,11 @@ export default function Login() {
         setError(`⚠️ Your role is permanently set as ${existingUser.role}. You cannot change it yourself. Contact admin for role changes.`)
         setTimeout(() => setError(''), 5000) // Auto-clear after 5 seconds
       }
-      
+
       // Redirect based on role
       const userRole = data.role.toLowerCase()
       let redirectPath = '/'
-      
+
       if (userRole.includes('admin')) {
         redirectPath = '/resources'
       } else if (userRole.includes('technician')) {
@@ -171,7 +171,7 @@ export default function Login() {
       } else if (userRole.includes('manager')) {
         redirectPath = '/bookings'
       }
-      
+
       console.log('Navigating to:', redirectPath)
       navigate(redirectPath, { replace: true })
     } catch (err) {
@@ -196,20 +196,20 @@ export default function Login() {
       const email = `${selectedRole}@my.sliit.lk`
       const name = `SLIIT ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`
       const sliitId = `sliit_${selectedRole}_${Date.now()}`
-      
+
       // Call backend using AuthAPI (reuse Google login endpoint for demo)
       const response = await AuthAPI.googleLogin({
         email,
         name,
         googleId: sliitId // Using same field for demo
       })
-      
+
       const data = response.data
-      
+
       if (!data.token) {
         throw new Error(data.message || 'SLIIT login failed')
       }
-      
+
       // Manually update auth context since we're not using the googleLogin method
       localStorage.setItem('authToken', data.token)
       const userInfo = {
@@ -220,7 +220,7 @@ export default function Login() {
         isSLIITUser: true
       }
       localStorage.setItem('authUser', JSON.stringify(userInfo))
-      
+
       // Force a re-render by updating window location to trigger auth check
       window.location.href = '/'
     } catch (err) {
@@ -238,17 +238,17 @@ export default function Login() {
           {/* Header Section */}
           <div className="login-header">
             <div className="app-icon">
-              <svg 
-                className="icon-svg" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="icon-svg"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                 />
               </svg>
             </div>
@@ -279,7 +279,7 @@ export default function Login() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="login-form-modern">
             {error && <div className="error-message">{error}</div>}
-            
+
             <div className="form-group-modern">
               <label htmlFor="email">Email Address</label>
               <input
@@ -306,9 +306,9 @@ export default function Login() {
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="btn-submit-modern" 
+            <button
+              type="submit"
+              className="btn-submit-modern"
               disabled={loading || !email || !password}
             >
               {loading ? 'Logging in...' : `Sign in as ${roles.find(r => r.id === selectedRole)?.title}`}
