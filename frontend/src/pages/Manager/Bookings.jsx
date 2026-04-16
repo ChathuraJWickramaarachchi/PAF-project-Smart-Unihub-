@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BookingAPI, ResourceAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
-import AdminSidebar from '../../components/AdminSidebar'
+import ManagerSidebar from '../../components/ManagerSidebar'
 import '../AdminDashboard.css'
 import '../Bookings.css'
 
@@ -200,7 +200,7 @@ export default function Bookings() {
 
   return (
     <div className="admin-dashboard">
-      <AdminSidebar onLogout={handleLogout} />
+      <ManagerSidebar onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="admin-main-content">

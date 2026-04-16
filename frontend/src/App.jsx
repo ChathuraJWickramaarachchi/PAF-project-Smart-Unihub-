@@ -12,10 +12,11 @@ import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
 import AdminDashboard from './pages/Admin/AdminDashboard'
 import TechnicianDashboard from './pages/TechnicianDashboard'
-import ManagerDashboard from './pages/ManagerDashboard'
+import ManagerDashboard from './pages/Manager/ManagerDashboard'
+import ManagerBookings from './pages/Manager/Bookings'
+import ManagerAnalytics from './pages/Manager/Analytics'
 import UserDashboard from './pages/UserDashboard'
 import Resources from './pages/Admin/Resources'
-import Bookings from './pages/Admin/Bookings'
 import AdminTickets from './pages/Admin/Tickets'
 import Notifications from './pages/Admin/Notifications'
 import NotFound from './pages/NotFound'
@@ -90,12 +91,13 @@ export default function App() {
                 <Route path="/admin/analytics" element={<Analytics />} />
                 <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
                 <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+                <Route path="/manager/analytics" element={<ManagerAnalytics />} />
                 <Route path="/user-dashboard" element={<UserDashboard />} />
                 <Route path="/profile" element={<UserProfile />} />
 
                 <Route path="/facilities" element={<Facilities />} />
                 <Route path="/resources" element={<Resources />} />
-                <Route path="/bookings" element={<Bookings />} />
+                <Route path="/bookings" element={<ManagerBookings />} />
                 <Route path="/admin/tickets" element={<AdminTickets />} />
                 <Route path="/tickets" element={<PublicTickets />} />
                 <Route path="/notifications" element={<Notifications />} />

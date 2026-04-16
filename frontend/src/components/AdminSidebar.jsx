@@ -51,10 +51,6 @@ export default function AdminSidebar() {
             <span className="item-icon">🏢</span>
             <span className="item-label">Facilities & Assets</span>
           </Link>
-          <Link to="/bookings" className={`nav-item ${isActive('/bookings') ? 'active' : ''}`}>
-            <span className="item-icon">📅</span>
-            <span className="item-label">Bookings</span>
-          </Link>
         </div>
 
         {/* Maintenance Section */}

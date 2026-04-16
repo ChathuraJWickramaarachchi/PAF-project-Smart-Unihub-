@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import AdminSidebar from '../../components/AdminSidebar'
+import ManagerSidebar from '../../components/ManagerSidebar'
 import '../Pages.css'
 import '../AdminDashboard.css'
 
-export default function Analytics() {
+export default function ManagerAnalytics() {
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
-    ticketResolution: [65, 80, 45, 90, 75, 85, 95], // Mock weekly data
-    resourceUsage: [55, 70, 85, 40], // Mock usage for different resource types
-    activeUsers: 142
+    teamPerformance: [85, 92, 78, 88, 95, 82, 90], // Mock weekly team performance data
+    resourceUtilization: [70, 85, 60, 75], // Mock utilization for different resource types
+    activeProjects: 24,
+    teamMembers: 12
   })
 
   useEffect(() => {
@@ -21,13 +22,13 @@ export default function Analytics() {
 
   return (
     <div className="admin-dashboard">
-      <AdminSidebar />
+      <ManagerSidebar />
 
       <main className="admin-main-content">
         <div className="admin-header">
-          <div className="header-title">System Analytics</div>
+          <div className="header-title">Manager Analytics</div>
           <div className="header-actions">
-            <button className="btn-secondary" style={{ marginRight: '1rem' }}>Download Report</button>
+            <button className="btn-secondary" style={{ marginRight: '1rem' }}>Export Report</button>
             <button className="header-icon-btn">🔔</button>
             <button className="header-icon-btn">👤</button>
           </div>
@@ -38,7 +39,7 @@ export default function Analytics() {
 
             {loading ? (
               <div style={{ textAlign: 'center', padding: '4rem', color: '#6b7280' }}>
-                <p style={{ fontSize: '1.2rem' }}>Crunching numbers...</p>
+                <p style={{ fontSize: '1.2rem' }}>Loading analytics data...</p>
               </div>
             ) : (
               <>
@@ -51,45 +52,54 @@ export default function Analytics() {
                   {/* Summary Cards */}
                   <div className="stat-card" style={{ borderBottomColor: '#3b82f6' }}>
                     <div className="stat-header">
-                      <div className="stat-title">SYSTEM UPTIME</div>
-                      <span className="stat-icon">⚡</span>
+                      <div className="stat-title">ACTIVE PROJECTS</div>
+                      <span className="stat-icon">📊</span>
                     </div>
-                    <div className="stat-value">99.9%</div>
-                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 0.1% from last month</div>
+                    <div className="stat-value">{stats.activeProjects}</div>
+                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 3 new this week</div>
                   </div>
 
                   <div className="stat-card" style={{ borderBottomColor: '#10b981' }}>
                     <div className="stat-header">
-                      <div className="stat-title">TICKETS RESOLVED</div>
-                      <span className="stat-icon">✅</span>
+                      <div className="stat-title">TEAM PERFORMANCE</div>
+                      <span className="stat-icon">🚀</span>
                     </div>
-                    <div className="stat-value">482</div>
-                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 12% from last month</div>
+                    <div className="stat-value">87%</div>
+                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 5% from last month</div>
                   </div>
 
                   <div className="stat-card" style={{ borderBottomColor: '#8b5cf6' }}>
                     <div className="stat-header">
-                      <div className="stat-title">ACTIVE USERS NOW</div>
+                      <div className="stat-title">TEAM MEMBERS</div>
                       <span className="stat-icon">👥</span>
                     </div>
-                    <div className="stat-value">{stats.activeUsers}</div>
-                    <div className="stat-footer">Peak time active</div>
+                    <div className="stat-value">{stats.teamMembers}</div>
+                    <div className="stat-footer">All active</div>
+                  </div>
+
+                  <div className="stat-card" style={{ borderBottomColor: '#f59e0b' }}>
+                    <div className="stat-header">
+                      <div className="stat-title">TASKS COMPLETED</div>
+                      <span className="stat-icon">✅</span>
+                    </div>
+                    <div className="stat-value">156</div>
+                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 18% from last month</div>
                   </div>
                 </div>
 
                 {/* Charts Area */}
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
 
-                  {/* Mock Bar Chart for Ticket Resolution */}
+                  {/* Mock Bar Chart for Team Performance */}
                   <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Weekly Ticket Resolution Rate</h3>
+                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Weekly Team Performance</h3>
                     <div style={{ display: 'flex', alignItems: 'flex-end', height: '250px', gap: '1rem', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem' }}>
-                      {stats.ticketResolution.map((val, idx) => (
+                      {stats.teamPerformance.map((val, idx) => (
                         <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                           <div style={{
                             width: '100%',
                             height: `${val}%`,
-                            backgroundColor: val > 80 ? '#10b981' : val > 50 ? '#f59e0b' : '#ef4444',
+                            backgroundColor: val > 85 ? '#10b981' : val > 70 ? '#3b82f6' : '#f59e0b',
                             borderRadius: '4px 4px 0 0',
                             transition: 'height 1s ease-out'
                           }}></div>
@@ -101,15 +111,15 @@ export default function Analytics() {
                     </div>
                   </div>
 
-                  {/* Mock Resource Usage Distribution */}
+                  {/* Mock Resource Utilization Distribution */}
                   <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Facility Usage</h3>
+                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Resource Utilization</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       {[
-                        { name: 'Classrooms', val: stats.resourceUsage[0], color: '#3b82f6' },
-                        { name: 'Laboratories', val: stats.resourceUsage[1], color: '#8b5cf6' },
-                        { name: 'Auditoriums', val: stats.resourceUsage[2], color: '#f59e0b' },
-                        { name: 'Equipment', val: stats.resourceUsage[3], color: '#10b981' }
+                        { name: 'Meeting Rooms', val: stats.resourceUtilization[0], color: '#3b82f6' },
+                        { name: 'Equipment', val: stats.resourceUtilization[1], color: '#8b5cf6' },
+                        { name: 'Workspaces', val: stats.resourceUtilization[2], color: '#f59e0b' },
+                        { name: 'Parking', val: stats.resourceUtilization[3], color: '#10b981' }
                       ].map(item => (
                         <div key={item.name}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: '500' }}>
@@ -127,30 +137,31 @@ export default function Analytics() {
                 </div>
 
                 <div style={{ marginTop: '2rem', backgroundColor: '#fff', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                  <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>System Logs</h3>
+                  <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Recent Activities</h3>
                   <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280', fontSize: '0.875rem' }}>
-                          <th style={{ padding: '0.75rem 0' }}>TIMESTAMP</th>
-                          <th style={{ padding: '0.75rem 0' }}>EVENT ID</th>
-                          <th style={{ padding: '0.75rem 0' }}>DESCRIPTION</th>
+                          <th style={{ padding: '0.75rem 0' }}>TIME</th>
+                          <th style={{ padding: '0.75rem 0' }}>ACTIVITY</th>
+                          <th style={{ padding: '0.75rem 0' }}>TEAM MEMBER</th>
                           <th style={{ padding: '0.75rem 0' }}>STATUS</th>
                         </tr>
                       </thead>
                       <tbody>
                         {[
-                          { time: '10:45 AM', id: 'EVT-9092', desc: 'Automatic system backup completed successfully.', status: 'SUCCESS', color: '#10b981' },
-                          { time: '09:12 AM', id: 'EVT-9091', desc: 'Failed login attempt from unauthorized IP.', status: 'WARNING', color: '#f59e0b' },
-                          { time: '08:30 AM', id: 'EVT-9090', desc: 'Database index rebuilt for optimized searching.', status: 'INFO', color: '#3b82f6' }
-                        ].map((log, i) => (
+                          { time: '10:45 AM', activity: 'Completed facility inspection', member: 'John Doe', status: 'COMPLETED', color: '#10b981' },
+                          { time: '09:30 AM', activity: 'Submitted maintenance request', member: 'Jane Smith', status: 'PENDING', color: '#f59e0b' },
+                          { time: '08:15 AM', activity: 'Updated project timeline', member: 'Mike Johnson', status: 'IN PROGRESS', color: '#3b82f6' },
+                          { time: 'Yesterday', activity: 'Approved resource booking', member: 'Sarah Wilson', status: 'COMPLETED', color: '#10b981' }
+                        ].map((activity, i) => (
                           <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem' }}>{log.time}</td>
-                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem', fontWeight: '500' }}>{log.id}</td>
-                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem', color: '#4b5563' }}>{log.desc}</td>
+                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem' }}>{activity.time}</td>
+                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem', color: '#4b5563' }}>{activity.activity}</td>
+                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem', fontWeight: '500' }}>{activity.member}</td>
                             <td style={{ padding: '0.75rem 0' }}>
-                              <span style={{ fontSize: '0.7rem', fontWeight: 'bold', padding: '0.2rem 0.5rem', backgroundColor: `${log.color}20`, color: log.color, borderRadius: '4px' }}>
-                                {log.status}
+                              <span style={{ fontSize: '0.7rem', fontWeight: 'bold', padding: '0.2rem 0.5rem', backgroundColor: `${activity.color}20`, color: activity.color, borderRadius: '4px' }}>
+                                {activity.status}
                               </span>
                             </td>
                           </tr>
