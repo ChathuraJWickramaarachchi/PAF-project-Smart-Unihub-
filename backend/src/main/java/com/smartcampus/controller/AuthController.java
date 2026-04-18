@@ -44,17 +44,25 @@ public class AuthController {
         String password = credentials.get("password");
         
         // Find user by email
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid email or password");
+            return ResponseEntity.status(401).body(errorResponse);
+        }
         
         // Check if user is active
         if (!user.getIsActive()) {
-            throw new RuntimeException("Account is deactivated");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Account is deactivated");
+            return ResponseEntity.status(403).body(errorResponse);
         }
         
         // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid email or password");
+            return ResponseEntity.status(401).body(errorResponse);
         }
         
         // Generate simple JWT-like token (for demo purposes)
