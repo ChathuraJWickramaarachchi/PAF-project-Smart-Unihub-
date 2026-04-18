@@ -53,7 +53,7 @@ export default function ManagerSidebar() {
         {/* Account Section */}
         <div className="nav-section">
           <div className="nav-section-label">ACCOUNT</div>
-          <Link to="/admin/analytics" className={`nav-item ${isActive('/admin/analytics') ? 'active' : ''}`}>
+          <Link to="/manager/analytics" className={`nav-item ${isActive('/manager/analytics') ? 'active' : ''}`}>
             <span className="nav-icon">📊</span>
             <span className="nav-label">Analytics</span>
           </Link>

@@ -30,19 +30,19 @@ export default function AdminDashboard() {
       const ticketsResponse = await TicketAPI.getByStatus('OPEN')
       const allBookings = await BookingAPI.getAll()
       const usersResponse = await UserAPI.getAll()
-      
+
       setStats({
         totalResources: resourcesResponse.data.length,
         activeBookings: bookingsResponse.data.length,
         openTickets: ticketsResponse.data.length,
         resolvedToday: 7 // Mock data
       })
-      
+
       setUsers(usersResponse.data || [])
-      
+
       // Get pending approvals
       setPendingApprovals(allBookings.data.filter(b => b.status === 'PENDING').slice(0, 4))
-      
+
       // Get recent activity (mock)
       setRecentActivity([
         { id: 1, type: 'booking', text: 'Booking #B-0142 approved for Lab B-202', time: '2 min ago', icon: '✓', color: '#10b981' },
@@ -66,9 +66,9 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      <AdminSidebar 
-        activeView={activeView} 
-        onActiveViewChange={setActiveView} 
+      <AdminSidebar
+        activeView={activeView}
+        onActiveViewChange={setActiveView}
         onLogout={handleLogout}
       />
 
@@ -90,123 +90,123 @@ export default function AdminDashboard() {
             <>
               {/* Stats Grid */}
               <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-header">
-                <div className="stat-title">TOTAL RESOURCES</div>
-                <span className="stat-icon">🏢</span>
-              </div>
-              <div className="stat-value">{stats.totalResources}</div>
-              <div className="stat-footer">12 out of service</div>
-            </div>
-
-            <div className="stat-card" style={{ borderBottomColor: '#10b981' }}>
-              <div className="stat-header">
-                <div className="stat-title">ACTIVE BOOKINGS</div>
-                <span className="stat-icon">📅</span>
-              </div>
-              <div className="stat-value">{stats.activeBookings}</div>
-              <div className="stat-footer">8 pending approval</div>
-            </div>
-
-            <div className="stat-card" style={{ borderBottomColor: '#f59e0b' }}>
-              <div className="stat-header">
-                <div className="stat-title">OPEN TICKETS</div>
-                <span className="stat-icon">🎫</span>
-              </div>
-              <div className="stat-value">{stats.openTickets}</div>
-              <div className="stat-footer">3 high priority</div>
-            </div>
-
-            <div className="stat-card" style={{ borderBottomColor: '#ef4444' }}>
-              <div className="stat-header">
-                <div className="stat-title">RESOLVED TODAY</div>
-                <span className="stat-icon">✅</span>
-              </div>
-              <div className="stat-value">{stats.resolvedToday}</div>
-              <div className="stat-footer">↑ 2 from yesterday</div>
-            </div>
-          </div>
-
-          {/* Action Cards */}
-          <div className="action-cards">
-            <div className="action-card">
-              <div className="action-icon">📅</div>
-              <div className="action-label">New Booking</div>
-              <div className="action-description">Reserve a resource</div>
-            </div>
-            <div className="action-card">
-              <div className="action-icon">🐛</div>
-              <div className="action-label">Report Issue</div>
-              <div className="action-description">Submit a ticket</div>
-            </div>
-            <div className="action-card">
-              <div className="action-icon">🏢</div>
-              <div className="action-label">Browse Rooms</div>
-              <div className="action-description">Check availability</div>
-            </div>
-            <div className="action-card">
-              <div className="action-icon">📊</div>
-              <div className="action-label">Analytics</div>
-              <div className="action-description">Usage reports</div>
-            </div>
-          </div>
-
-          {/* Main Grid - Pending Approvals and Activity */}
-          <div className="main-grid">
-            {/* Pending Approvals */}
-            <div className="approvals-section">
-              <div className="section-header">
-                <h3>Pending Approvals</h3>
-                <Link to="/bookings" className="view-all">View all →</Link>
-              </div>
-              <div className="approvals-table">
-                <div className="table-row table-header">
-                  <div className="table-cell" style={{ flex: 1 }}>RESOURCE</div>
-                  <div className="table-cell" style={{ flex: 1 }}>REQUESTED BY</div>
-                  <div className="table-cell" style={{ flex: 1 }}>DATE</div>
-                  <div className="table-cell" style={{ flex: 1 }}>ACTION</div>
+                <div className="stat-card">
+                  <div className="stat-header">
+                    <div className="stat-title">TOTAL RESOURCES</div>
+                    <span className="stat-icon">🏢</span>
+                  </div>
+                  <div className="stat-value">{stats.totalResources}</div>
+                  <div className="stat-footer">12 out of service</div>
                 </div>
-                {pendingApprovals.length > 0 ? (
-                  pendingApprovals.map((approval) => (
-                    <div className="table-row" key={approval.bookingId}>
-                      <div className="table-cell" style={{ flex: 1 }}>{approval.resourceName || 'Lab A-301'}</div>
-                      <div className="table-cell" style={{ flex: 1 }}>Kamal P.</div>
-                      <div className="table-cell" style={{ flex: 1 }}>Apr 2</div>
-                      <div className="table-cell" style={{ flex: 1 }}>
-                        <button className="approve-btn">✓ Approve</button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="table-row">
-                    <div className="table-cell" colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: '#9ca3af' }}>
-                      No pending approvals
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
 
-            {/* Recent Activity */}
-            <div className="activity-section">
-              <div className="section-header">
-                <h3>Recent Activity</h3>
-              </div>
-              <div className="activity-list">
-                {recentActivity.map((activity) => (
-                  <div className="activity-item" key={activity.id}>
-                    <div className="activity-indicator" style={{ backgroundColor: activity.color }}>
-                      {activity.icon}
-                    </div>
-                    <div className="activity-content">
-                      <div className="activity-text">{activity.text}</div>
-                      <div className="activity-time">{activity.time}</div>
-                    </div>
+                <div className="stat-card" style={{ borderBottomColor: '#10b981' }}>
+                  <div className="stat-header">
+                    <div className="stat-title">ACTIVE BOOKINGS</div>
+                    <span className="stat-icon">📅</span>
                   </div>
-                ))}
+                  <div className="stat-value">{stats.activeBookings}</div>
+                  <div className="stat-footer">8 pending approval</div>
+                </div>
+
+                <div className="stat-card" style={{ borderBottomColor: '#f59e0b' }}>
+                  <div className="stat-header">
+                    <div className="stat-title">OPEN TICKETS</div>
+                    <span className="stat-icon">🎫</span>
+                  </div>
+                  <div className="stat-value">{stats.openTickets}</div>
+                  <div className="stat-footer">3 high priority</div>
+                </div>
+
+                <div className="stat-card" style={{ borderBottomColor: '#ef4444' }}>
+                  <div className="stat-header">
+                    <div className="stat-title">RESOLVED TODAY</div>
+                    <span className="stat-icon">✅</span>
+                  </div>
+                  <div className="stat-value">{stats.resolvedToday}</div>
+                  <div className="stat-footer">↑ 2 from yesterday</div>
+                </div>
               </div>
-            </div>
-          </div>
+
+              {/* Action Cards */}
+              <div className="action-cards">
+                <div className="action-card">
+                  <div className="action-icon">📅</div>
+                  <div className="action-label">New Booking</div>
+                  <div className="action-description">Reserve a resource</div>
+                </div>
+                <div className="action-card">
+                  <div className="action-icon">🐛</div>
+                  <div className="action-label">Report Issue</div>
+                  <div className="action-description">Submit a ticket</div>
+                </div>
+                <div className="action-card">
+                  <div className="action-icon">🏢</div>
+                  <div className="action-label">Browse Rooms</div>
+                  <div className="action-description">Check availability</div>
+                </div>
+                <div className="action-card">
+                  <div className="action-icon">📊</div>
+                  <div className="action-label">Analytics</div>
+                  <div className="action-description">Usage reports</div>
+                </div>
+              </div>
+
+              {/* Main Grid - Pending Approvals and Activity */}
+              <div className="main-grid">
+                {/* Pending Approvals */}
+                <div className="approvals-section">
+                  <div className="section-header">
+                    <h3>Pending Approvals</h3>
+                    <Link to="/bookings" className="view-all">View all →</Link>
+                  </div>
+                  <div className="approvals-table">
+                    <div className="table-row table-header">
+                      <div className="table-cell" style={{ flex: 1 }}>RESOURCE</div>
+                      <div className="table-cell" style={{ flex: 1 }}>REQUESTED BY</div>
+                      <div className="table-cell" style={{ flex: 1 }}>DATE</div>
+                      <div className="table-cell" style={{ flex: 1 }}>ACTION</div>
+                    </div>
+                    {pendingApprovals.length > 0 ? (
+                      pendingApprovals.map((approval) => (
+                        <div className="table-row" key={approval.bookingId}>
+                          <div className="table-cell" style={{ flex: 1 }}>{approval.resourceName || 'Lab A-301'}</div>
+                          <div className="table-cell" style={{ flex: 1 }}>Kamal P.</div>
+                          <div className="table-cell" style={{ flex: 1 }}>Apr 2</div>
+                          <div className="table-cell" style={{ flex: 1 }}>
+                            <button className="approve-btn">✓ Approve</button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="table-row">
+                        <div className="table-cell" colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: '#9ca3af' }}>
+                          No pending approvals
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="activity-section">
+                  <div className="section-header">
+                    <h3>Recent Activity</h3>
+                  </div>
+                  <div className="activity-list">
+                    {recentActivity.map((activity) => (
+                      <div className="activity-item" key={activity.id}>
+                        <div className="activity-indicator" style={{ backgroundColor: activity.color }}>
+                          {activity.icon}
+                        </div>
+                        <div className="activity-content">
+                          <div className="activity-text">{activity.text}</div>
+                          <div className="activity-time">{activity.time}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </>
           ) : (
             <>

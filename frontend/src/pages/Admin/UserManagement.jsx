@@ -179,128 +179,128 @@ export default function UserManagement() {
         </div>
         <div className="page-container">
 
-      {error && (
-        <div className="error-message" style={{ marginBottom: '1rem' }}>
-          {error}
-        </div>
-      )}
+          {error && (
+            <div className="error-message" style={{ marginBottom: '1rem' }}>
+              {error}
+            </div>
+          )}
 
-      {successMessage && (
-        <div className="success-message" style={{ marginBottom: '1rem', color: '#059669' }}>
-          {successMessage}
-        </div>
-      )}
+          {successMessage && (
+            <div className="success-message" style={{ marginBottom: '1rem', color: '#059669' }}>
+              {successMessage}
+            </div>
+          )}
 
-      <div className="users-table">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Login Method</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.userId}>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {user.profilePictureUrl && (
-                      <img 
-                        src={user.profilePictureUrl} 
-                        alt={user.fullName}
-                        style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-                      />
-                    )}
-                    <strong>{user.fullName}</strong>
-                  </div>
-                </td>
-                <td>{user.email}</td>
-                <td>
-                  {editingUserId === user.userId ? (
-                    <select
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user.userId, e.target.value)}
-                      onBlur={() => setEditingUserId(null)}
-                      autoFocus
-                      style={{ padding: '0.25rem 0.5rem', borderRadius: '0.25rem', border: '1px solid #3b82f6' }}
-                    >
-                      <option value="USER">User</option>
-                      <option value="ADMIN">Admin</option>
-                      <option value="MANAGER">Manager</option>
-                      <option value="TECHNICIAN">Technician</option>
-                    </select>
-                  ) : (
-                    <span 
-                      className={`role-badge ${getRoleBadgeClass(user.role)}`}
-                      onClick={() => setEditingUserId(user.userId)}
-                      style={{ cursor: 'pointer' }}
-                      title="Click to edit role"
-                    >
-                      {user.role}
-                    </span>
-                  )}
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleStatusToggle(user.userId, user.isActive)}
-                    className={`status-btn ${user.isActive ? 'active' : 'inactive'}`}
-                    title={user.isActive ? 'Click to deactivate' : 'Click to activate'}
-                  >
-                    {user.isActive ? '✓ Active' : '✗ Inactive'}
-                  </button>
-                </td>
-                <td>
-                  {user.googleId ? (
-                    <span title="Google OAuth">🔵 Google</span>
-                  ) : (
-                    <span title="Regular login">📧 Email</span>
-                  )}
-                </td>
-                <td>
-                  <div className="actions-cell">
-                    <button
-                      onClick={() => handleEditClick(user)}
-                      className="edit-btn"
-                      title="Edit user"
-                      style={{ 
-                        background: '#3b82f6', 
-                        color: 'white', 
-                        border: 'none', 
-                        padding: '0.25rem 0.75rem',
-                        borderRadius: '0.25rem',
-                        cursor: 'pointer',
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUser(user.userId, user.email)}
-                      className="delete-btn"
-                      title="Delete user"
-                      style={{ 
-                        background: '#ef4444', 
-                        color: 'white', 
-                        border: 'none', 
-                        padding: '0.25rem 0.75rem',
-                        borderRadius: '0.25rem',
-                        cursor: 'pointer',
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <div className="users-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Login Method</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.userId}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {user.profilePictureUrl && (
+                          <img
+                            src={user.profilePictureUrl}
+                            alt={user.fullName}
+                            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                          />
+                        )}
+                        <strong>{user.fullName}</strong>
+                      </div>
+                    </td>
+                    <td>{user.email}</td>
+                    <td>
+                      {editingUserId === user.userId ? (
+                        <select
+                          value={user.role}
+                          onChange={(e) => handleRoleChange(user.userId, e.target.value)}
+                          onBlur={() => setEditingUserId(null)}
+                          autoFocus
+                          style={{ padding: '0.25rem 0.5rem', borderRadius: '0.25rem', border: '1px solid #3b82f6' }}
+                        >
+                          <option value="USER">User</option>
+                          <option value="ADMIN">Admin</option>
+                          <option value="MANAGER">Manager</option>
+                          <option value="TECHNICIAN">Technician</option>
+                        </select>
+                      ) : (
+                        <span
+                          className={`role-badge ${getRoleBadgeClass(user.role)}`}
+                          onClick={() => setEditingUserId(user.userId)}
+                          style={{ cursor: 'pointer' }}
+                          title="Click to edit role"
+                        >
+                          {user.role}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleStatusToggle(user.userId, user.isActive)}
+                        className={`status-btn ${user.isActive ? 'active' : 'inactive'}`}
+                        title={user.isActive ? 'Click to deactivate' : 'Click to activate'}
+                      >
+                        {user.isActive ? '✓ Active' : '✗ Inactive'}
+                      </button>
+                    </td>
+                    <td>
+                      {user.googleId ? (
+                        <span title="Google OAuth">🔵 Google</span>
+                      ) : (
+                        <span title="Regular login">📧 Email</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="actions-cell">
+                        <button
+                          onClick={() => handleEditClick(user)}
+                          className="edit-btn"
+                          title="Edit user"
+                          style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '0.25rem',
+                            cursor: 'pointer',
+                            fontSize: '0.875rem'
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user.userId, user.email)}
+                          className="delete-btn"
+                          title="Delete user"
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '0.25rem',
+                            cursor: 'pointer',
+                            fontSize: '0.875rem'
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Edit Modal */}
@@ -309,7 +309,7 @@ export default function UserManagement() {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>Edit User</h2>
-                <button 
+                <button
                   onClick={() => setShowEditModal(false)}
                   className="modal-close-btn"
                 >
@@ -322,7 +322,7 @@ export default function UserManagement() {
                   <input
                     type="text"
                     value={editFormData.fullName}
-                    onChange={(e) => setEditFormData({...editFormData, fullName: e.target.value})}
+                    onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
                     style={{
                       width: '100%',
                       padding: '0.5rem',
@@ -338,7 +338,7 @@ export default function UserManagement() {
                   <input
                     type="email"
                     value={editFormData.email}
-                    onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
                     style={{
                       width: '100%',
                       padding: '0.5rem',
@@ -353,7 +353,7 @@ export default function UserManagement() {
                   <label>Role</label>
                   <select
                     value={editFormData.role}
-                    onChange={(e) => setEditFormData({...editFormData, role: e.target.value})}
+                    onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
                     style={{
                       width: '100%',
                       padding: '0.5rem',
@@ -371,13 +371,13 @@ export default function UserManagement() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button 
+                <button
                   onClick={() => setShowEditModal(false)}
                   className="modal-btn-cancel"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleEditSubmit}
                   className="modal-btn-save"
                 >

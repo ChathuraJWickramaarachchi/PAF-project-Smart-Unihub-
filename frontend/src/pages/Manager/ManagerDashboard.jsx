@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { BookingAPI, ResourceAPI, TicketAPI } from '../services/api'
-import { useAuth } from '../context/AuthContext'
-import ManagerSidebar from '../components/ManagerSidebar'
-import './AdminDashboard.css' // We can reuse the same css as AdminDashboard for uniform look
+import { BookingAPI, ResourceAPI, TicketAPI } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import ManagerSidebar from '../../components/ManagerSidebar'
+import '../AdminDashboard.css' // We can reuse the same css as AdminDashboard for uniform look
 
 export default function ManagerDashboard() {
   const { user } = useAuth()
