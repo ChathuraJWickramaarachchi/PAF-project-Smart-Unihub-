@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { BookingAPI, ResourceAPI } from '../services/api'
-import { useAuth } from '../context/AuthContext'
-import AdminSidebar from '../components/AdminSidebar'
-import './AdminDashboard.css'
-import './Bookings.css'
+import { BookingAPI, ResourceAPI } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import ManagerSidebar from '../../components/ManagerSidebar'
+import '../AdminDashboard.css'
+import '../Bookings.css'
 
 export default function Bookings() {
   const { user, logout } = useAuth()
@@ -12,6 +12,7 @@ export default function Bookings() {
   const [error, setError] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [viewMode, setViewMode] = useState('list')
+  const [searchQuery, setSearchQuery] = useState('')
   const [calendarDate, setCalendarDate] = useState(new Date())
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [resources, setResources] = useState([])
@@ -163,8 +164,18 @@ export default function Bookings() {
     return days
   }
 
+  const filteredBookings = bookings.filter(booking => {
+    const query = searchQuery.toLowerCase()
+    return (
+      (booking.id && booking.id.toString().includes(query)) ||
+      (booking.resourceName && booking.resourceName.toLowerCase().includes(query)) ||
+      (booking.userFullName && booking.userFullName.toLowerCase().includes(query)) ||
+      (booking.bookingPurpose && booking.bookingPurpose.toLowerCase().includes(query))
+    )
+  })
+
   const getBookingsForDate = (date) => {
-    return bookings.filter(b => {
+    return filteredBookings.filter(b => {
       if (!b.startTime) return false
       const bd = new Date(b.startTime)
       return bd.getFullYear() === date.getFullYear() &&
@@ -189,7 +200,7 @@ export default function Bookings() {
 
   return (
     <div className="admin-dashboard">
-      <AdminSidebar onLogout={handleLogout} />
+      <ManagerSidebar onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="admin-main-content">
@@ -197,7 +208,13 @@ export default function Bookings() {
         <div className="admin-header">
           <div className="header-title">Booking Management</div>
           <div className="header-actions">
-            <input type="text" className="search-input" placeholder="Search anything..." />
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="Search bookings..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <button className="header-icon-btn">🔔</button>
             <button className="header-icon-btn">👤</button>
           </div>
@@ -246,7 +263,7 @@ export default function Bookings() {
             <div className="bookings-table-wrapper">
               {loading ? (
                 <div className="loading-message">Loading bookings...</div>
-              ) : bookings.length === 0 ? (
+              ) : filteredBookings.length === 0 ? (
                 <div className="empty-message">No bookings found</div>
               ) : (
                 <div className="bookings-table">
@@ -261,7 +278,7 @@ export default function Bookings() {
                     <div className="table-cell actions-col">ACTIONS</div>
                   </div>
 
-                  {bookings.map((booking, index) => (
+                  {filteredBookings.map((booking, index) => (
                     <div className="table-row" key={booking.id || index}>
                       <div className="table-cell id-col">#{booking.id || 'N/A'}</div>
                       <div className="table-cell resource-col">{booking.resourceName || 'N/A'}</div>
