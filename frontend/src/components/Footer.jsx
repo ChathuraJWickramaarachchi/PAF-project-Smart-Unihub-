@@ -1,12 +1,10 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import './Footer.css'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
   const location = useLocation()
 
-  // Hide footer on dashboard pages (they have their own layouts)
   const dashboardPages = [
     '/admin-dashboard',
     '/admin/users',
@@ -26,15 +24,17 @@ export default function Footer() {
   }
 
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        <p className="footer-copyright">
-          &copy; {currentYear} SmartUni Portal. All rights reserved.
+    <footer className="bg-white border-t border-gray-100 py-12">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+          &copy; {currentYear} SmartUni Portal. System Verified.
         </p>
-        <div className="footer-links">
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#terms">Terms of Service</a>
-          <a href="#contact">Contact</a>
+        <div className="flex gap-8">
+          {['Privacy Protocol', 'Service Terms', 'Network Support'].map(link => (
+            <a key={link} href="#" className="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-primary transition-colors">
+              {link}
+            </a>
+          ))}
         </div>
       </div>
     </footer>

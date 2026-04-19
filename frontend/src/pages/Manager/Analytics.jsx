@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import ManagerSidebar from '../../components/ManagerSidebar'
-import '../Pages.css'
-import '../AdminDashboard.css'
 
 export default function ManagerAnalytics() {
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({
-    teamPerformance: [85, 92, 78, 88, 95, 82, 90], // Mock weekly team performance data
-    resourceUtilization: [70, 85, 60, 75], // Mock utilization for different resource types
+  const [stats] = useState({
+    teamPerformance: [85, 92, 78, 88, 95, 82, 90],
+    resourceUtilization: [70, 85, 60, 75],
     activeProjects: 24,
     teamMembers: 12
   })
 
   useEffect(() => {
-    // Simulate loading data
     const timer = setTimeout(() => {
       setLoading(false)
     }, 800)
@@ -21,159 +18,152 @@ export default function ManagerAnalytics() {
   }, [])
 
   return (
-    <div className="admin-dashboard">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row shadow-2xl shadow-gray-200 selection:bg-primary/10">
       <ManagerSidebar />
 
-      <main className="admin-main-content">
-        <div className="admin-header">
-          <div className="header-title">Manager Analytics</div>
-          <div className="header-actions">
-            <button className="btn-secondary" style={{ marginRight: '1rem' }}>Export Report</button>
-            <button className="header-icon-btn">🔔</button>
-            <button className="header-icon-btn">👤</button>
-          </div>
-        </div>
-
-        <div className="admin-content">
-          <div className="page-container" style={{ margin: 0, width: '100%', maxWidth: 'none', padding: '1.5rem' }}>
-
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '4rem', color: '#6b7280' }}>
-                <p style={{ fontSize: '1.2rem' }}>Loading analytics data...</p>
+      <main className="flex-1 min-w-0 h-screen overflow-y-auto w-full custom-scrollbar">
+        {/* Top Header */}
+        <header className="bg-white border-b border-gray-100 flex justify-between items-center px-12 py-5 sticky top-0 z-10">
+           <div className="text-[14px] font-bold text-gray-900 tracking-tight">System Analytics</div>
+           <div className="flex items-center gap-6">
+              <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
+                <span className="text-[12px] font-bold">Export Report</span>
+              </button>
+              <div className="h-8 w-px bg-gray-100"></div>
+              <div className="flex items-center gap-3">
+                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm">👤</div>
+                 <div className="text-right hidden sm:block">
+                    <div className="text-[12px] font-bold text-gray-900 leading-none">Manager</div>
+                    <div className="text-[10px] font-medium text-gray-400 mt-1">Telemetry Ops</div>
+                 </div>
               </div>
-            ) : (
-              <>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '1.5rem',
-                  marginBottom: '2rem'
-                }}>
-                  {/* Summary Cards */}
-                  <div className="stat-card" style={{ borderBottomColor: '#3b82f6' }}>
-                    <div className="stat-header">
-                      <div className="stat-title">ACTIVE PROJECTS</div>
-                      <span className="stat-icon">📊</span>
+           </div>
+        </header>
+
+        <div className="p-12 space-y-12 max-w-7xl mx-auto">
+          {loading ? (
+             <div className="min-h-[400px] flex items-center justify-center text-[12px] font-bold text-gray-400 uppercase tracking-widest animate-pulse italic">Synchronizing Data Matrix...</div>
+          ) : (
+            <>
+              {/* Summary Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { label: 'Active Projects', value: stats.activeProjects, icon: '📊', trend: '↑ 3 new' },
+                  { label: 'Team Efficiency', value: '87%', icon: '🚀', trend: '↑ 5%' },
+                  { label: 'Registry Nodes', value: stats.teamMembers, icon: '👥', trend: 'All active' },
+                  { label: 'Protocols Ready', value: '156', icon: '✅', trend: '↑ 18%' }
+                ].map((stat, i) => (
+                  <div key={i} className="bg-white p-8 rounded-3xl border border-gray-100 hover:shadow-xl hover:shadow-gray-200/40 transition-all flex justify-between items-start group">
+                    <div className="space-y-4">
+                       <span className="text-[12px] font-medium text-gray-400">{stat.label}</span>
+                       <div className="space-y-1">
+                          <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+                          <div className="text-[11px] font-bold text-emerald-500">{stat.trend}</div>
+                       </div>
                     </div>
-                    <div className="stat-value">{stats.activeProjects}</div>
-                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 3 new this week</div>
+                    <div className="p-3 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-primary/5 group-hover:text-primary transition-colors">{stat.icon}</div>
                   </div>
+                ))}
+              </div>
 
-                  <div className="stat-card" style={{ borderBottomColor: '#10b981' }}>
-                    <div className="stat-header">
-                      <div className="stat-title">TEAM PERFORMANCE</div>
-                      <span className="stat-icon">🚀</span>
+              {/* Data Visualization */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                 {/* Team Performance Chart */}
+                 <div className="lg:col-span-2 bg-white p-10 rounded-[2.5rem] border border-gray-100 space-y-8">
+                    <div className="flex justify-between items-end">
+                       <div className="space-y-1">
+                          <h3 className="text-lg font-bold text-gray-900 tracking-tight">Team Velocity</h3>
+                          <p className="text-[12px] font-medium text-gray-400">Weekly Efficiency Telemetry</p>
+                       </div>
+                       <div className="text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/5 px-4 py-1.5 rounded-full italic">Real-time feed</div>
                     </div>
-                    <div className="stat-value">87%</div>
-                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 5% from last month</div>
-                  </div>
-
-                  <div className="stat-card" style={{ borderBottomColor: '#8b5cf6' }}>
-                    <div className="stat-header">
-                      <div className="stat-title">TEAM MEMBERS</div>
-                      <span className="stat-icon">👥</span>
+                    <div className="flex items-end gap-3 h-64 border-b border-gray-50 pb-4 mt-8">
+                       {stats.teamPerformance.map((val, idx) => (
+                         <div key={idx} className="flex-1 flex flex-col items-center gap-4 group">
+                            <div className="relative w-full">
+                               <div 
+                                 style={{ height: `${val}%` }} 
+                                 className={`w-full rounded-xl transition-all duration-1000 ${val > 90 ? 'bg-primary' : 'bg-slate-800'} group-hover:brightness-125 shadow-sm`}
+                               ></div>
+                               <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold text-gray-900">{val}%</div>
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-300 uppercase">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][idx]}</span>
+                         </div>
+                       ))}
                     </div>
-                    <div className="stat-value">{stats.teamMembers}</div>
-                    <div className="stat-footer">All active</div>
-                  </div>
+                 </div>
 
-                  <div className="stat-card" style={{ borderBottomColor: '#f59e0b' }}>
-                    <div className="stat-header">
-                      <div className="stat-title">TASKS COMPLETED</div>
-                      <span className="stat-icon">✅</span>
+                 {/* Resource Allocation */}
+                 <div className="bg-[#1e293b] p-10 rounded-[2.5rem] text-white shadow-2xl shadow-slate-200/50 space-y-10">
+                    <div className="space-y-1">
+                       <h3 className="text-lg font-bold tracking-tight">Resource Mix</h3>
+                       <p className="text-[12px] font-medium text-slate-400 italic">Allocation Matrix</p>
                     </div>
-                    <div className="stat-value">156</div>
-                    <div className="stat-footer" style={{ color: '#10b981' }}>↑ 18% from last month</div>
-                  </div>
-                </div>
-
-                {/* Charts Area */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
-
-                  {/* Mock Bar Chart for Team Performance */}
-                  <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Weekly Team Performance</h3>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', height: '250px', gap: '1rem', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem' }}>
-                      {stats.teamPerformance.map((val, idx) => (
-                        <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          <div style={{
-                            width: '100%',
-                            height: `${val}%`,
-                            backgroundColor: val > 85 ? '#10b981' : val > 70 ? '#3b82f6' : '#f59e0b',
-                            borderRadius: '4px 4px 0 0',
-                            transition: 'height 1s ease-out'
-                          }}></div>
-                          <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: '#6b7280' }}>
-                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][idx]}
-                          </span>
-                        </div>
-                      ))}
+                    <div className="space-y-8">
+                       {[
+                         { name: 'Sectors', val: stats.resourceUtilization[0], color: 'bg-primary' },
+                         { name: 'Hardware', val: stats.resourceUtilization[1], color: 'bg-white' },
+                         { name: 'Compute', val: stats.resourceUtilization[2], color: 'bg-blue-400' },
+                         { name: 'Nodes', val: stats.resourceUtilization[3], color: 'bg-emerald-400' }
+                       ].map(item => (
+                         <div key={item.name} className="space-y-3 group">
+                            <div className="flex justify-between text-[11px] font-bold uppercase tracking-tight">
+                              <span className="text-slate-400 group-hover:text-white transition-colors">{item.name}</span>
+                              <span>{item.val}%</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                              <div style={{ width: `${item.val}%` }} className={`h-full ${item.color} transition-all duration-1000 shadow-sm shadow-white/5`}></div>
+                            </div>
+                         </div>
+                       ))}
                     </div>
-                  </div>
+                    <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all">Optimize Allocation</button>
+                 </div>
+              </div>
 
-                  {/* Mock Resource Utilization Distribution */}
-                  <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Resource Utilization</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      {[
-                        { name: 'Meeting Rooms', val: stats.resourceUtilization[0], color: '#3b82f6' },
-                        { name: 'Equipment', val: stats.resourceUtilization[1], color: '#8b5cf6' },
-                        { name: 'Workspaces', val: stats.resourceUtilization[2], color: '#f59e0b' },
-                        { name: 'Parking', val: stats.resourceUtilization[3], color: '#10b981' }
-                      ].map(item => (
-                        <div key={item.name}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: '500' }}>
-                            <span>{item.name}</span>
-                            <span>{item.val}%</span>
-                          </div>
-                          <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '999px' }}>
-                            <div style={{ width: `${item.val}%`, height: '100%', backgroundColor: item.color, borderRadius: '999px' }}></div>
-                          </div>
-                        </div>
-                      ))}
+              {/* Operations Table */}
+              <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden p-8 space-y-8">
+                 <div className="flex justify-between items-center">
+                    <div className="space-y-1">
+                       <h3 className="text-lg font-bold text-gray-900 tracking-tight">Operations Log</h3>
+                       <p className="text-[12px] font-medium text-gray-400">Audited Network Events</p>
                     </div>
-                  </div>
-
-                </div>
-
-                <div style={{ marginTop: '2rem', backgroundColor: '#fff', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                  <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: '#374151' }}>Recent Activities</h3>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280', fontSize: '0.875rem' }}>
-                          <th style={{ padding: '0.75rem 0' }}>TIME</th>
-                          <th style={{ padding: '0.75rem 0' }}>ACTIVITY</th>
-                          <th style={{ padding: '0.75rem 0' }}>TEAM MEMBER</th>
-                          <th style={{ padding: '0.75rem 0' }}>STATUS</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { time: '10:45 AM', activity: 'Completed facility inspection', member: 'John Doe', status: 'COMPLETED', color: '#10b981' },
-                          { time: '09:30 AM', activity: 'Submitted maintenance request', member: 'Jane Smith', status: 'PENDING', color: '#f59e0b' },
-                          { time: '08:15 AM', activity: 'Updated project timeline', member: 'Mike Johnson', status: 'IN PROGRESS', color: '#3b82f6' },
-                          { time: 'Yesterday', activity: 'Approved resource booking', member: 'Sarah Wilson', status: 'COMPLETED', color: '#10b981' }
-                        ].map((activity, i) => (
-                          <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem' }}>{activity.time}</td>
-                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem', color: '#4b5563' }}>{activity.activity}</td>
-                            <td style={{ padding: '0.75rem 0', fontSize: '0.875rem', fontWeight: '500' }}>{activity.member}</td>
-                            <td style={{ padding: '0.75rem 0' }}>
-                              <span style={{ fontSize: '0.7rem', fontWeight: 'bold', padding: '0.2rem 0.5rem', backgroundColor: `${activity.color}20`, color: activity.color, borderRadius: '4px' }}>
-                                {activity.status}
-                              </span>
-                            </td>
+                    <button className="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest">Download Full Log</button>
+                 </div>
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                       <thead>
+                          <tr className="border-b border-gray-50 text-[10px] font-bold text-gray-300 uppercase tracking-widest">
+                             <th className="pb-6">Timestamp</th>
+                             <th className="pb-6">Operation</th>
+                             <th className="pb-6">Initiator</th>
+                             <th className="pb-6 text-right">Status</th>
                           </tr>
-                        ))}
-                      </tbody>
+                       </thead>
+                       <tbody className="divide-y divide-gray-50">
+                          {[
+                            { time: '10:45 AM', activity: 'Facility synchronization complete', member: 'John Doe', status: 'DONE', style: 'text-emerald-500 bg-emerald-50' },
+                            { time: '09:30 AM', activity: 'Maintenance relay initialized', member: 'Jane Smith', status: 'WAIT', style: 'text-amber-500 bg-amber-50' },
+                            { time: '08:15 AM', activity: 'System metrics purge', member: 'Mike Johnson', status: 'CORE', style: 'text-blue-500 bg-blue-50' },
+                            { time: 'Yesterday', activity: 'Registry node verified', member: 'Sarah Wilson', status: 'DONE', style: 'text-emerald-500 bg-emerald-50' }
+                          ].map((activity, i) => (
+                            <tr key={i} className="group hover:bg-gray-50/50 transition-colors">
+                               <td className="py-6 text-[12px] font-bold text-gray-400">{activity.time}</td>
+                               <td className="py-6 text-sm font-bold text-gray-900 tracking-tight italic">{activity.activity}</td>
+                               <td className="py-6 text-[12px] font-bold text-gray-500 uppercase">{activity.member}</td>
+                               <td className="py-6 text-right">
+                                  <span className={`text-[9px] font-black px-3 py-1 rounded-lg border border-transparent ${activity.style}`}>
+                                     {activity.status}
+                                  </span>
+                               </td>
+                            </tr>
+                          ))}
+                       </tbody>
                     </table>
-                  </div>
-                </div>
-              </>
-            )}
-
-          </div>
+                 </div>
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>
