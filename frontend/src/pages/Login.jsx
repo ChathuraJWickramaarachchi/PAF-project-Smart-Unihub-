@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../context/AuthContext'
-import { AuthAPI } from '../services/api'
-import './Pages.css'
 
 export default function Login() {
   const [selectedRole, setSelectedRole] = useState('admin')
@@ -14,9 +12,7 @@ export default function Login() {
   const { login, googleLogin, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
 
-  // Redirect if already logged in
-  React.useEffect(() => {
-    console.log('Login useEffect - isAuthenticated:', isAuthenticated, 'user:', user)
+  useEffect(() => {
     if (isAuthenticated && user) {
       const userRole = user.role.toLowerCase()
       let redirectPath = '/'
@@ -29,61 +25,19 @@ export default function Login() {
       } else {
         redirectPath = '/user-dashboard'
       }
-
-      console.log('Redirecting to:', redirectPath)
       navigate(redirectPath, { replace: true })
     }
   }, [isAuthenticated, user, navigate])
 
-  // Don't render login form if already authenticated and redirecting
-  if (isAuthenticated && user) {
-    return (
-      <div className="login-page-modern">
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>Redirecting...</p>
-        </div>
-      </div>
-    )
-  }
-
   const roles = [
-    {
-      id: 'admin',
-      title: 'Admin',
-      description: 'Full access',
-      icon: '👑',
-      demoEmail: 'admin@smartcampus.edu',
-      demoPassword: 'password123'
-    },
-    {
-      id: 'user',
-      title: 'User',
-      description: 'Student / Staff',
-      icon: '👤',
-      demoEmail: 'user@smartcampus.edu',
-      demoPassword: 'password123'
-    },
-    {
-      id: 'technician',
-      title: 'Technician',
-      description: 'Ticket updates',
-      icon: '🔧',
-      demoEmail: 'tech@smartcampus.edu',
-      demoPassword: 'password123'
-    },
-    {
-      id: 'manager',
-      title: 'Manager',
-      description: 'Approvals',
-      icon: '📋',
-      demoEmail: 'faculty@smartcampus.edu',
-      demoPassword: 'password123'
-    }
+    { id: 'admin', title: 'Admin', description: 'Root Access', icon: '👑', demoEmail: 'admin@smartcampus.edu', demoPassword: 'password123' },
+    { id: 'user', title: 'User', description: 'End Node', icon: '👤', demoEmail: 'user@smartcampus.edu', demoPassword: 'password123' },
+    { id: 'technician', title: 'Technician', description: 'Field Ops', icon: '🔧', demoEmail: 'tech@smartcampus.edu', demoPassword: 'password123' },
+    { id: 'manager', title: 'Manager', description: 'Governance', icon: '📋', demoEmail: 'faculty@smartcampus.edu', demoPassword: 'password123' }
   ]
 
   const handleRoleSelect = (roleId) => {
     setSelectedRole(roleId)
-    // Auto-fill demo credentials
     const role = roles.find(r => r.id === roleId)
     if (role) {
       setEmail(role.demoEmail)
@@ -95,28 +49,17 @@ export default function Login() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     try {
       const result = await login(email, password)
-
-      console.log('Regular login successful - Role from backend:', result.data.role)
-
-      // Redirect based on role
       const userRole = result.data.role.toLowerCase()
       let redirectPath = '/'
-      if (userRole.includes('admin')) {
-        redirectPath = '/admin-dashboard'
-      } else if (userRole.includes('technician')) {
-        redirectPath = '/technician-dashboard'
-      } else if (userRole.includes('manager')) {
-        redirectPath = '/manager-dashboard'
-      } else {
-        redirectPath = '/user-dashboard'
-      }
-
+      if (userRole.includes('admin')) redirectPath = '/admin-dashboard'
+      else if (userRole.includes('technician')) redirectPath = '/technician-dashboard'
+      else if (userRole.includes('manager')) redirectPath = '/manager-dashboard'
+      else redirectPath = '/user-dashboard'
       navigate(redirectPath, { replace: true })
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.')
+      setError(err.message || 'Verification sequence failed. Invalid credentials.')
     } finally {
       setLoading(false)
     }
@@ -126,232 +69,209 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      console.log('Google login response:', response)
-
-      // The response object contains the credential (ID token)
       const idToken = response.credential || response.id_token
-
-      if (!idToken) {
-        throw new Error('No credential received from Google')
-      }
-
-      // Get the selected role mapping
-      const roleMapping = {
-        'admin': 'ADMIN',
-        'user': 'USER',
-        'technician': 'TECHNICIAN',
-        'manager': 'MANAGER'
-      }
-
+      if (!idToken) throw new Error('No credential received from Google')
+      const roleMapping = { 'admin': 'ADMIN', 'user': 'USER', 'technician': 'TECHNICIAN', 'manager': 'MANAGER' }
       const selectedRoleName = roleMapping[selectedRole] || 'USER'
-
-      console.log('Selected role for OAuth:', selectedRoleName)
-
-      // Use AuthContext's googleLogin method to properly update state
       const data = await googleLogin(idToken, selectedRoleName)
-
-      console.log('Backend response:', data)
-
-      // Check if role matches selected role (show warning if user tried to change role)
-      if (data.role !== selectedRoleName && localStorage.getItem('authUser')) {
-        // User already exists and role didn't change
-        const existingUser = JSON.parse(localStorage.getItem('authUser'))
-        setError(`⚠️ Your role is permanently set as ${existingUser.role}. You cannot change it yourself. Contact admin for role changes.`)
-        setTimeout(() => setError(''), 5000) // Auto-clear after 5 seconds
-      }
-
-      // Redirect based on role
       const userRole = data.role.toLowerCase()
       let redirectPath = '/'
-
-      if (userRole.includes('admin')) {
-        redirectPath = '/resources'
-      } else if (userRole.includes('technician')) {
-        redirectPath = '/tickets'
-      } else if (userRole.includes('manager')) {
-        redirectPath = '/bookings'
-      }
-
-      console.log('Navigating to:', redirectPath)
+      if (userRole.includes('admin')) redirectPath = '/admin-dashboard'
+      else if (userRole.includes('technician')) redirectPath = '/technician-dashboard'
+      else if (userRole.includes('manager')) redirectPath = '/manager-dashboard'
+      else redirectPath = '/user-dashboard'
       navigate(redirectPath, { replace: true })
     } catch (err) {
-      console.error('Google login error:', err)
-      setError(err.response?.data?.message || err.message || 'Google login failed. Please try again.')
+      setError(err.message || 'Google Auth relay interrupted.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleGoogleLoginError = () => {
-    setError('Google login failed. Please try again.')
-    setLoading(false)
-  }
-
-  const handleSLIITLogin = async () => {
-    setError('')
-    setLoading(true)
-    try {
-      // Simulate SLIIT SSO - in production, integrate with SLIIT SAML/OAuth provider
-      // For demo, we'll create a mock SLIIT user based on selected role
-      const email = `${selectedRole}@my.sliit.lk`
-      const name = `SLIIT ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`
-      const sliitId = `sliit_${selectedRole}_${Date.now()}`
-
-      // Call backend using AuthAPI (reuse Google login endpoint for demo)
-      const response = await AuthAPI.googleLogin({
-        email,
-        name,
-        googleId: sliitId // Using same field for demo
-      })
-
-      const data = response.data
-
-      if (!data.token) {
-        throw new Error(data.message || 'SLIIT login failed')
-      }
-
-      // Manually update auth context since we're not using the googleLogin method
-      localStorage.setItem('authToken', data.token)
-      const userInfo = {
-        email: data.email,
-        fullName: data.fullName,
-        role: data.role.toLowerCase(),
-        userId: data.userId,
-        isSLIITUser: true
-      }
-      localStorage.setItem('authUser', JSON.stringify(userInfo))
-
-      // Force a re-render by updating window location to trigger auth check
-      window.location.href = '/'
-    } catch (err) {
-      console.error('SLIIT login error:', err)
-      setError(err.response?.data?.message || err.message || 'SLIIT SSO login failed. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+  if (isAuthenticated && user) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <div className="text-[10px] font-black text-primary uppercase tracking-[0.5em] animate-pulse">Establishing Secure Uplink...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="login-page-modern">
-      <div className="login-container-modern">
-        <div className="login-card">
-          {/* Header Section */}
-          <div className="login-header">
-            <div className="app-icon">
-              <svg
-                className="icon-svg"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+    <div className="min-h-screen bg-slate-950 flex selection:bg-primary/20 relative overflow-hidden font-['Inter',_sans-serif]">
+      {/* Visual Side: Background Image with Gradient Overlay */}
+      <div className="hidden lg:flex w-[55%] relative overflow-hidden">
+        <img 
+          src="C:\Users\Tumal\.gemini\antigravity\brain\e1ee2fc7-e71e-448c-95d4-1b3aa31a0677\modern_university_campus_abstract_login_bg_1776613879162.png" 
+          alt="SmartUni Campus"
+          className="absolute inset-0 w-full h-full object-cover scale-105 animate-slow-zoom"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+        
+        {/* Cinematic Text Overlay */}
+        <div className="absolute bottom-20 left-20 space-y-6 max-w-xl animate-slide-up">
+           <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2rem] flex items-center justify-center text-3xl shadow-2xl shadow-black/50">🎓</div>
+              <div>
+                 <h1 className="text-5xl font-black text-white tracking-tighter leading-none italic">UniBridge <span className="text-primary not-italic">Elite</span></h1>
+                 <p className="text-primary font-black text-[10px] uppercase tracking-[0.4em] mt-2">Next-Gen Campus Infrastructure</p>
+              </div>
+           </div>
+           <p className="text-gray-400 text-sm font-medium leading-relaxed italic border-l-2 border-primary/30 pl-6">
+             Experience the future of academic management. Integrated telemetry, real-time resource mapping, and localized governance in one unified interface.
+           </p>
+        </div>
+      </div>
+
+      {/* Logic Side: Login Form with Glassmorphism */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-20 relative z-10">
+        {/* Mobile Logo */}
+        <div className="lg:hidden mb-12 text-center space-y-4">
+           <div className="w-20 h-20 bg-primary mx-auto rounded-[2.5rem] flex items-center justify-center text-3xl shadow-2xl shadow-primary/40 rotate-3">🎓</div>
+           <h1 className="text-3xl font-black text-white tracking-tighter italic">UniBridge</h1>
+        </div>
+
+        <div className="w-full max-w-[500px] space-y-10">
+          <div className="space-y-2">
+             <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">Gateway Access</h2>
+             <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Select protocol and authenticate identity</p>
+          </div>
+
+          {/* New Creative Role Selection */}
+          <div className="grid grid-cols-2 gap-4">
+            {roles.map((role) => (
+              <button
+                key={role.id}
+                onClick={() => handleRoleSelect(role.id)}
+                className={`relative p-5 rounded-[2rem] border transition-all flex flex-col items-center text-center gap-3 group active:scale-95 ${
+                  selectedRole === role.id 
+                  ? 'bg-primary border-primary shadow-2xl shadow-primary/30 text-white translate-y-[-4px]' 
+                  : 'bg-white/5 border-white/10 hover:border-white/20 text-gray-400'
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                <span className={`text-2xl transition-all duration-500 ${selectedRole === role.id ? 'scale-110 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]' : 'opacity-30 group-hover:opacity-60'}`}>{role.icon}</span>
+                <div>
+                  <div className={`text-[11px] font-black uppercase tracking-widest ${selectedRole === role.id ? 'text-white' : 'text-gray-400'}`}>{role.title}</div>
+                  <div className={`text-[8px] font-bold uppercase tracking-tighter ${selectedRole === role.id ? 'text-white/70' : 'text-gray-600'}`}>{role.description}</div>
+                </div>
+                {selectedRole === role.id && (
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center text-[10px] shadow-lg animate-bounce">✨</div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-rose-500/10 border-l-2 border-rose-500 text-rose-500 p-4 rounded-xl text-[10px] font-black uppercase tracking-widest animate-shake italic">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="group">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4.5 text-sm font-bold text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-600 italic shadow-inner"
+                  placeholder="Registry Identity (Email)"
+                  required
                 />
-              </svg>
-            </div>
-            <h1 className="login-title-modern">SmartUni Portal</h1>
-            <p className="login-subtitle-modern">
-              Manage facilities, bookings & campus operations in one place
-            </p>
-          </div>
-
-          {/* Role Selection Section */}
-          <div className="role-section">
-            <label className="role-label">SIGN IN AS</label>
-            <div className="role-grid">
-              {roles.map((role) => (
-                <button
-                  key={role.id}
-                  onClick={() => handleRoleSelect(role.id)}
-                  className={`role-card ${selectedRole === role.id ? 'selected' : ''}`}
-                >
-                  <span className="role-icon">{role.icon}</span>
-                  <div className="role-title">{role.title}</div>
-                  <div className="role-description">{role.description}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="login-form-modern">
-            {error && <div className="error-message">{error}</div>}
-
-            <div className="form-group-modern">
-              <label htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                autoComplete="email"
-              />
-            </div>
-
-            <div className="form-group-modern">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-              />
+              </div>
+              <div className="group">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4.5 text-sm font-bold text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-600 italic shadow-inner"
+                  placeholder="Security Key (Password)"
+                  required
+                />
+              </div>
             </div>
 
             <button
               type="submit"
-              className="btn-submit-modern"
-              disabled={loading || !email || !password}
+              disabled={loading}
+              className="w-full bg-white text-slate-950 py-5 rounded-3xl font-black text-[12px] uppercase tracking-[0.2em] shadow-2xl hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-4 group"
             >
-              {loading ? 'Logging in...' : `Sign in as ${roles.find(r => r.id === selectedRole)?.title}`}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  Authorize {selectedRole} Session
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </>
+              )}
             </button>
           </form>
 
-          {/* Authentication Buttons */}
-          <div className="auth-buttons">
-            <GoogleLogin
-              onSuccess={handleGoogleLogin}
-              onError={() => {
-                console.error('Google login error')
-                setError('Google login failed. Please try again.')
-              }}
-              useOneTap
-              text="signin_with"
-              theme="outline"
-              size="large"
-              width="300"
-            />
+          <div className="space-y-8">
+            <div className="flex items-center gap-4 text-gray-700">
+              <div className="h-[1px] bg-white/10 flex-1"></div>
+              <span className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600">Cross-Auth Uplink</span>
+              <div className="h-[1px] bg-white/10 flex-1"></div>
+            </div>
 
-            <div className="divider">or</div>
-
-            <button
-              onClick={handleSLIITLogin}
-              disabled={loading}
-              className="btn-sso"
-            >
-              <svg className="sso-icon" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
-              </svg>
-              <span>SLIIT SSO Login</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4">
+               <div className="flex-1 min-w-[200px]">
+                  <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() => setError('Google Authentication Failed.')}
+                    theme="filled_black"
+                    shape="circle"
+                    size="large"
+                    width="100%"
+                  />
+               </div>
+               <button className="flex-1 bg-white/5 border border-white/10 text-white/60 py-4 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors flex items-center justify-center gap-3">
+                  <span className="text-sm">🔑</span>
+                  SSO
+               </button>
+            </div>
           </div>
 
-          {/* Footer */}
-          <div className="login-footer">
-            <p className="demo-hint">
-              <strong>Demo:</strong> Select a role above to auto-fill credentials
-            </p>
+          <div className="pt-8 flex justify-center gap-12">
+             <div className="text-[9px] font-black text-gray-700 uppercase tracking-widest group cursor-pointer hover:text-primary transition-colors">Forgot Cipher?</div>
+             <div className="text-[9px] font-black text-gray-700 uppercase tracking-widest group cursor-pointer hover:text-primary transition-colors">Request Node</div>
           </div>
         </div>
       </div>
+
+      {/* Animation Styles */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes slow-zoom {
+          from { transform: scale(1.05); }
+          to { transform: scale(1.15); }
+        }
+        .animate-slow-zoom {
+          animation: slow-zoom 20s infinite alternate ease-in-out;
+        }
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+          animation: slide-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out;
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        .animate-shake {
+          animation: shake 0.4s ease-in-out;
+        }
+      `}} />
     </div>
   )
 }

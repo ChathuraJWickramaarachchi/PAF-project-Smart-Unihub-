@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import apiClient from '../../services/api'
-import '../Pages.css'
-import '../../pages/AdminDashboard.css'
 import AdminSidebar from '../../components/AdminSidebar'
 
 export default function UserManagement() {
@@ -39,7 +37,7 @@ export default function UserManagement() {
       const response = await apiClient.put(`/users/${userId}/role`, { role: newRole })
       setSuccessMessage(response.data.message)
       setTimeout(() => setSuccessMessage(''), 3000)
-      fetchUsers() // Refresh user list
+      fetchUsers()
       setEditingUserId(null)
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update role')
@@ -52,7 +50,7 @@ export default function UserManagement() {
       const response = await apiClient.put(`/users/${userId}/status`, { isActive: !currentStatus })
       setSuccessMessage(response.data.message)
       setTimeout(() => setSuccessMessage(''), 3000)
-      fetchUsers() // Refresh user list
+      fetchUsers()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update status')
       setTimeout(() => setError(''), 3000)
@@ -63,12 +61,11 @@ export default function UserManagement() {
     if (!window.confirm(`Are you sure you want to delete user ${userEmail}? This action cannot be undone.`)) {
       return
     }
-
     try {
       const response = await apiClient.delete(`/users/${userId}`)
       setSuccessMessage(response.data.message)
       setTimeout(() => setSuccessMessage(''), 3000)
-      fetchUsers() // Refresh user list
+      fetchUsers()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete user')
       setTimeout(() => setError(''), 3000)
@@ -105,128 +102,82 @@ export default function UserManagement() {
 
   const getRoleBadgeClass = (role) => {
     switch (role) {
-      case 'ADMIN': return 'role-badge-admin'
-      case 'MANAGER': return 'role-badge-manager'
-      case 'TECHNICIAN': return 'role-badge-technician'
-      default: return 'role-badge-user'
+      case 'ADMIN': return 'bg-rose-500 text-white shadow-rose-200'
+      case 'MANAGER': return 'bg-amber-500 text-white shadow-amber-200'
+      case 'TECHNICIAN': return 'bg-blue-500 text-white shadow-blue-200'
+      default: return 'bg-gray-500 text-white shadow-gray-200'
     }
   }
 
-  if (loading) {
-    return (
-      <div className="admin-layout">
-        <AdminSidebar />
-        <div className="admin-main">
-          <div className="admin-header">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <h1>Users Management</h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <input
-                  type="text"
-                  placeholder="Search anything..."
-                  style={{
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.375rem',
-                    border: '1px solid #e5e7eb',
-                    backgroundColor: '#f9fafb',
-                    width: '250px'
-                  }}
-                />
-                <button style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
-                  🔔
-                </button>
-                <button style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
-                  👤
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="page-container">
-            <p>Loading users...</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center font-black uppercase tracking-widest text-xs text-gray-400">
+      Syncing User Registry...
+    </div>
+  )
 
   return (
-    <div className="admin-layout">
+    <div className="flex bg-gray-50/50 min-h-screen selection:bg-primary/10">
       <AdminSidebar />
-      <div className="admin-main">
-        <div className="admin-header">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <h1>Users Management</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <input
-                type="text"
-                placeholder="Search anything..."
-                style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '0.375rem',
-                  border: '1px solid #e5e7eb',
-                  backgroundColor: '#f9fafb',
-                  width: '250px'
-                }}
-              />
-              <button style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
-                🔔
-              </button>
-              <button style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
-                👤
-              </button>
-            </div>
+
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-100 px-8 py-5 flex justify-between items-center shrink-0">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-black text-gray-900 tracking-tight italic">User <span className="text-primary not-italic">Identity</span></h1>
           </div>
-        </div>
-        <div className="page-container">
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <input type="text" className="pl-11 pr-4 py-2.5 bg-gray-50 border-none rounded-2xl text-sm w-72 focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium" placeholder="Search Identities..." />
+              <span className="absolute left-4 top-3 text-gray-400 group-focus-within:text-primary transition-colors">🔍</span>
+            </div>
+            <button className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl text-lg hover:bg-gray-100 transition-colors">🔔</button>
+            <button className="w-10 h-10 flex items-center justify-center bg-primary rounded-xl text-lg text-white shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all">👤</button>
+          </div>
+        </header>
 
-          {error && (
-            <div className="error-message" style={{ marginBottom: '1rem' }}>
-              {error}
+        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+          {/* Notifications area */}
+          {(error || successMessage) && (
+            <div className="animate-fade-in">
+              {error && <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-xl text-xs font-black text-rose-700 uppercase tracking-widest">{error}</div>}
+              {successMessage && <div className="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-xl text-xs font-black text-emerald-700 uppercase tracking-widest">{successMessage}</div>}
             </div>
           )}
 
-          {successMessage && (
-            <div className="success-message" style={{ marginBottom: '1rem', color: '#059669' }}>
-              {successMessage}
-            </div>
-          )}
-
-          <div className="users-table">
-            <table>
+          <div className="bg-white rounded-[3rem] p-4 border border-gray-100 shadow-sm overflow-hidden">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Login Method</th>
-                  <th>Actions</th>
+                <tr className="border-b border-gray-50">
+                  <th className="px-6 py-5 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">User Profile</th>
+                  <th className="px-6 py-5 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">Contact</th>
+                  <th className="px-6 py-5 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">Identity Class</th>
+                  <th className="px-6 py-5 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">State</th>
+                  <th className="px-6 py-5 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">Method</th>
+                  <th className="px-6 py-5 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.userId}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {user.profilePictureUrl && (
-                          <img
-                            src={user.profilePictureUrl}
-                            alt={user.fullName}
-                            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-                          />
+              <tbody className="divide-y divide-gray-50">
+                {users.map((u) => (
+                  <tr key={u.userId} className="hover:bg-gray-50/50 transition-colors group">
+                    <td className="px-6 py-6 font-black text-gray-900 tracking-tight italic">
+                      <div className="flex items-center gap-4">
+                        {u.profilePictureUrl ? (
+                          <img src={u.profilePictureUrl} className="w-10 h-10 rounded-xl object-cover bg-gray-100 p-0.5 border border-gray-50" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-xs font-black text-gray-300">{u.fullName.charAt(0)}</div>
                         )}
-                        <strong>{user.fullName}</strong>
+                        <span>{u.fullName}</span>
                       </div>
                     </td>
-                    <td>{user.email}</td>
-                    <td>
-                      {editingUserId === user.userId ? (
-                        <select
-                          value={user.role}
-                          onChange={(e) => handleRoleChange(user.userId, e.target.value)}
+                    <td className="px-6 py-6 text-sm font-medium text-gray-500 italic">{u.email}</td>
+                    <td className="px-6 py-6">
+                      {editingUserId === u.userId ? (
+                        <select 
+                          value={u.role}
+                          onChange={(e) => handleRoleChange(u.userId, e.target.value)}
                           onBlur={() => setEditingUserId(null)}
                           autoFocus
-                          style={{ padding: '0.25rem 0.5rem', borderRadius: '0.25rem', border: '1px solid #3b82f6' }}
+                          className="bg-white border border-primary/50 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl outline-none shadow-xl shadow-primary/5 italic"
                         >
                           <option value="USER">User</option>
                           <option value="ADMIN">Admin</option>
@@ -234,67 +185,26 @@ export default function UserManagement() {
                           <option value="TECHNICIAN">Technician</option>
                         </select>
                       ) : (
-                        <span
-                          className={`role-badge ${getRoleBadgeClass(user.role)}`}
-                          onClick={() => setEditingUserId(user.userId)}
-                          style={{ cursor: 'pointer' }}
-                          title="Click to edit role"
+                        <div 
+                          onClick={() => setEditingUserId(u.userId)}
+                          className={`inline-block text-[8px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm border border-white/10 cursor-alias hover:-translate-y-0.5 transition-all ${getRoleBadgeClass(u.role)}`}
                         >
-                          {user.role}
-                        </span>
+                          {u.role}
+                        </div>
                       )}
                     </td>
-                    <td>
-                      <button
-                        onClick={() => handleStatusToggle(user.userId, user.isActive)}
-                        className={`status-btn ${user.isActive ? 'active' : 'inactive'}`}
-                        title={user.isActive ? 'Click to deactivate' : 'Click to activate'}
+                    <td className="px-6 py-6">
+                      <button 
+                         onClick={() => handleStatusToggle(u.userId, u.isActive)}
+                         className={`text-[8px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl transition-all ${u.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100 shadow-sm' : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100 shadow-sm'}`}
                       >
-                        {user.isActive ? '✓ Active' : '✗ Inactive'}
+                        {u.isActive ? 'Active Node' : 'Suspended'}
                       </button>
                     </td>
-                    <td>
-                      {user.googleId ? (
-                        <span title="Google OAuth">🔵 Google</span>
-                      ) : (
-                        <span title="Regular login">📧 Email</span>
-                      )}
-                    </td>
-                    <td>
-                      <div className="actions-cell">
-                        <button
-                          onClick={() => handleEditClick(user)}
-                          className="edit-btn"
-                          title="Edit user"
-                          style={{
-                            background: '#3b82f6',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.25rem 0.75rem',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer',
-                            fontSize: '0.875rem'
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user.userId, user.email)}
-                          className="delete-btn"
-                          title="Delete user"
-                          style={{
-                            background: '#ef4444',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.25rem 0.75rem',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer',
-                            fontSize: '0.875rem'
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                    <td className="px-6 py-6 text-[10px] font-black text-gray-400 tracking-widest italic">{u.googleId ? '🔵 OAuth' : '📧 Credential'}</td>
+                    <td className="px-6 py-6 text-right space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleEditClick(u)} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline translate-y-0 active:translate-y-0.5">Edit</button>
+                      <button onClick={() => handleDeleteUser(u.userId, u.email)} className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline translate-y-0 active:translate-y-0.5">Wipe</button>
                     </td>
                   </tr>
                 ))}
@@ -305,89 +215,58 @@ export default function UserManagement() {
 
         {/* Edit Modal */}
         {showEditModal && (
-          <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>Edit User</h2>
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="modal-close-btn"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label>Full Name</label>
-                  <input
-                    type="text"
-                    value={editFormData.fullName}
-                    onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.5rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.25rem',
-                      fontSize: '0.875rem',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={editFormData.email}
-                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.5rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.25rem',
-                      fontSize: '0.875rem',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Role</label>
-                  <select
-                    value={editFormData.role}
-                    onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.5rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.25rem',
-                      fontSize: '0.875rem',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <option value="USER">User</option>
-                    <option value="ADMIN">Admin</option>
-                    <option value="MANAGER">Manager</option>
-                    <option value="TECHNICIAN">Technician</option>
-                  </select>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="modal-btn-cancel"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleEditSubmit}
-                  className="modal-btn-save"
-                >
-                  Save Changes
-                </button>
-              </div>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-gray-900/20 animate-fade-in" onClick={() => setShowEditModal(false)}>
+            <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl border border-gray-100 p-12 space-y-10 animate-zoom-in" onClick={(e) => e.stopPropagation()}>
+               <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tighter italic">Identity <span className="text-primary not-italic">Matrix</span></h2>
+                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mt-2">Adjusting session permissions...</p>
+                  </div>
+                  <button onClick={() => setShowEditModal(false)} className="text-gray-300 hover:text-gray-900 transition-colors text-xl">✕</button>
+               </div>
+
+               <div className="space-y-6">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Name Mapping</label>
+                    <input 
+                      type="text" 
+                      value={editFormData.fullName} 
+                      onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Primary Relay</label>
+                    <input 
+                      type="email" 
+                      value={editFormData.email} 
+                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Permission Level</label>
+                    <select 
+                      value={editFormData.role} 
+                      onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all italic"
+                    >
+                      <option value="USER">User (Access)</option>
+                      <option value="ADMIN">Admin (Root)</option>
+                      <option value="MANAGER">Manager (Gov)</option>
+                      <option value="TECHNICIAN">Technician (Ops)</option>
+                    </select>
+                  </div>
+               </div>
+
+               <div className="flex gap-4 pt-6">
+                  <button onClick={() => setShowEditModal(false)} className="flex-1 bg-gray-50 text-[11px] font-black text-gray-400 py-5 rounded-2xl uppercase tracking-widest hover:bg-gray-100 transition-all">Cancel Seq</button>
+                  <button onClick={handleEditSubmit} className="flex-2 bg-primary text-white text-[11px] font-black py-5 rounded-2xl uppercase tracking-widest shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all">Authorize Changes</button>
+               </div>
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }
