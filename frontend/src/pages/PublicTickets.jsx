@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { TicketAPI, ResourceAPI } from '../services/api'
 import { useAuth } from '../context/AuthContext'
-import './Pages.css'
 
 export default function PublicTickets() {
   const { user } = useAuth()
@@ -32,7 +31,6 @@ export default function PublicTickets() {
       const openRes = await TicketAPI.getByStatus('OPEN')
       const progRes = await TicketAPI.getByStatus('IN_PROGRESS')
       const resRes = await TicketAPI.getByStatus('RESOLVED')
-
       let allTix = [...openRes.data, ...progRes.data, ...resRes.data]
       setTickets(allTix)
     } catch (err) {
@@ -62,19 +60,8 @@ export default function PublicTickets() {
       setShowCreateModal(false)
       setNewTicket({ title: '', description: '', priority: 'MEDIUM', resourceId: '' })
       fetchMyTickets()
-      alert('Ticket submitted successfully!')
     } catch (err) {
       setError('Failed to create ticket')
-    }
-  }
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'OPEN': return { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' }
-      case 'IN_PROGRESS': return { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' }
-      case 'RESOLVED':
-      case 'CLOSED': return { bg: '#dcfce7', text: '#166534', border: '#86efac' }
-      default: return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' }
     }
   }
 
@@ -96,145 +83,78 @@ export default function PublicTickets() {
   })
 
   return (
-    <div className="page-container" style={{ paddingBottom: '4rem' }}>
-
+    <div className="min-h-screen bg-gray-50/50 p-8 flex flex-col gap-10 selection:bg-primary/10">
       {/* Header Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
-        borderRadius: '1rem',
-        padding: '3rem 2rem',
-        color: 'white',
-        marginBottom: '2rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-            {user?.name ? `Hi ${user.name.split(' ')[0]}, here are your Tickets` : 'My Requests & Tickets'}
-          </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9, maxWidth: '600px' }}>
-            Report issues, request equipment repairs, and track the status of your ongoing maintenance requests.
-          </p>
+      <div className="relative overflow-hidden bg-gray-900 p-16 rounded-[4rem] group shadow-2xl shadow-gray-200">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -mr-48 -mt-48 group-hover:bg-primary/20 transition-all duration-1000"></div>
+        <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12 text-center lg:text-left">
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none italic">
+              Incident <span className="text-primary not-italic">Reporting</span>
+            </h1>
+            <p className="max-w-xl text-gray-400 font-medium text-lg leading-relaxed italic">
+              Report campus infrastructure anomalies. Monitor resolution cycles in real-time.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-white text-gray-900 px-12 py-6 rounded-2xl font-black text-[13px] uppercase tracking-[0.3em] shadow-xl hover:-translate-y-2 transition-all active:scale-95"
+          >
+            Launch Ticket
+          </button>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          style={{
-            backgroundColor: 'white',
-            color: '#1e40af',
-            border: 'none',
-            padding: '1rem 2rem',
-            borderRadius: '999px',
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-            cursor: 'pointer',
-            transition: 'transform 0.2s',
-          }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          + New Ticket
-        </button>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem' }}>
+      {/* Navigation Tabs */}
+      <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100 self-center">
         {['ALL', 'OPEN', 'RESOLVED'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '1.1rem',
-              fontWeight: activeTab === tab ? 'bold' : '500',
-              color: activeTab === tab ? '#1e40af' : '#6b7280',
-              borderBottom: activeTab === tab ? '3px solid #1e40af' : '3px solid transparent',
-              paddingBottom: '0.25rem',
-              cursor: 'pointer',
-              textTransform: 'capitalize'
-            }}
+            className={`px-10 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-gray-900 text-white shadow-xl' : 'text-gray-400 hover:text-gray-900'}`}
           >
-            {tab === 'ALL' ? 'All Tickets' : tab === 'OPEN' ? 'Active / Open' : 'Resolved'}
+            {tab === 'ALL' ? 'Registry' : tab === 'OPEN' ? 'In Cycle' : 'Resolved'}
           </button>
         ))}
       </div>
 
-      {error && <div className="error-message" style={{ marginBottom: '2rem' }}>{error}</div>}
+      {error && <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-xl text-[10px] font-black text-rose-700 uppercase tracking-widest animate-fade-in mx-auto max-w-xl w-full">{error}</div>}
 
-      {/* Ticket Cards */}
+      {/* Ticket Grid */}
       {loading ? (
-        <p style={{ textAlign: 'center', margin: '3rem', fontSize: '1.2rem', color: '#6b7280' }}>Loading your tickets...</p>
+        <div className="flex-1 flex items-center justify-center italic text-gray-400 font-black uppercase tracking-widest text-xs">Accessing Ticket Streams...</div>
       ) : filteredTickets.length === 0 ? (
-        <div style={{ textAlign: 'center', backgroundColor: '#f9fafb', padding: '4rem 2rem', borderRadius: '1rem', border: '2px dashed #d1d5db' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
-          <h3 style={{ fontSize: '1.5rem', color: '#374151', marginBottom: '0.5rem' }}>No tickets found!</h3>
-          <p style={{ color: '#6b7280' }}>Everything seems to be working perfectly. Need help? Create a new ticket.</p>
+        <div className="flex-1 flex flex-col items-center justify-center p-20 text-center space-y-8 animate-fade-in opacity-50 italic grayscale">
+           <div className="text-6xl text-emerald-500">🛡️</div>
+           <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">Zero anomalies detected in your sector.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
           {filteredTickets.map(ticket => {
-            const statusStyle = getStatusColor(ticket.status)
+            const isResolved = ticket.status === 'RESOLVED' || ticket.status === 'CLOSED'
+            const isProgress = ticket.status === 'IN_PROGRESS'
             return (
-              <div key={ticket.id} style={{
-                backgroundColor: 'white',
-                borderRadius: '1rem',
-                border: `1px solid #e5e7eb`,
-                borderTop: `4px solid ${statusStyle.border}`,
-                padding: '1.5rem',
-                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <span style={{
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold',
-                    color: '#6b7280',
-                    backgroundColor: '#f3f4f6',
-                    padding: '0.25rem 0.5rem',
-                    borderRadius: '0.25rem'
-                  }}>
-                    #{ticket.ticketNumber || `T-${ticket.id}`}
-                  </span>
-
-                  <span style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold',
-                    padding: '0.25rem 0.75rem',
-                    backgroundColor: statusStyle.bg,
-                    color: statusStyle.text,
-                    borderRadius: '999px',
-                    border: `1px solid ${statusStyle.border}`
-                  }}>
+              <div key={ticket.id} className="bg-white p-10 rounded-[3.5rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all flex flex-col gap-6">
+                <div className="flex justify-between items-start">
+                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">Node #{ticket.ticketNumber || ticket.id}</span>
+                  <div className={`px-4 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest ${isResolved ? 'bg-emerald-500 text-white' : isProgress ? 'bg-gray-900 text-white shadow-lg shadow-gray-200' : 'bg-white border border-gray-100 text-gray-400 italic'}`}>
                     {ticket.status.replace('_', ' ')}
-                  </span>
+                  </div>
                 </div>
 
-                <h3 style={{ fontSize: '1.25rem', color: '#111827', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                  {ticket.title}
-                </h3>
+                <div className="space-y-3">
+                  <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate">{ticket.title}</h3>
+                  <p className="text-sm font-medium text-gray-500 leading-relaxed italic line-clamp-3">
+                    {ticket.description}
+                  </p>
+                </div>
 
-                <p style={{ color: '#4b5563', fontSize: '0.95rem', marginBottom: '1.5rem', flex: 1 }}>
-                  {ticket.description.length > 100 ? ticket.description.substring(0, 100) + '...' : ticket.description}
-                </p>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '1rem' }}>
-                  <div style={{ fontSize: '0.85rem', color: '#6b7280', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ marginRight: '0.5rem' }}>{getPriorityIcon(ticket.priority)}</span>
-                    {ticket.priority} Priority
+                <div className="mt-auto flex justify-between items-center pt-8 border-t border-gray-50">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{getPriorityIcon(ticket.priority)}</span>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">{ticket.priority} Flow</span>
                   </div>
-                  <button style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#2563eb',
-                    fontWeight: '500',
-                    cursor: 'pointer'
-                  }}>
-                    View Details →
-                  </button>
+                  <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Registry →</button>
                 </div>
               </div>
             )
@@ -242,89 +162,81 @@ export default function PublicTickets() {
         </div>
       )}
 
-      {/* Create Ticket Modal */}
+      {/* Create Modal */}
       {showCreateModal && (
-        <div className="modal" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal-content" style={{ maxWidth: '500px', width: '100%', borderRadius: '1rem', padding: '0' }}>
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#111827' }}>Submit New Ticket</h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#6b7280' }}
-              >✕</button>
-            </div>
-
-            <form onSubmit={handleCreateTicket} style={{ padding: '1.5rem' }}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>Issue Title</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="E.g., Projector bulb is dead"
-                  value={newTicket.title}
-                  onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
-                  style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
-                />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-gray-900/20 animate-fade-in" onClick={() => setShowCreateModal(false)}>
+           <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl border border-gray-100 p-12 space-y-10 animate-zoom-in overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
+              <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none"></div>
+              
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-3xl font-black text-gray-900 tracking-tighter italic">Report <span className="text-primary not-italic">Anomaly</span></h2>
+                  <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mt-2">Initializing new incident protocol...</p>
+                </div>
+                <button onClick={() => setShowCreateModal(false)} className="text-gray-300 hover:text-gray-900 transition-colors text-xl">✕</button>
               </div>
 
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>Which resource?</label>
-                <select
-                  required
-                  value={newTicket.resourceId}
-                  onChange={(e) => setNewTicket({ ...newTicket, resourceId: e.target.value })}
-                  style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
-                >
-                  <option value="">-- Select a facility/resource --</option>
-                  {resources.map(r => (
-                    <option key={r.id} value={r.id}>{r.resourceName} ({r.location})</option>
-                  ))}
-                </select>
-              </div>
+              <form onSubmit={handleCreateTicket} className="space-y-8">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Identifier Group</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Lab 4 network failure"
+                    value={newTicket.title}
+                    onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
+                    className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-gray-300"
+                  />
+                </div>
 
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>Details of the issue</label>
-                <textarea
-                  required
-                  rows="4"
-                  placeholder="Please describe exactly what is wrong..."
-                  value={newTicket.description}
-                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                  style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
-                />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Target Mapping</label>
+                    <select
+                      required
+                      value={newTicket.resourceId}
+                      onChange={(e) => setNewTicket({ ...newTicket, resourceId: e.target.value })}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all italic"
+                    >
+                      <option value="">Select Resource Node...</option>
+                      {resources.map(r => (
+                        <option key={r.id} value={r.id}>{r.resourceName} · {r.location}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Flow Frequency</label>
+                    <select
+                      value={newTicket.priority}
+                      onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value })}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all italic"
+                    >
+                      <option value="LOW">Low (Trival)</option>
+                      <option value="MEDIUM">Medium (Stable)</option>
+                      <option value="HIGH">High (Impact)</option>
+                      <option value="URGENT">Urgent (Breakback)</option>
+                    </select>
+                  </div>
+                </div>
 
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>Urgency</label>
-                <select
-                  value={newTicket.priority}
-                  onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value })}
-                  style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
-                >
-                  <option value="LOW">Low (Cosmetic / No disruption)</option>
-                  <option value="MEDIUM">Medium (Partial disruption)</option>
-                  <option value="HIGH">High (Major disruption)</option>
-                  <option value="URGENT">Urgent (Safety hazard / Critical)</option>
-                </select>
-              </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Telemetry Details</label>
+                  <textarea
+                    required
+                    rows="4"
+                    placeholder="Provide specific incident telemetry..."
+                    value={newTicket.description}
+                    onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                    className="w-full bg-gray-50 border-none rounded-2xl px-6 py-5 text-sm font-medium text-gray-600 focus:ring-2 focus:ring-primary outline-none transition-all min-h-[120px] italic placeholder:text-gray-300"
+                  />
+                </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  style={{ padding: '0.75rem 1.5rem', border: '1px solid #d1d5db', background: 'white', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: '500' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  style={{ padding: '0.75rem 1.5rem', border: 'none', background: '#2563eb', color: 'white', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: '500' }}
-                >
-                  Submit Ticket
-                </button>
-              </div>
-            </form>
-          </div>
+                <div className="flex gap-4 pt-6">
+                  <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 bg-gray-50 text-[11px] font-black text-gray-400 py-5 rounded-2xl uppercase tracking-widest hover:bg-gray-100 transition-all">Abort Proc</button>
+                  <button type="submit" className="flex-2 bg-primary text-white text-[11px] font-black py-5 rounded-2xl uppercase tracking-widest shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all">Engage Portal</button>
+                </div>
+              </form>
+           </div>
         </div>
       )}
     </div>
