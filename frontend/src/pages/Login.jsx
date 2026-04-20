@@ -102,7 +102,7 @@ export default function Login() {
       {/* Visual Side: Background Image with Gradient Overlay */}
       <div className="hidden lg:flex w-[55%] relative overflow-hidden">
         <img 
-          src="C:\Users\Tumal\.gemini\antigravity\brain\e1ee2fc7-e71e-448c-95d4-1b3aa31a0677\modern_university_campus_abstract_login_bg_1776613879162.png" 
+          src="/login-bg.png" 
           alt="SmartUni Campus"
           className="absolute inset-0 w-full h-full object-cover scale-105 animate-slow-zoom"
         />
@@ -223,7 +223,7 @@ export default function Login() {
                     theme="filled_black"
                     shape="circle"
                     size="large"
-                    width="100%"
+                    width={300}
                   />
                </div>
                <button className="flex-1 bg-white/5 border border-white/10 text-white/60 py-4 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors flex items-center justify-center gap-3">
