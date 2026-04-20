@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-export default function AdminSidebar() {
+export default function ManagerSidebar() {
   const { logout, user } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
@@ -10,11 +10,11 @@ export default function AdminSidebar() {
   const isActive = (path) => location.pathname === path
 
   const navItems = [
-    { name: 'Dashboard Overview', path: '/admin-dashboard', icon: '📊' },
-    { name: 'Users', path: '/admin/users', icon: '👥' },
-    { name: 'Resources', path: '/resources', icon: '🏢' },
-    { name: 'Notifications', path: '/notifications', icon: '🔔' },
-    { name: 'Analytics', path: '/admin/analytics', icon: '📈' },
+    { name: 'Dashboard Overview', path: '/manager-dashboard', icon: '📊' },
+    { name: 'Facility Management', path: '/resources', icon: '🏢' },
+    { name: 'Booking Control', path: '/bookings', icon: '📅' },
+    { name: 'Real-time Analytics', path: '/manager/analytics', icon: '📈' },
+
   ]
 
   return (
@@ -25,7 +25,7 @@ export default function AdminSidebar() {
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary/20">🎓</div>
           <div>
             <div className="text-gray-900 font-black text-base tracking-tight leading-none italic">SmartUniPortal</div>
-            <div className="text-gray-400 font-bold text-[8px] uppercase tracking-widest mt-1">Admin Portal</div>
+            <div className="text-gray-400 font-bold text-[8px] uppercase tracking-widest mt-1">Manager Portal</div>
           </div>
         </div>
       </div>
@@ -51,11 +51,11 @@ export default function AdminSidebar() {
       <div className="p-4 border-t border-gray-100 space-y-4">
         <div className="flex items-center gap-4 p-4">
           <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-black text-gray-400 text-xs uppercase shadow-inner">
-            {user?.fullName?.charAt(0) || 'A'}
+            {user?.fullName?.charAt(0) || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-gray-900 font-bold text-[12px] truncate">{user?.fullName || 'Administrator'}</div>
-            <div className="text-gray-400 font-medium text-[10px] truncate">{user?.email || 'admin@smartuni.edu'}</div>
+            <div className="text-gray-900 font-bold text-[12px] truncate">{user?.fullName || 'Manager'}</div>
+            <div className="text-gray-400 font-medium text-[10px] truncate">{user?.email || 'manager@smartuni.edu'}</div>
           </div>
         </div>
 

@@ -34,6 +34,9 @@ public class DataInitializer implements CommandLineRunner {
         Role technicianRole = roleRepository.findByRoleName("TECHNICIAN")
                 .orElseGet(() -> roleRepository.save(new Role(null, "TECHNICIAN", "Can manage support tickets")));
 
+        Role managerRole = roleRepository.findByRoleName("MANAGER")
+                .orElseGet(() -> roleRepository.save(new Role(null, "MANAGER", "Approvals and management")));
+
         // Create default admin user if doesn't exist
         if (userRepository.findByEmail("admin@smartcampus.edu").isEmpty()) {
             User admin = new User();
@@ -61,6 +64,36 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(user);
             System.out.println("✅ Sample user created:");
             System.out.println("   Email: user@smartcampus.edu");
+            System.out.println("   Password: password123");
+        }
+
+        // Create sample technician user
+        if (userRepository.findByEmail("tech@smartcampus.edu").isEmpty()) {
+            User tech = new User();
+            tech.setEmail("tech@smartcampus.edu");
+            tech.setFullName("Test Technician");
+            tech.setPassword(passwordEncoder.encode("password123"));
+            tech.setIsActive(true);
+            tech.setRoles(Set.of(technicianRole));
+            
+            userRepository.save(tech);
+            System.out.println("✅ Sample technician created:");
+            System.out.println("   Email: tech@smartcampus.edu");
+            System.out.println("   Password: password123");
+        }
+
+        // Create sample manager user
+        if (userRepository.findByEmail("faculty@smartcampus.edu").isEmpty()) {
+            User manager = new User();
+            manager.setEmail("faculty@smartcampus.edu");
+            manager.setFullName("Test Manager");
+            manager.setPassword(passwordEncoder.encode("password123"));
+            manager.setIsActive(true);
+            manager.setRoles(Set.of(managerRole));
+            
+            userRepository.save(manager);
+            System.out.println("✅ Sample manager created:");
+            System.out.println("   Email: faculty@smartcampus.edu");
             System.out.println("   Password: password123");
         }
     }
