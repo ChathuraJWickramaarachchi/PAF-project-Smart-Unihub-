@@ -131,38 +131,33 @@ export default function Resources() {
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching nodes in registry.</p>
               </div>
             ) : (
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {resources.map((resource) => (
-                    <div key={resource.id} className="bg-white p-2 rounded-[3.5rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all">
-                       <div className="relative aspect-video bg-gray-900 rounded-[3rem] overflow-hidden flex items-center justify-center text-5xl">
-                          <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                          {resource.resourceType === 'CLASSROOM' ? '🏫' : resource.resourceType === 'LAB' ? '🔬' : '🏢'}
-                       </div>
-                       
-                       <div className="p-8 space-y-8">
-                          <div className="flex justify-between items-start">
-                             <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate">{resource.resourceName}</h3>
-                             <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border-emerald-100' : 'bg-rose-50 text-rose-500 border-rose-100'}`}>
+                    <div key={resource.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/20 group hover:-translate-y-1 transition-all">
+                       <div className="space-y-4">
+                          <div className="flex justify-between items-start gap-2">
+                             <h3 className="text-base font-black text-gray-900 tracking-tight italic uppercase truncate">{resource.resourceName}</h3>
+                             <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
                                 {resource.status}
                              </span>
                           </div>
 
-                          <div className="space-y-3">
-                             <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                               <span className="text-primary opacity-50 text-base">📍</span>
-                               {resource.location}
+                          <div className="space-y-2">
+                             <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                               <span className="text-primary opacity-50">📍</span>
+                               <span className="truncate">{resource.location}</span>
                              </div>
-                             <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                               <span className="text-primary opacity-50 text-base">👥</span>
-                               {resource.capacity} Active Slots
+                             <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                               <span className="text-primary opacity-50">👥</span>
+                               {resource.capacity} Slots
                              </div>
                           </div>
 
-                          <div className="pt-8 border-t border-gray-50 flex items-center justify-between">
-                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType}</span>
-                            <div className="flex gap-2">
-                               <button className="text-[9px] font-black text-primary hover:text-black transition-colors uppercase italic underline underline-offset-4 decoration-primary/20 p-2">Edit</button>
-                               <button onClick={() => handleDeleteResource(resource.id)} className="text-[9px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic underline underline-offset-4 decoration-rose-500/20 p-2">Purge</button>
+                          <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
+                            <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType}</span>
+                            <div className="flex gap-1">
+                               <button className="text-[8px] font-black text-primary hover:text-black transition-colors uppercase italic p-1 hover:bg-gray-50 rounded">Edit</button>
+                               <button onClick={() => handleDeleteResource(resource.id)} className="text-[8px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic p-1 hover:bg-rose-50 rounded">Del</button>
                             </div>
                           </div>
                        </div>
