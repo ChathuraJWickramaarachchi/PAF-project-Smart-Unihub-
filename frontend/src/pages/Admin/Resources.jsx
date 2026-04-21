@@ -95,7 +95,7 @@ export default function Resources() {
                onClick={() => setShowAddModal(true)}
                className="bg-primary text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all active:scale-95"
              >
-                + Register Asset
+                + Add Resource
              </button>
           </div>
         </header>
@@ -200,7 +200,6 @@ export default function Resources() {
                               onChange={(e) => setNewResource({ ...newResource, resourceType: e.target.value })}
                               className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                             >
-                              <option value="CLASSROOM">Classroom</option>
                               <option value="LAB">Laboratory</option>
                               <option value="AUDITORIUM">Auditorium</option>
                               <option value="MEETING_ROOM">Meeting Room</option>
@@ -269,7 +268,6 @@ export default function Resources() {
                               className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                             >
                               <option value="ACTIVE">ACTIVE</option>
-                              <option value="INACTIVE">INACTIVE</option>
                               <option value="MAINTENANCE">MAINTENANCE</option>
                             </select>
                          </div>
