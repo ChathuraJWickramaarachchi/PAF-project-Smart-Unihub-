@@ -12,7 +12,7 @@ export default function ManagerSidebar() {
   const navItems = [
     { name: 'Dashboard Overview', path: '/manager-dashboard', icon: '📊' },
     { name: 'Facility Management', path: '/resources', icon: '🏢' },
-    { name: 'Booking Control', path: '/bookings', icon: '📅' },
+    { name: 'Booking Management', path: '/bookings', icon: '📅' },
     { name: 'Real-time Analytics', path: '/manager/analytics', icon: '📈' },
 
   ]
