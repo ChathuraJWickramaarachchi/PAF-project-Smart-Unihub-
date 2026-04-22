@@ -1,12 +1,10 @@
 package com.smartcampus.controller;
 
-import com.smartcampus.dto.UserDTO;
 import com.smartcampus.entity.Role;
 import com.smartcampus.entity.User;
 import com.smartcampus.repository.RoleRepository;
 import com.smartcampus.repository.UserRepository;
 import com.smartcampus.service.GoogleOAuthService;
-import com.smartcampus.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,9 +26,6 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -80,7 +75,7 @@ public class AuthController {
         response.put("email", user.getEmail());
         response.put("fullName", user.getFullName());
         response.put("role", role);  // Add role to response
-        response.put("userId", user.getId().toString());  // Add userId to response
+        response.put("userId", user.getId());  // Add userId to response
         
         return ResponseEntity.ok(response);
     }
@@ -249,7 +244,7 @@ public class AuthController {
             response.put("email", user.getEmail());
             response.put("fullName", user.getFullName());
             response.put("role", role);
-            response.put("userId", user.getId().toString());
+            response.put("userId", user.getId());
             response.put("profilePictureUrl", user.getProfilePictureUrl() != null ? user.getProfilePictureUrl() : pictureUrl);
             
             return ResponseEntity.ok(response);

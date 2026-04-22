@@ -77,7 +77,7 @@ public class UserController {
     @PutMapping("/{userId}/role")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> updateUserRole(
-            @PathVariable Long userId,
+            @PathVariable String userId,
             @RequestBody Map<String, String> roleData) {
         
         Map<String, String> response = new HashMap<>();
@@ -133,7 +133,7 @@ public class UserController {
     @PutMapping("/{userId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> updateUserStatus(
-            @PathVariable Long userId,
+            @PathVariable String userId,
             @RequestBody Map<String, Boolean> statusData) {
         
         Map<String, String> response = new HashMap<>();
@@ -168,7 +168,7 @@ public class UserController {
      */
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable String userId) {
         Map<String, String> response = new HashMap<>();
         
         try {

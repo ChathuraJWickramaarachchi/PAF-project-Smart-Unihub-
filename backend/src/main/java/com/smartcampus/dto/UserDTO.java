@@ -1,16 +1,10 @@
 package com.smartcampus.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserDTO {
-    private Long id;
+    private String id;
     private String email;
     private String fullName;
     private String phoneNumber;
@@ -18,4 +12,28 @@ public class UserDTO {
     private Boolean isActive;
     private LocalDateTime createdAt;
     private Set<RoleDTO> roles;
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Set<RoleDTO> getRoles() { return roles; }
+    public void setRoles(Set<RoleDTO> roles) { this.roles = roles; }
 }

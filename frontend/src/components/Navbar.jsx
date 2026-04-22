@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { NotificationAPI } from '../services/api'
+import { FaBell } from 'react-icons/fa'
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth()
@@ -32,6 +33,10 @@ export default function Navbar() {
     } catch (err) {
       console.error('Failed to fetch unread count:', err)
     }
+  }
+
+  const handleNotificationClick = () => {
+    navigate('/notifications')
   }
 
   const dashboardPages = [
@@ -89,6 +94,17 @@ export default function Navbar() {
                   {user?.fullName?.charAt(0).toUpperCase() || '👤'}
                 </div>
               </Link>
+              <button
+                onClick={handleNotificationClick}
+                className="relative p-2 rounded-xl bg-gray-50 hover:bg-primary/10 transition-all group"
+              >
+                <FaBell className="w-5 h-5 text-gray-600 group-hover:text-primary transition-all" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
               <button
                 onClick={handleLogout}
                 className="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95"

@@ -2,22 +2,11 @@ spring:
   application:
     name: smart-campus-hub
   
-  # Database Configuration
-  datasource:
-    url: jdbc:mysql://localhost:3306/smart_campus_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root          # Your MySQL username
-    password: 2002 # ← CHANGE THIS to your actual MySQL root password
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-    show-sql: false
-    open-in-view: false
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb+srv://himashananayakkara08_db_user:I15Rf5Ustnrz2Gct@cluster0.1mnxjfz.mongodb.net/smart_campus_db?retryWrites=true&w=majority&appName=Cluster0
+      database: smart_campus_db
   
   # File Upload Configuration
   servlet:

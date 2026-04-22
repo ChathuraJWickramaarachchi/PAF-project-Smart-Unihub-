@@ -26,16 +26,36 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Create default roles if they don't exist
         Role adminRole = roleRepository.findByRoleName("ADMIN")
-                .orElseGet(() -> roleRepository.save(new Role(null, "ADMIN", "Administrator with full access")));
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName("ADMIN");
+                    role.setDescription("Administrator with full access");
+                    return roleRepository.save(role);
+                });
         
         Role userRole = roleRepository.findByRoleName("USER")
-                .orElseGet(() -> roleRepository.save(new Role(null, "USER", "Standard user")));
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName("USER");
+                    role.setDescription("Standard user");
+                    return roleRepository.save(role);
+                });
         
         Role technicianRole = roleRepository.findByRoleName("TECHNICIAN")
-                .orElseGet(() -> roleRepository.save(new Role(null, "TECHNICIAN", "Can manage support tickets")));
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName("TECHNICIAN");
+                    role.setDescription("Can manage support tickets");
+                    return roleRepository.save(role);
+                });
 
         Role managerRole = roleRepository.findByRoleName("MANAGER")
-                .orElseGet(() -> roleRepository.save(new Role(null, "MANAGER", "Approvals and management")));
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName("MANAGER");
+                    role.setDescription("Approvals and management");
+                    return roleRepository.save(role);
+                });
 
         // Create default admin user if doesn't exist
         if (userRepository.findByEmail("admin@smartcampus.edu").isEmpty()) {

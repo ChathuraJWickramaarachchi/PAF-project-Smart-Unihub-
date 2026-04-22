@@ -1,79 +1,48 @@
 package com.smartcampus.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "tickets")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Document(collection = "tickets")
 public class Ticket {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "ticket_number", unique = true, nullable = false)
     private String ticketNumber;
 
-    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
     private TicketStatus status = TicketStatus.OPEN;
 
-    @Column(name = "priority")
-    @Enumerated(EnumType.STRING)
     private TicketPriority priority = TicketPriority.MEDIUM;
 
-    @ManyToOne
-    @JoinColumn(name = "reported_by")
+    @DBRef
     private User reportedBy;
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_to")
+    @DBRef
     private User assignedTo;
 
-    @ManyToOne
-    @JoinColumn(name = "resource_id")
+    @DBRef
     private Resource resource;
 
-    @Column(name = "resolution_notes", columnDefinition = "TEXT")
     private String resolutionNotes;
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @DBRef
     private List<Attachment> attachments;
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @DBRef
     private List<Comment> comments;
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public enum TicketStatus {
         OPEN, IN_PROGRESS, RESOLVED, CLOSED, REJECTED
@@ -82,4 +51,50 @@ public class Ticket {
     public enum TicketPriority {
         LOW, MEDIUM, HIGH, URGENT
     }
+
+    // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getTicketNumber() { return ticketNumber; }
+    public void setTicketNumber(String ticketNumber) { this.ticketNumber = ticketNumber; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public TicketStatus getStatus() { return status; }
+    public void setStatus(TicketStatus status) { this.status = status; }
+
+    public TicketPriority getPriority() { return priority; }
+    public void setPriority(TicketPriority priority) { this.priority = priority; }
+
+    public User getReportedBy() { return reportedBy; }
+    public void setReportedBy(User reportedBy) { this.reportedBy = reportedBy; }
+
+    public User getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(User assignedTo) { this.assignedTo = assignedTo; }
+
+    public Resource getResource() { return resource; }
+    public void setResource(Resource resource) { this.resource = resource; }
+
+    public String getResolutionNotes() { return resolutionNotes; }
+    public void setResolutionNotes(String resolutionNotes) { this.resolutionNotes = resolutionNotes; }
+
+    public List<Attachment> getAttachments() { return attachments; }
+    public void setAttachments(List<Attachment> attachments) { this.attachments = attachments; }
+
+    public List<Comment> getComments() { return comments; }
+    public void setComments(List<Comment> comments) { this.comments = comments; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public LocalDateTime getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(LocalDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
 }

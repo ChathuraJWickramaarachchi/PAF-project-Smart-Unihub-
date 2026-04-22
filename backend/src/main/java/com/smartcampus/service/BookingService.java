@@ -28,7 +28,7 @@ public class BookingService {
     @Autowired
     private NotificationService notificationService;
 
-    public BookingDTO createBooking(BookingDTO bookingDTO, Long creatorUserId) {
+    public BookingDTO createBooking(BookingDTO bookingDTO, String creatorUserId) {
         // Check for conflicts
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 bookingDTO.getResourceId(),
@@ -71,7 +71,7 @@ public class BookingService {
         return convertToDTO(saved);
     }
 
-    public BookingDTO approveBooking(Long bookingId, Long approvedById, String notes) {
+    public BookingDTO approveBooking(String bookingId, String approvedById, String notes) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
         
@@ -99,7 +99,7 @@ public class BookingService {
         return convertToDTO(updated);
     }
 
-    public BookingDTO rejectBooking(Long bookingId, Long approvedById, String notes) {
+    public BookingDTO rejectBooking(String bookingId, String approvedById, String notes) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
         
@@ -127,7 +127,7 @@ public class BookingService {
         return convertToDTO(updated);
     }
 
-    public BookingDTO cancelBooking(Long bookingId) {
+    public BookingDTO cancelBooking(String bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
         
@@ -140,14 +140,14 @@ public class BookingService {
         return convertToDTO(updated);
     }
 
-    public List<BookingDTO> getUserBookings(Long userId) {
+    public List<BookingDTO> getUserBookings(String userId) {
         return bookingRepository.findByUserId(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDTO> getBookingsByResource(Long resourceId) {
+    public List<BookingDTO> getBookingsByResource(String resourceId) {
         return bookingRepository.findByResourceId(resourceId)
                 .stream()
                 .map(this::convertToDTO)
@@ -168,7 +168,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public BookingDTO getBookingById(Long id) {
+    public BookingDTO getBookingById(String id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
         return convertToDTO(booking);
