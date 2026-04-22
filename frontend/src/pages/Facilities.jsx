@@ -78,36 +78,31 @@ export default function Facilities() {
            <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching entities in the registry.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredResources.map((resource) => (
-            <div key={resource.id} className="bg-white p-2 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
-              <div className="relative aspect-video bg-gray-900 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-6xl shadow-inner">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                {getIconForType(resource.resourceType)}
-              </div>
-              
-              <div className="p-8 space-y-6">
-                <div className="flex justify-between items-start">
-                   <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate max-w-[150px]">{resource.resourceName}</h3>
-                   <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
+            <div key={resource.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/20 group hover:-translate-y-1 transition-all cursor-pointer">
+              <div className="space-y-4">
+                <div className="flex justify-between items-start gap-2">
+                   <h3 className="text-base font-black text-gray-900 tracking-tight italic uppercase truncate">{resource.resourceName}</h3>
+                   <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
                       {resource.status}
                    </span>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                    <span className="text-primary opacity-50 text-base">📍</span>
-                    {resource.location}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                    <span className="text-primary opacity-50">📍</span>
+                    <span className="truncate">{resource.location}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                    <span className="text-primary opacity-50 text-base">👥</span>
-                    Capacity: {resource.capacity} Nodes
+                  <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                    <span className="text-primary opacity-50">👥</span>
+                    Cap: {resource.capacity}
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
-                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType?.replace('_', ' ')}</span>
-                  <button className="bg-primary text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors">Details</button>
+                <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
+                  <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType?.replace('_', ' ')}</span>
+                  <button className="bg-primary text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors whitespace-nowrap">Book Now</button>
                 </div>
               </div>
             </div>
