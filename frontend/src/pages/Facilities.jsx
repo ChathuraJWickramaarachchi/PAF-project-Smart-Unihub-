@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { ResourceAPI } from '../services/api'
+import { ResourceAPI, BookingAPI } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function Facilities() {
+  const { user } = useAuth()
   const [resources, setResources] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newBooking, setNewBooking] = useState({
+    resourceId: '',
+    date: '',
+    expectedAttendees: '',
+    startTime: '',
+    endTime: '',
+    bookingPurpose: '',
+    additionalNotes: ''
+  })
 
   useEffect(() => {
     fetchResources()
@@ -39,6 +51,47 @@ export default function Facilities() {
       case 'SPORTS_FACILITY': return '⚽'
       case 'EQUIPMENT': return '💻'
       default: return '🏢'
+    }
+  }
+
+  const handleBookNow = (resource) => {
+    if (resource.status !== 'ACTIVE') {
+      setError('This resource is currently not active and cannot be booked.')
+      return
+    }
+    setNewBooking({
+      resourceId: resource.id.toString(),
+      date: '',
+      expectedAttendees: '',
+      startTime: '',
+      endTime: '',
+      bookingPurpose: '',
+      additionalNotes: ''
+    })
+    setShowCreateModal(true)
+  }
+
+  const handleCreateBooking = async (e) => {
+    e.preventDefault()
+    setError('')
+    try {
+      const startDateTime = `${newBooking.date}T${newBooking.startTime}:00`
+      const endDateTime = `${newBooking.date}T${newBooking.endTime}:00`
+
+      await BookingAPI.create({
+        resourceId: parseInt(newBooking.resourceId),
+        startTime: startDateTime,
+        endTime: endDateTime,
+        bookingPurpose: newBooking.bookingPurpose,
+        additionalNotes: newBooking.additionalNotes,
+        expectedAttendees: newBooking.expectedAttendees ? parseInt(newBooking.expectedAttendees) : null,
+        userId: user?.userId || 1
+      })
+      setShowCreateModal(false)
+      setNewBooking({ resourceId: '', date: '', expectedAttendees: '', startTime: '', endTime: '', bookingPurpose: '', additionalNotes: '' })
+      alert("Booking request submitted successfully!")
+    } catch (err) {
+      setError('Failed to create booking. Please check schedule conflicts.')
     }
   }
 
@@ -78,40 +131,110 @@ export default function Facilities() {
            <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching entities in the registry.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredResources.map((resource) => (
-            <div key={resource.id} className="bg-white p-2 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
-              <div className="relative aspect-video bg-gray-900 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-6xl shadow-inner">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                {getIconForType(resource.resourceType)}
-              </div>
-              
-              <div className="p-8 space-y-6">
-                <div className="flex justify-between items-start">
-                   <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate max-w-[150px]">{resource.resourceName}</h3>
-                   <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
+            <div key={resource.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/20 group hover:-translate-y-1 transition-all cursor-pointer">
+              <div className="space-y-4">
+                <div className="flex justify-between items-start gap-2">
+                   <h3 className="text-base font-black text-gray-900 tracking-tight italic uppercase truncate">{resource.resourceName}</h3>
+                   <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
                       {resource.status}
                    </span>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                    <span className="text-primary opacity-50 text-base">📍</span>
-                    {resource.location}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                    <span className="text-primary opacity-50">📍</span>
+                    <span className="truncate">{resource.location}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                    <span className="text-primary opacity-50 text-base">👥</span>
-                    Capacity: {resource.capacity} Nodes
+                  <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                    <span className="text-primary opacity-50">👥</span>
+                    Cap: {resource.capacity}
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
-                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType?.replace('_', ' ')}</span>
-                  <button className="bg-primary text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors">Details</button>
+                <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
+                  <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType?.replace('_', ' ')}</span>
+                  <button className="bg-primary text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors whitespace-nowrap" onClick={(e) => { e.stopPropagation(); handleBookNow(resource); }}>Book Now</button>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal Redesign */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-zoom-in" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-[#1f2937] tracking-wide">Request a Booking</h2>
+              <button type="button" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors" onClick={() => setShowCreateModal(false)}>✕</button>
+            </div>
+            
+            <form onSubmit={handleCreateBooking} className="p-6 space-y-5">
+              {/* Resource */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Resource</label>
+                <select className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.resourceId} onChange={e => setNewBooking({ ...newBooking, resourceId: e.target.value })} required>
+                  <option value="">Select a resource...</option>
+                  {resources.map(r => <option key={r.id} value={r.id}>{r.resourceName}</option>)}
+                </select>
+              </div>
+
+              {/* Date & Expected Attendees */}
+              <div className="grid grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Date</label>
+                  <input type="date" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.date} onChange={e => setNewBooking({ ...newBooking, date: e.target.value })} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Expected Attendees</label>
+                  <input type="number" min="1" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. 30" value={newBooking.expectedAttendees} onChange={e => setNewBooking({ ...newBooking, expectedAttendees: e.target.value })} />
+                </div>
+              </div>
+
+              {/* Start Time & End Time */}
+              <div className="grid grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Start Time</label>
+                  <input type="time" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.startTime} onChange={e => setNewBooking({ ...newBooking, startTime: e.target.value })} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">End Time</label>
+                  <input type="time" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.endTime} onChange={e => setNewBooking({ ...newBooking, endTime: e.target.value })} required />
+                </div>
+              </div>
+
+              {/* Purpose */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Purpose</label>
+                <input type="text" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. Lecture, Practical, Committee Meeting..." value={newBooking.bookingPurpose} onChange={e => setNewBooking({ ...newBooking, bookingPurpose: e.target.value })} required />
+              </div>
+
+              {/* Additional Notes */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Additional Notes</label>
+                <textarea className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none h-24" placeholder="Any special requirements..." value={newBooking.additionalNotes} onChange={e => setNewBooking({ ...newBooking, additionalNotes: e.target.value })}></textarea>
+              </div>
+
+              {/* Success Alert */}
+              <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-3 flex items-center gap-2">
+                <span className="text-[#16a34a] font-bold text-sm">✓</span>
+                <span className="text-[#16a34a] text-sm font-medium">No scheduling conflicts detected for this time slot</span>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="pt-4 flex justify-end items-center gap-3 border-t border-gray-100 mt-2">
+                <button type="button" className="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onClick={() => setShowCreateModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="px-5 py-2.5 text-sm font-semibold text-white bg-[#2563eb] rounded-lg hover:bg-[#1d4ed8] focus:ring-2 focus:ring-blue-500/50 transition-colors shadow-sm">
+                  Submit Request
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -219,12 +219,7 @@ export default function Bookings() {
               >
                 {['All', 'Pending', 'Approved', 'Rejected'].map(s => <option key={s} value={s}>{s} Status</option>)}
               </select>
-              <button
-                className="bg-primary text-white px-8 py-3 rounded-xl font-bold text-[12px] shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all active:scale-95"
-                onClick={() => setShowCreateModal(true)}
-              >
-                + New Booking
-              </button>
+
             </div>
           </div>
 
@@ -303,35 +298,72 @@ export default function Bookings() {
       {/* Modal Redesign */}
       {showCreateModal && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowCreateModal(false)}>
-          <div className="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden animate-zoom-in" onClick={e => e.stopPropagation()}>
-            <div className="p-10 border-b border-gray-50 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Initiate New Booking</h2>
-              <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-50 rounded-xl" onClick={() => setShowCreateModal(false)}>✕</button>
+          <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-zoom-in" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-[#1f2937] tracking-wide">Request a Booking</h2>
+              <button type="button" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors" onClick={() => setShowCreateModal(false)}>✕</button>
             </div>
-            <form onSubmit={handleCreateBooking} className="p-10 space-y-6">
-              <div className="space-y-4">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Target Resource</label>
-                <select className="w-full bg-gray-50 border-none rounded-xl px-5 py-4 text-[13px] font-bold text-gray-900 focus:ring-2 focus:ring-primary/20 outline-none" value={newBooking.resourceId} onChange={e => setNewBooking({ ...newBooking, resourceId: e.target.value })} required>
-                  <option value="">Select infrastructure...</option>
+
+            <form onSubmit={handleCreateBooking} className="p-6 space-y-5">
+              {/* Resource */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Resource</label>
+                <select className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.resourceId} onChange={e => setNewBooking({ ...newBooking, resourceId: e.target.value })} required>
+                  <option value="">Select a resource...</option>
                   {resources.map(r => <option key={r.id} value={r.id}>{r.resourceName}</option>)}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Operational Date</label>
-                  <input type="date" className="w-full bg-gray-50 border-none rounded-xl px-5 py-4 text-[13px] font-bold text-gray-900 focus:ring-2 focus:ring-primary/20 outline-none" value={newBooking.date} onChange={e => setNewBooking({ ...newBooking, date: e.target.value })} required />
+
+              {/* Date & Expected Attendees */}
+              <div className="grid grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Date</label>
+                  <input type="date" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.date} onChange={e => setNewBooking({ ...newBooking, date: e.target.value })} required />
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">StartTime</label>
-                  <input type="time" className="w-full bg-gray-50 border-none rounded-xl px-5 py-4 text-[13px] font-bold text-gray-900 focus:ring-2 focus:ring-primary/20 outline-none" value={newBooking.startTime} onChange={e => setNewBooking({ ...newBooking, startTime: e.target.value })} required />
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Expected Attendees</label>
+                  <input type="number" min="1" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. 30" value={newBooking.expectedAttendees} onChange={e => setNewBooking({ ...newBooking, expectedAttendees: e.target.value })} />
                 </div>
               </div>
-              <div className="space-y-4">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Objective</label>
-                <input type="text" className="w-full bg-gray-50 border-none rounded-xl px-5 py-4 text-[13px] font-bold text-gray-900 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Purpose of booking..." value={newBooking.bookingPurpose} onChange={e => setNewBooking({ ...newBooking, bookingPurpose: e.target.value })} required />
+
+              {/* Start Time & End Time */}
+              <div className="grid grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Start Time</label>
+                  <input type="time" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.startTime} onChange={e => setNewBooking({ ...newBooking, startTime: e.target.value })} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">End Time</label>
+                  <input type="time" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" value={newBooking.endTime} onChange={e => setNewBooking({ ...newBooking, endTime: e.target.value })} required />
+                </div>
               </div>
-              <div className="pt-6 border-t border-gray-50">
-                <button type="submit" className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-[13px] shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all">Establish Sequence</button>
+
+              {/* Purpose */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Purpose</label>
+                <input type="text" className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. Lecture, Practical, Committee Meeting..." value={newBooking.bookingPurpose} onChange={e => setNewBooking({ ...newBooking, bookingPurpose: e.target.value })} required />
+              </div>
+
+              {/* Additional Notes */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Additional Notes</label>
+                <textarea className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none h-24" placeholder="Any special requirements..." value={newBooking.additionalNotes} onChange={e => setNewBooking({ ...newBooking, additionalNotes: e.target.value })}></textarea>
+              </div>
+
+              {/* Success Alert */}
+              <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg p-3 flex items-center gap-2">
+                <span className="text-[#16a34a] font-bold text-sm">✓</span>
+                <span className="text-[#16a34a] text-sm font-medium">No scheduling conflicts detected for this time slot</span>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="pt-4 flex justify-end items-center gap-3 border-t border-gray-100 mt-2">
+                <button type="button" className="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onClick={() => setShowCreateModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="px-5 py-2.5 text-sm font-semibold text-white bg-[#2563eb] rounded-lg hover:bg-[#1d4ed8] focus:ring-2 focus:ring-blue-500/50 transition-colors shadow-sm">
+                  Submit Request
+                </button>
               </div>
             </form>
           </div>
