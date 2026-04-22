@@ -7,6 +7,7 @@ export default function Resources() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedType, setSelectedType] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -53,6 +54,10 @@ export default function Resources() {
       setLoading(false)
     }
   }
+
+  const filteredResources = resources.filter(res =>
+    (selectedType === '' || res.resourceType === selectedType)
+  )
 
   const handleAddResource = async (e) => {
     e.preventDefault()
@@ -134,25 +139,47 @@ export default function Resources() {
               </div>
             )}
 
-            <div className="relative group max-w-xl">
-               <input 
-                 type="text" 
-                 placeholder="Search assets, locations, clusters..." 
-                 value={searchTerm}
-                 onChange={(e) => setSearchTerm(e.target.value)}
-                 className="w-full bg-white border border-gray-100 rounded-[2rem] px-10 py-5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all shadow-xl shadow-gray-200/20 italic" 
-               />
-               <button 
-                 onClick={handleSearch}
-                 className="absolute right-3 top-3 bg-gray-900 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all"
-               >
-                 Search
-               </button>
+            <div className="flex gap-4 flex-wrap">
+              <div className="relative group flex-1 min-w-[250px] max-w-xl">
+                 <input 
+                   type="text" 
+                   placeholder="Search assets, locations, clusters..." 
+                   value={searchTerm}
+                   onChange={(e) => setSearchTerm(e.target.value)}
+                   className="w-full bg-white border border-gray-100 rounded-[2rem] px-10 py-5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all shadow-xl shadow-gray-200/20 italic" 
+                 />
+                 <button 
+                   onClick={handleSearch}
+                   className="absolute right-3 top-3 bg-gray-900 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all"
+                 >
+                   Search
+                 </button>
+              </div>
+              
+              <select 
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="bg-white border border-gray-100 rounded-[2rem] px-6 py-5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all shadow-xl shadow-gray-200/20 italic cursor-pointer appearance-none bg-no-repeat"
+                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+              >
+                <option value="">All Types</option>
+                <option value="LAB">Laboratory</option>
+                <option value="AUDITORIUM">Auditorium</option>
+                <option value="MEETING_ROOM">Meeting Room</option>
+                <option value="SPORTS_FACILITY">Sports Facility</option>
+                <option value="LECTURE_HALL">Lecture Hall</option>
+                <option value="PROJECTOR">Projector</option>
+                <option value="SMART_BOARD">Smart Board</option>
+                <option value="WHITEBOARD">Whiteboard</option>
+                <option value="SOUND_SYSTEM">Sound System</option>
+                <option value="MICROPHONE">Microphone</option>
+                <option value="VR_BOX">VR Box</option>
+              </select>
             </div>
 
             {loading ? (
               <div className="min-h-[400px] flex items-center justify-center italic text-gray-400 font-black uppercase tracking-[0.4em] animate-pulse">Synchronizing Registry...</div>
-            ) : resources.length === 0 ? (
+            ) : filteredResources.length === 0 ? (
                <div className="min-h-[400px] flex flex-col items-center justify-center p-20 text-center space-y-8 bg-white rounded-[4rem] border border-dashed border-gray-200 opacity-50 grayscale italic">
                 <div className="text-6xl">🏢</div>
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching nodes in registry.</p>
@@ -172,7 +199,7 @@ export default function Resources() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {resources.map((resource) => (
+                      {filteredResources.map((resource) => (
                         <tr key={resource.id} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-8 py-6 text-sm font-black text-gray-900 uppercase tracking-tight italic">{resource.resourceName}</td>
                           <td className="px-8 py-6 text-[11px] font-black text-gray-600 uppercase tracking-widest italic">{resource.resourceType?.replace(/_/g, ' ')}</td>
