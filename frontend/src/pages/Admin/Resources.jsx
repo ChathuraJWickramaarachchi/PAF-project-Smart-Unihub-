@@ -241,6 +241,12 @@ export default function Resources() {
                            <option value="MEETING_ROOM">Meeting Room</option>
                            <option value="SPORTS_FACILITY">Sports Facility</option>
                            <option value="LECTURE_HALL">Lecture Hall</option>
+                           <option value="PROJECTOR">Projector</option>
+                           <option value="SMART_BOARD">Smart Board</option>
+                           <option value="WHITEBOARD">Whiteboard</option>
+                           <option value="SOUND_SYSTEM">Sound System</option>
+                           <option value="MICROPHONE">Microphone</option>
+                           <option value="VR_BOX">VR Box</option>
                          </select>
                       </div>
                    </div>
@@ -418,6 +424,12 @@ export default function Resources() {
                            <option value="MEETING_ROOM">Meeting Room</option>
                            <option value="SPORTS_FACILITY">Sports Facility</option>
                            <option value="LECTURE_HALL">Lecture Hall</option>
+                           <option value="PROJECTOR">Projector</option>
+                           <option value="SMART_BOARD">Smart Board</option>
+                           <option value="WHITEBOARD">Whiteboard</option>
+                           <option value="SOUND_SYSTEM">Sound System</option>
+                           <option value="MICROPHONE">Microphone</option>
+                           <option value="VR_BOX">VR Box</option>
                          </select>
                       </div>
                    </div>
