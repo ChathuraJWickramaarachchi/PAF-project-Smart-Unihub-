@@ -1,14 +1,16 @@
 package com.smartcampus.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class RoleDTO {
-    private Long id;
+    private String id;
     private String roleName;
     private String description;
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getRoleName() { return roleName; }
+    public void setRoleName(String roleName) { this.roleName = roleName; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }

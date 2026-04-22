@@ -24,7 +24,7 @@ public class BookingController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private Long getCurrentUserId(HttpServletRequest request) {
+    private String getCurrentUserId(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -36,8 +36,8 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody BookingDTO bookingDTO, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        Long creatorId = userId != null ? userId : 1L;
+        String userId = getCurrentUserId(request);
+        String creatorId = userId != null ? userId : "1";
         bookingDTO.setUserId(creatorId);
         BookingDTO created = bookingService.createBooking(bookingDTO, creatorId);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -45,33 +45,33 @@ public class BookingController {
 
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BookingDTO> approveBooking(@PathVariable Long id,
+    public ResponseEntity<BookingDTO> approveBooking(@PathVariable String id,
                                                      @RequestParam(required = false) String notes,
                                                      HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        BookingDTO approved = bookingService.approveBooking(id, userId != null ? userId : 1L, notes);
+        String userId = getCurrentUserId(request);
+        BookingDTO approved = bookingService.approveBooking(id, userId != null ? userId : "1", notes);
         return ResponseEntity.ok(approved);
     }
 
     @PostMapping("/{id}/reject")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BookingDTO> rejectBooking(@PathVariable Long id,
+    public ResponseEntity<BookingDTO> rejectBooking(@PathVariable String id,
                                                     @RequestParam(required = false) String notes,
                                                     HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        BookingDTO rejected = bookingService.rejectBooking(id, userId != null ? userId : 1L, notes);
+        String userId = getCurrentUserId(request);
+        BookingDTO rejected = bookingService.rejectBooking(id, userId != null ? userId : "1", notes);
         return ResponseEntity.ok(rejected);
     }
 
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<BookingDTO> cancelBooking(@PathVariable Long id) {
+    public ResponseEntity<BookingDTO> cancelBooking(@PathVariable String id) {
         BookingDTO cancelled = bookingService.cancelBooking(id);
         return ResponseEntity.ok(cancelled);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookingDTO> getBooking(@PathVariable Long id) {
+    public ResponseEntity<BookingDTO> getBooking(@PathVariable String id) {
         BookingDTO booking = bookingService.getBookingById(id);
         return ResponseEntity.ok(booking);
     }
@@ -83,13 +83,13 @@ public class BookingController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable Long userId) {
+    public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable String userId) {
         List<BookingDTO> bookings = bookingService.getUserBookings(userId);
         return ResponseEntity.ok(bookings);
     }
 
     @GetMapping("/resource/{resourceId}")
-    public ResponseEntity<List<BookingDTO>> getResourceBookings(@PathVariable Long resourceId) {
+    public ResponseEntity<List<BookingDTO>> getResourceBookings(@PathVariable String resourceId) {
         List<BookingDTO> bookings = bookingService.getBookingsByResource(resourceId);
         return ResponseEntity.ok(bookings);
     }

@@ -24,7 +24,7 @@ public class TicketController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private Long getCurrentUserId(HttpServletRequest request) {
+    private String getCurrentUserId(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -36,15 +36,15 @@ public class TicketController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TicketDTO> createTicket(@Valid @RequestBody TicketDTO ticketDTO, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        ticketDTO.setReportedById(userId != null ? userId : 1L);
+        String userId = getCurrentUserId(request);
+        ticketDTO.setReportedById(userId != null ? userId : "1");
         TicketDTO created = ticketService.createTicket(ticketDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('TECHNICIAN') or hasRole('ADMIN')")
-    public ResponseEntity<TicketDTO> updateStatus(@PathVariable Long id,
+    public ResponseEntity<TicketDTO> updateStatus(@PathVariable String id,
                                                   @RequestParam String status) {
         TicketStatus statusEnum = TicketStatus.valueOf(status.toUpperCase());
         TicketDTO updated = ticketService.updateTicketStatus(id, statusEnum);
@@ -53,22 +53,22 @@ public class TicketController {
 
     @PostMapping("/{id}/assign")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TicketDTO> assignTicket(@PathVariable Long id,
-                                                  @RequestParam Long technicianId) {
+    public ResponseEntity<TicketDTO> assignTicket(@PathVariable String id,
+                                                  @RequestParam String technicianId) {
         TicketDTO assigned = ticketService.assignTicket(id, technicianId);
         return ResponseEntity.ok(assigned);
     }
 
     @PatchMapping("/{id}/resolution-notes")
     @PreAuthorize("hasRole('TECHNICIAN') or hasRole('ADMIN')")
-    public ResponseEntity<TicketDTO> addResolutionNotes(@PathVariable Long id,
+    public ResponseEntity<TicketDTO> addResolutionNotes(@PathVariable String id,
                                                         @RequestParam String notes) {
         TicketDTO updated = ticketService.addResolutionNotes(id, notes);
         return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketDTO> getTicket(@PathVariable Long id) {
+    public ResponseEntity<TicketDTO> getTicket(@PathVariable String id) {
         TicketDTO ticket = ticketService.getTicketById(id);
         return ResponseEntity.ok(ticket);
     }
@@ -87,19 +87,19 @@ public class TicketController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TicketDTO>> getUserTickets(@PathVariable Long userId) {
+    public ResponseEntity<List<TicketDTO>> getUserTickets(@PathVariable String userId) {
         List<TicketDTO> tickets = ticketService.getUserTickets(userId);
         return ResponseEntity.ok(tickets);
     }
 
     @GetMapping("/assigned/{technicianId}")
-    public ResponseEntity<List<TicketDTO>> getAssignedTickets(@PathVariable Long technicianId) {
+    public ResponseEntity<List<TicketDTO>> getAssignedTickets(@PathVariable String technicianId) {
         List<TicketDTO> tickets = ticketService.getAssignedTickets(technicianId);
         return ResponseEntity.ok(tickets);
     }
 
     @GetMapping("/resource/{resourceId}")
-    public ResponseEntity<List<TicketDTO>> getResourceTickets(@PathVariable Long resourceId) {
+    public ResponseEntity<List<TicketDTO>> getResourceTickets(@PathVariable String resourceId) {
         List<TicketDTO> tickets = ticketService.getTicketsByResource(resourceId);
         return ResponseEntity.ok(tickets);
     }

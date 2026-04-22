@@ -20,21 +20,21 @@ public class NotificationController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<NotificationDTO>> getUserNotifications(@PathVariable Long userId) {
+    public ResponseEntity<List<NotificationDTO>> getUserNotifications(@PathVariable String userId) {
         List<NotificationDTO> notifications = notificationService.getUserNotifications(userId);
         return ResponseEntity.ok(notifications);
     }
 
     @GetMapping("/user/{userId}/unread")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<NotificationDTO>> getUnreadNotifications(@PathVariable Long userId) {
+    public ResponseEntity<List<NotificationDTO>> getUnreadNotifications(@PathVariable String userId) {
         List<NotificationDTO> notifications = notificationService.getUnreadNotifications(userId);
         return ResponseEntity.ok(notifications);
     }
 
     @GetMapping("/user/{userId}/unread-count")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Map<String, Long>> getUnreadCount(@PathVariable Long userId) {
+    public ResponseEntity<Map<String, Long>> getUnreadCount(@PathVariable String userId) {
         Long count = notificationService.getUnreadCount(userId);
         Map<String, Long> response = new HashMap<>();
         response.put("unreadCount", count);
@@ -43,28 +43,28 @@ public class NotificationController {
 
     @PatchMapping("/{id}/read")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<NotificationDTO> markAsRead(@PathVariable Long id) {
+    public ResponseEntity<NotificationDTO> markAsRead(@PathVariable String id) {
         NotificationDTO notification = notificationService.markAsRead(id);
         return ResponseEntity.ok(notification);
     }
 
     @PostMapping("/user/{userId}/read-all")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> markAllAsRead(@PathVariable Long userId) {
+    public ResponseEntity<Void> markAllAsRead(@PathVariable String userId) {
         notificationService.markAllAsRead(userId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteNotification(@PathVariable String id) {
         notificationService.deleteNotification(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/user/{userId}/all")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> deleteAllUserNotifications(@PathVariable Long userId) {
+    public ResponseEntity<Void> deleteAllUserNotifications(@PathVariable String userId) {
         notificationService.deleteAllUserNotifications(userId);
         return ResponseEntity.noContent().build();
     }
