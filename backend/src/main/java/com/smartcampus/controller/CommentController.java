@@ -23,7 +23,7 @@ public class CommentController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private Long getCurrentUserId(HttpServletRequest request) {
+    private String getCurrentUserId(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -34,40 +34,40 @@ public class CommentController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CommentDTO> addComment(@RequestParam Long ticketId,
+    public ResponseEntity<CommentDTO> addComment(@RequestParam String ticketId,
                                                  @Valid @RequestBody CommentDTO commentDTO,
                                                  HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        CommentDTO created = commentService.addComment(ticketId, userId != null ? userId : 1L, commentDTO.getContent());
+        String userId = getCurrentUserId(request);
+        CommentDTO created = commentService.addComment(ticketId, userId != null ? userId : "1", commentDTO.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CommentDTO> updateComment(@PathVariable Long id,
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable String id,
                                                     @Valid @RequestBody CommentDTO commentDTO,
                                                     HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        CommentDTO updated = commentService.updateComment(id, userId != null ? userId : 1L, commentDTO.getContent());
+        String userId = getCurrentUserId(request);
+        CommentDTO updated = commentService.updateComment(id, userId != null ? userId : "1", commentDTO.getContent());
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        commentService.deleteComment(id, userId != null ? userId : 1L);
+    public ResponseEntity<Void> deleteComment(@PathVariable String id, HttpServletRequest request) {
+        String userId = getCurrentUserId(request);
+        commentService.deleteComment(id, userId != null ? userId : "1");
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/ticket/{ticketId}")
-    public ResponseEntity<List<CommentDTO>> getTicketComments(@PathVariable Long ticketId) {
+    public ResponseEntity<List<CommentDTO>> getTicketComments(@PathVariable String ticketId) {
         List<CommentDTO> comments = commentService.getTicketComments(ticketId);
         return ResponseEntity.ok(comments);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommentDTO> getComment(@PathVariable Long id) {
+    public ResponseEntity<CommentDTO> getComment(@PathVariable String id) {
         CommentDTO comment = commentService.getCommentById(id);
         return ResponseEntity.ok(comment);
     }

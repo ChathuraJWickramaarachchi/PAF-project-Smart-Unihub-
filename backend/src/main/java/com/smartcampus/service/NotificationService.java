@@ -21,8 +21,8 @@ public class NotificationService {
     @Autowired
     private UserRepository userRepository;
 
-    public NotificationDTO createNotification(Long userId, String title, String message, 
-                                             NotificationType type, String entityType, Long entityId) {
+    public NotificationDTO createNotification(String userId, String title, String message, 
+                                             NotificationType type, String entityType, String entityId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
@@ -39,7 +39,7 @@ public class NotificationService {
         return convertToDTO(saved);
     }
 
-    public NotificationDTO markAsRead(Long notificationId) {
+    public NotificationDTO markAsRead(String notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         
@@ -50,7 +50,7 @@ public class NotificationService {
         return convertToDTO(updated);
     }
 
-    public void markAllAsRead(Long userId) {
+    public void markAllAsRead(String userId) {
         List<Notification> unreadNotifications = notificationRepository.findByUserIdAndIsReadFalse(userId);
         unreadNotifications.forEach(n -> {
             n.setIsRead(true);
@@ -59,32 +59,32 @@ public class NotificationService {
         notificationRepository.saveAll(unreadNotifications);
     }
 
-    public List<NotificationDTO> getUserNotifications(Long userId) {
+    public List<NotificationDTO> getUserNotifications(String userId) {
         return notificationRepository.findByUserId(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<NotificationDTO> getUnreadNotifications(Long userId) {
+    public List<NotificationDTO> getUnreadNotifications(String userId) {
         return notificationRepository.findUnreadNotifications(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public Long getUnreadCount(Long userId) {
+    public Long getUnreadCount(String userId) {
         return notificationRepository.countUnreadNotifications(userId);
     }
 
-    public void deleteNotification(Long notificationId) {
+    public void deleteNotification(String notificationId) {
         if (!notificationRepository.existsById(notificationId)) {
             throw new RuntimeException("Notification not found");
         }
         notificationRepository.deleteById(notificationId);
     }
 
-    public void deleteAllUserNotifications(Long userId) {
+    public void deleteAllUserNotifications(String userId) {
         List<Notification> notifications = notificationRepository.findByUserId(userId);
         notificationRepository.deleteAll(notifications);
     }

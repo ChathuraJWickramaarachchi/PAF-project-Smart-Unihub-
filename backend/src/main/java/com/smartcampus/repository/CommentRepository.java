@@ -1,12 +1,12 @@
 package com.smartcampus.repository;
 
 import com.smartcampus.entity.Comment;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByTicketId(Long ticketId);
-    List<Comment> findByAuthorId(Long userId);
+public interface CommentRepository extends MongoRepository<Comment, String> {
+    List<Comment> findByTicketId(String ticketId);
+    List<Comment> findByAuthorId(String userId);
 }

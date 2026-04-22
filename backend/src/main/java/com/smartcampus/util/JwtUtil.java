@@ -9,7 +9,7 @@ public class JwtUtil {
      * Extract user ID from JWT token
      * For demo purposes - extracts ID from token format: "Bearer_timestamp_id"
      */
-    public Long getUserIdFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         if (token == null || token.isEmpty()) {
             return null;
         }
@@ -21,7 +21,7 @@ public class JwtUtil {
         try {
             String[] parts = cleanToken.split("_");
             if (parts.length >= 2) {
-                return Long.parseLong(parts[parts.length - 1]);
+                return parts[parts.length - 1];
             }
         } catch (Exception e) {
             // Invalid token format

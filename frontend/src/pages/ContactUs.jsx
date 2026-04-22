@@ -8,6 +8,7 @@ export default function ContactUs() {
     message: ''
   })
   const [submitted, setSubmitted] = useState(false)
+  const [showMap, setShowMap] = useState(false)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -23,10 +24,10 @@ export default function ContactUs() {
   }
 
   const contactInfo = [
-    { icon: '📧', label: 'Email', value: 'unibridge@gmail.com' },
-    { icon: '📞', label: 'Phone', value: '+94 11587469' },
+    { icon: '📧', label: 'Email', value: 'support@smartunihub.edu' },
+    { icon: '📞', label: 'Phone', value: '+94 112 874 500' },
     { icon: '📍', label: 'Office', value: 'SLIIT Malabe Campus', subtext: 'New Kandy Road, Malabe' },
-    { icon: '🕐', label: 'Hours', value: 'Mon - Fri', subtext: '9:00 AM - 6:00 PM' }
+    { icon: '🕐', label: 'Hours', value: 'Mon - Fri', subtext: '8:30 AM - 5:30 PM' }
   ]
 
   return (
@@ -56,7 +57,12 @@ export default function ContactUs() {
                 <div className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">{info.label}</div>
                 <div className="text-sm font-black text-gray-900 tracking-tight leading-snug">
                   {info.label === 'Office' ? (
-                    <a href="#" className="hover:text-primary transition-colors underline decoration-primary/20 underline-offset-4">{info.value}</a>
+                    <button 
+                      onClick={() => setShowMap(!showMap)} 
+                      className="hover:text-primary transition-colors underline decoration-primary/20 underline-offset-4 cursor-pointer"
+                    >
+                      {info.value}
+                    </button>
                   ) : (
                     info.value
                   )}
@@ -64,6 +70,81 @@ export default function ContactUs() {
                 {info.subtext && <div className="text-[10px] font-bold text-gray-400 mt-2 uppercase">{info.subtext}</div>}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Map Section */}
+      {showMap && (
+        <section className="py-20 -mt-8">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="bg-white p-4 rounded-[2rem] border border-gray-100 shadow-2xl shadow-gray-200/30">
+              <div className="flex justify-between items-center mb-4 px-4">
+                <h3 className="text-lg font-black text-gray-900 tracking-tight italic">📍 SLIIT Malabe Campus Location</h3>
+                <button 
+                  onClick={() => setShowMap(false)}
+                  className="text-xs font-black text-gray-400 hover:text-primary uppercase tracking-widest transition-colors"
+                >
+                  Close Map ✕
+                </button>
+              </div>
+              <div className="rounded-[1.5rem] overflow-hidden border border-gray-100">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.234567890!2d79.980123456789!3d6.9123456789012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae25a62b0cccccd%3A0x1234567890abcdef!2sSLIIT%20Malabe!5e0!3m2!1sen!2slk!4v1234567890123!5m2!1sen!2slk"
+                  width="100%"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full"
+                  title="SLIIT Malabe Campus Map"
+                ></iframe>
+              </div>
+              <div className="px-4 py-3 bg-gray-50 rounded-b-[1.5rem] mt-2">
+                <p className="text-xs font-bold text-gray-500">New Kandy Road, Malabe, Sri Lanka</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-gray-50/30">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-1.5 mb-6 bg-primary/20 backdrop-blur-md rounded-full border border-primary/30">
+              <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Quick Answers</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter italic">
+              Frequently Asked <span className="text-primary not-italic">Questions</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/20">
+              <div className="text-2xl mb-4">🎓</div>
+              <h3 className="text-lg font-black text-gray-900 tracking-tight mb-3">How do I book a facility?</h3>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">Log in to your account, navigate to the Facilities section, select your desired resource, and submit a booking request. Admin approval is required for most bookings.</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/20">
+              <div className="text-2xl mb-4">🔧</div>
+              <h3 className="text-lg font-black text-gray-900 tracking-tight mb-3">How do I report a maintenance issue?</h3>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">Go to the Tickets page, click "Create New Ticket", fill in the details about the issue, and submit. Our maintenance team will review and assign it promptly.</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/20">
+              <div className="text-2xl mb-4">👤</div>
+              <h3 className="text-lg font-black text-gray-900 tracking-tight mb-3">Can I update my profile information?</h3>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">Yes! Navigate to your User Profile page where you can update your contact details, profile picture, and password.</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-200/20">
+              <div className="text-2xl mb-4">📊</div>
+              <h3 className="text-lg font-black text-gray-900 tracking-tight mb-3">How do I track my ticket status?</h3>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">Visit the Tickets page to see all your submitted tickets with their current status (Open, In Progress, Resolved, or Closed).</p>
+            </div>
           </div>
         </div>
       </section>

@@ -27,7 +27,7 @@ public class CommentService {
     @Autowired
     private NotificationService notificationService;
 
-    public CommentDTO addComment(Long ticketId, Long authorId, String content) {
+    public CommentDTO addComment(String ticketId, String authorId, String content) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         
@@ -67,7 +67,7 @@ public class CommentService {
         return convertToDTO(saved);
     }
 
-    public CommentDTO updateComment(Long commentId, Long authorId, String newContent) {
+    public CommentDTO updateComment(String commentId, String authorId, String newContent) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
         
@@ -81,7 +81,7 @@ public class CommentService {
         return convertToDTO(updated);
     }
 
-    public void deleteComment(Long commentId, Long authorId) {
+    public void deleteComment(String commentId, String authorId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
         
@@ -93,21 +93,21 @@ public class CommentService {
         commentRepository.deleteById(commentId);
     }
 
-    public List<CommentDTO> getTicketComments(Long ticketId) {
+    public List<CommentDTO> getTicketComments(String ticketId) {
         return commentRepository.findByTicketId(ticketId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<CommentDTO> getUserComments(Long userId) {
+    public List<CommentDTO> getUserComments(String userId) {
         return commentRepository.findByAuthorId(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public CommentDTO getCommentById(Long id) {
+    public CommentDTO getCommentById(String id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
         return convertToDTO(comment);

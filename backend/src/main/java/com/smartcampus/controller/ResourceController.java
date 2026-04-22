@@ -27,7 +27,7 @@ public class ResourceController {
     /**
      * Extract user ID from Authorization header
      */
-    private Long getCurrentUserId(HttpServletRequest request) {
+    private String getCurrentUserId(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -39,14 +39,14 @@ public class ResourceController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResourceDTO> createResource(@Valid @RequestBody ResourceDTO resourceDTO, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        ResourceDTO created = resourceService.createResource(resourceDTO, userId != null ? userId : 1L);
+        String userId = getCurrentUserId(request);
+        ResourceDTO created = resourceService.createResource(resourceDTO, userId != null ? userId : "1");
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResourceDTO> updateResource(@PathVariable Long id, 
+    public ResponseEntity<ResourceDTO> updateResource(@PathVariable String id, 
                                                      @Valid @RequestBody ResourceDTO resourceDTO) {
         ResourceDTO updated = resourceService.updateResource(id, resourceDTO);
         return ResponseEntity.ok(updated);
@@ -54,13 +54,13 @@ public class ResourceController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteResource(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteResource(@PathVariable String id) {
         resourceService.deleteResource(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceDTO> getResource(@PathVariable Long id) {
+    public ResponseEntity<ResourceDTO> getResource(@PathVariable String id) {
         ResourceDTO resource = resourceService.getResourceById(id);
         return ResponseEntity.ok(resource);
     }
@@ -104,7 +104,7 @@ public class ResourceController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResourceDTO> changeStatus(@PathVariable Long id, 
+    public ResponseEntity<ResourceDTO> changeStatus(@PathVariable String id, 
                                                     @RequestParam String status) {
         ResourceStatus statusEnum = ResourceStatus.valueOf(status.toUpperCase());
         ResourceDTO updated = resourceService.changeResourceStatus(id, statusEnum);
