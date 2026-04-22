@@ -24,7 +24,7 @@ export default function ContactUs() {
   }
 
   const contactInfo = [
-    { icon: '📧', label: 'Email', value: 'support@smartunihub.edu' },
+    { icon: '📧', label: 'Email', value: 'support@smartuni.edu' },
     { icon: '📞', label: 'Phone', value: '+94 112 874 500' },
     { icon: '📍', label: 'Office', value: 'SLIIT Malabe Campus', subtext: 'New Kandy Road, Malabe' },
     { icon: '🕐', label: 'Hours', value: 'Mon - Fri', subtext: '8:30 AM - 5:30 PM' }

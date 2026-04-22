@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.smartcampus</groupId>
-    <artifactId>smart-campus-hub</artifactId>
+    <groupId>com.smartuni</groupId>
+    <artifactId>smartuni-portal</artifactId>
     <version>1.0.0</version>
-    <name>Smart Campus Operations Hub</name>
+    <name>SmartUni Portal</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -97,7 +97,7 @@ export default function AboutUs() {
             <p className="text-4xl font-black tracking-tighter italic">Bridging the gap since inception.</p>
             <div className="space-y-6 text-lg text-gray-400 font-medium leading-relaxed">
               <p>
-                SmartUni Portal emerged from the critical need to synchronize decentralized university complex systems. 
+                SmartUni Portal emerged from the critical need to synchronize decentralized university complex systems.
                 We observed that disconnected management tools were hindering academic excellence.
               </p>
               <p>

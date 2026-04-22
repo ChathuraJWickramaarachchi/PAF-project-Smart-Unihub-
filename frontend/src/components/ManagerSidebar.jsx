@@ -24,7 +24,7 @@ export default function ManagerSidebar() {
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary/20">🎓</div>
           <div>
-            <div className="text-gray-900 font-black text-base tracking-tight leading-none italic">SmartUniPortal</div>
+            <div className="text-gray-900 font-black text-base tracking-tight leading-none italic">SmartUni Portal</div>
             <div className="text-gray-400 font-bold text-[8px] uppercase tracking-widest mt-1">Manager Portal</div>
           </div>
         </div>
