@@ -20,7 +20,7 @@ public class ResourceService {
     @Autowired
     private UserRepository userRepository;
 
-    public ResourceDTO createResource(ResourceDTO resourceDTO, Long createdById) {
+    public ResourceDTO createResource(ResourceDTO resourceDTO, String createdById) {
         Resource resource = new Resource();
         resource.setResourceName(resourceDTO.getResourceName());
         resource.setResourceType(resourceDTO.getResourceType());
@@ -37,7 +37,7 @@ public class ResourceService {
         return convertToDTO(saved);
     }
 
-    public ResourceDTO updateResource(Long id, ResourceDTO resourceDTO) {
+    public ResourceDTO updateResource(String id, ResourceDTO resourceDTO) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
         
@@ -64,14 +64,14 @@ public class ResourceService {
         return convertToDTO(updated);
     }
 
-    public void deleteResource(Long id) {
+    public void deleteResource(String id) {
         if (!resourceRepository.existsById(id)) {
             throw new RuntimeException("Resource not found");
         }
         resourceRepository.deleteById(id);
     }
 
-    public ResourceDTO getResourceById(Long id) {
+    public ResourceDTO getResourceById(String id) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
         return convertToDTO(resource);
@@ -112,7 +112,7 @@ public class ResourceService {
                 .collect(Collectors.toList());
     }
 
-    public ResourceDTO changeResourceStatus(Long id, ResourceStatus status) {
+    public ResourceDTO changeResourceStatus(String id, ResourceStatus status) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
         resource.setStatus(status);

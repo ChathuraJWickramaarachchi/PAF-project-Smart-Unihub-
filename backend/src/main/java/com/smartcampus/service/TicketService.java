@@ -45,7 +45,7 @@ public class TicketService {
         return convertToDTO(saved);
     }
 
-    public TicketDTO updateTicketStatus(Long ticketId, TicketStatus newStatus) {
+    public TicketDTO updateTicketStatus(String ticketId, TicketStatus newStatus) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         
@@ -73,7 +73,7 @@ public class TicketService {
         return convertToDTO(updated);
     }
 
-    public TicketDTO assignTicket(Long ticketId, Long technicianId) {
+    public TicketDTO assignTicket(String ticketId, String technicianId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         
@@ -98,7 +98,7 @@ public class TicketService {
         return convertToDTO(updated);
     }
 
-    public TicketDTO addResolutionNotes(Long ticketId, String notes) {
+    public TicketDTO addResolutionNotes(String ticketId, String notes) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         
@@ -107,7 +107,7 @@ public class TicketService {
         return convertToDTO(updated);
     }
 
-    public TicketDTO getTicketById(Long id) {
+    public TicketDTO getTicketById(String id) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         return convertToDTO(ticket);
@@ -127,28 +127,28 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public List<TicketDTO> getUserTickets(Long userId) {
+    public List<TicketDTO> getUserTickets(String userId) {
         return ticketRepository.findByReportedById(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<TicketDTO> getAssignedTickets(Long technicianId) {
+    public List<TicketDTO> getAssignedTickets(String technicianId) {
         return ticketRepository.findByAssignedToId(technicianId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<TicketDTO> getTicketsByResource(Long resourceId) {
+    public List<TicketDTO> getTicketsByResource(String resourceId) {
         return ticketRepository.findByResourceId(resourceId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public Long countOpenTicketsForTechnician(Long technicianId) {
+    public Long countOpenTicketsForTechnician(String technicianId) {
         return ticketRepository.countByStatusAndAssignedToId(TicketStatus.IN_PROGRESS, technicianId);
     }
 
