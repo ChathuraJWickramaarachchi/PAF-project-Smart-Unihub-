@@ -80,13 +80,8 @@ export default function Facilities() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredResources.map((resource) => (
-            <div key={resource.id} className="bg-white p-2 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
-              <div className="relative aspect-video bg-gray-900 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-6xl shadow-inner">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                {getIconForType(resource.resourceType)}
-              </div>
-              
-              <div className="p-8 space-y-6">
+            <div key={resource.id} className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
+              <div className="space-y-6">
                 <div className="flex justify-between items-start">
                    <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate max-w-[150px]">{resource.resourceName}</h3>
                    <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
