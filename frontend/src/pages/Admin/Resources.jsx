@@ -8,6 +8,8 @@ export default function Resources() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState(null)
   const [newResource, setNewResource] = useState({
     resourceName: '',
     resourceType: 'LAB',
@@ -67,13 +69,19 @@ export default function Resources() {
   }
 
   const handleDeleteResource = async (id) => {
-    if (window.confirm('Are you sure you want to delete this resource?')) {
-      try {
-        await ResourceAPI.delete(id)
-        fetchResources()
-      } catch (err) {
-        setError('Failed to delete resource')
-      }
+    setDeleteTargetId(id)
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = async () => {
+    try {
+      await ResourceAPI.delete(deleteTargetId)
+      setShowDeleteConfirm(false)
+      setDeleteTargetId(null)
+      fetchResources()
+    } catch (err) {
+      setError('Failed to delete resource')
+      setShowDeleteConfirm(false)
     }
   }
 
@@ -155,8 +163,8 @@ export default function Resources() {
                           </td>
                           <td className="px-8 py-6 text-right">
                             <div className="flex gap-3 justify-end">
-                              <button className="text-[9px] font-black text-primary hover:text-black transition-colors uppercase italic underline underline-offset-4 decoration-primary/20">Edit</button>
-                              <button onClick={() => handleDeleteResource(resource.id)} className="text-[9px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic underline underline-offset-4 decoration-rose-500/20">Delete</button>
+                              <button className="px-6 py-3 bg-primary/10 text-primary font-black hover:bg-primary hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Edit</button>
+                              <button onClick={() => handleDeleteResource(resource.id)} className="px-6 py-3 bg-rose-50 text-rose-600 font-black hover:bg-rose-500 hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Delete</button>
                             </div>
                           </td>
                         </tr>
@@ -307,6 +315,38 @@ export default function Resources() {
                    </div>
                 </form>
              </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full">
+              <div className="text-center space-y-6">
+                <div className="text-5xl text-rose-500">⚠️</div>
+                <div>
+                  <h3 className="text-xl font-black text-gray-900 uppercase italic mb-2">Confirm Deletion</h3>
+                  <p className="text-sm text-gray-600">Are you sure you want to delete this resource? This action cannot be undone.</p>
+                </div>
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={() => {
+                      setShowDeleteConfirm(false)
+                      setDeleteTargetId(null)
+                    }}
+                    className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-colors shadow-md"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>
