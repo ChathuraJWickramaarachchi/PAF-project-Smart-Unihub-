@@ -27,7 +27,7 @@ public class ResourceService {
         resource.setCapacity(resourceDTO.getCapacity());
         resource.setLocation(resourceDTO.getLocation());
         resource.setDescription(resourceDTO.getDescription());
-        resource.setStatus(ResourceStatus.ACTIVE);
+        resource.setStatus(resourceDTO.getStatus() != null ? resourceDTO.getStatus() : ResourceStatus.ACTIVE);
         
         User createdBy = userRepository.findById(createdById)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -58,6 +58,9 @@ public class ResourceService {
         }
         if (resourceDTO.getImageUrl() != null) {
             resource.setImageUrl(resourceDTO.getImageUrl());
+        }
+        if (resourceDTO.getStatus() != null) {
+            resource.setStatus(resourceDTO.getStatus());
         }
         
         Resource updated = resourceRepository.save(resource);

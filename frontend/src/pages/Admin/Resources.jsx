@@ -17,7 +17,8 @@ export default function Resources() {
     resourceName: '',
     resourceType: 'LAB',
     location: '',
-    capacity: ''
+    capacity: '',
+    status: 'ACTIVE'
   })
 
   useEffect(() => {
@@ -64,11 +65,10 @@ export default function Resources() {
     try {
       await ResourceAPI.create({
         ...newResource,
-        capacity: parseInt(newResource.capacity),
-        status: 'ACTIVE'
+        capacity: parseInt(newResource.capacity)
       })
       setShowAddModal(false)
-      setNewResource({ resourceName: '', resourceType: 'LAB', location: '', capacity: '' })
+      setNewResource({ resourceName: '', resourceType: 'LAB', location: '', capacity: '', status: 'ACTIVE' })
       fetchResources()
     } catch (err) {
       setError('Failed to create resource')
@@ -335,8 +335,9 @@ export default function Resources() {
                         className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
                         style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
                       >
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="MAINTENANCE">MAINTENANCE</option>
+                        <option value="ACTIVE">Active</option>
+
+                        <option value="MAINTENANCE">Maintenance</option>
                       </select>
                    </div>
 
@@ -496,8 +497,9 @@ export default function Resources() {
                         className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
                         style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
                       >
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="MAINTENANCE">MAINTENANCE</option>
+                        <option value="ACTIVE">Active</option>
+
+                        <option value="MAINTENANCE">Maintenance</option>
                       </select>
                    </div>
 

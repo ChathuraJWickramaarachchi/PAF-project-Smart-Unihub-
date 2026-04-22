@@ -32,15 +32,16 @@ export default function Facilities() {
     (selectedType === '' || res.resourceType === selectedType)
   )
 
-  const getIconForType = (type) => {
-    switch (type) {
-      case 'CLASSROOM': return '🏫'
-      case 'LAB': return '🔬'
-      case 'AUDITORIUM': return '🎭'
-      case 'MEETING_ROOM': return '💼'
-      case 'SPORTS_FACILITY': return '⚽'
-      case 'EQUIPMENT': return '💻'
-      default: return '🏢'
+  const getStatusDisplay = (status) => {
+    switch(status) {
+      case 'ACTIVE':
+        return { label: 'Active', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600', borderColor: 'border-emerald-100' }
+      case 'MAINTENANCE':
+        return { label: 'Maintenance', bgColor: 'bg-rose-50', textColor: 'text-rose-600', borderColor: 'border-rose-100' }
+      case 'OUT_OF_SERVICE':
+        return { label: 'Out of Service', bgColor: 'bg-rose-50', textColor: 'text-rose-600', borderColor: 'border-rose-100' }
+      default:
+        return { label: status, bgColor: 'bg-gray-50', textColor: 'text-gray-600', borderColor: 'border-gray-100' }
     }
   }
 
@@ -108,9 +109,14 @@ export default function Facilities() {
               <div className="space-y-6">
                 <div className="flex justify-between items-start">
                    <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate max-w-[150px]">{resource.resourceName}</h3>
-                   <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
-                      {resource.status}
-                   </span>
+                   {(() => {
+                     const statusDisplay = getStatusDisplay(resource.status)
+                     return (
+                       <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${statusDisplay.bgColor} ${statusDisplay.textColor} border ${statusDisplay.borderColor}`}>
+                         {statusDisplay.label}
+                       </span>
+                     )
+                   })()}
                 </div>
 
                 <div className="space-y-3">
