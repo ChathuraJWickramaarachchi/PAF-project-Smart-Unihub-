@@ -92,7 +92,7 @@ export default function Resources() {
                onClick={() => setShowAddModal(true)}
                className="bg-primary text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all active:scale-95"
              >
-                + Register Asset
+                + New Resource
              </button>
           </div>
         </header>
@@ -116,7 +116,7 @@ export default function Resources() {
                  onClick={handleSearch}
                  className="absolute right-3 top-3 bg-gray-900 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all"
                >
-                 Execute
+                 Search
                </button>
             </div>
 
