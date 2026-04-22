@@ -102,7 +102,7 @@ export default function Facilities() {
 
                 <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
                   <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType?.replace('_', ' ')}</span>
-                  <button className="bg-primary text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors">Details</button>
+                  <button className="bg-primary text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors">Book Now</button>
                 </div>
               </div>
             </div>

@@ -271,7 +271,6 @@ export default function Resources() {
                         style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
                       >
                         <option value="ACTIVE">ACTIVE</option>
-                        <option value="INACTIVE">INACTIVE</option>
                         <option value="MAINTENANCE">MAINTENANCE</option>
                       </select>
                    </div>
