@@ -8,8 +8,10 @@ export default function Resources() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteTargetId, setDeleteTargetId] = useState(null)
+  const [editingResource, setEditingResource] = useState(null)
   const [newResource, setNewResource] = useState({
     resourceName: '',
     resourceType: 'LAB',
@@ -82,6 +84,26 @@ export default function Resources() {
     } catch (err) {
       setError('Failed to delete resource')
       setShowDeleteConfirm(false)
+    }
+  }
+
+  const handleEditResource = (resource) => {
+    setEditingResource(resource)
+    setShowEditModal(true)
+  }
+
+  const handleUpdateResource = async (e) => {
+    e.preventDefault()
+    try {
+      await ResourceAPI.update(editingResource.id, {
+        ...editingResource,
+        capacity: parseInt(editingResource.capacity)
+      })
+      setShowEditModal(false)
+      setEditingResource(null)
+      fetchResources()
+    } catch (err) {
+      setError('Failed to update resource')
     }
   }
 
@@ -163,7 +185,7 @@ export default function Resources() {
                           </td>
                           <td className="px-8 py-6 text-right">
                             <div className="flex gap-3 justify-end">
-                              <button className="px-6 py-3 bg-primary/10 text-primary font-black hover:bg-primary hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Edit</button>
+                              <button onClick={() => handleEditResource(resource)} className="px-6 py-3 bg-primary/10 text-primary font-black hover:bg-primary hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Edit</button>
                               <button onClick={() => handleDeleteResource(resource.id)} className="px-6 py-3 bg-rose-50 text-rose-600 font-black hover:bg-rose-500 hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Delete</button>
                             </div>
                           </td>
@@ -347,6 +369,120 @@ export default function Resources() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && editingResource && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+             <div className="bg-white w-full max-w-3xl rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-start mb-8">
+                   <div>
+                      <h2 className="text-2xl font-bold text-gray-900">Edit Resource</h2>
+                   </div>
+                   <button 
+                     onClick={() => {
+                       setShowEditModal(false)
+                       setEditingResource(null)
+                     }}
+                     className="text-gray-400 hover:text-gray-600 text-2xl"
+                   >
+                      ✕
+                   </button>
+                </div>
+
+                <form onSubmit={handleUpdateResource} className="space-y-6">
+                   {/* Row 1: Resource Name & Type */}
+                   <div className="grid grid-cols-2 gap-6">
+                      <div>
+                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Resource Name</label>
+                         <input 
+                           type="text" 
+                           placeholder="e.g. Hall C-110"
+                           required 
+                           value={editingResource.resourceName}
+                           onChange={(e) => setEditingResource({ ...editingResource, resourceName: e.target.value })}
+                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                         />
+                      </div>
+                      <div>
+                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Type</label>
+                         <select 
+                           value={editingResource.resourceType}
+                           onChange={(e) => setEditingResource({ ...editingResource, resourceType: e.target.value })}
+                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
+                           style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
+                         >
+                           <option value="LAB">Laboratory</option>
+                           <option value="AUDITORIUM">Auditorium</option>
+                           <option value="MEETING_ROOM">Meeting Room</option>
+                           <option value="SPORTS_FACILITY">Sports Facility</option>
+                           <option value="LECTURE_HALL">Lecture Hall</option>
+                         </select>
+                      </div>
+                   </div>
+
+                   {/* Row 2: Location & Capacity */}
+                   <div className="grid grid-cols-2 gap-6">
+                      <div>
+                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Location / Block</label>
+                         <input 
+                           type="text" 
+                           placeholder="e.g. Block C, 1st Floor"
+                           required 
+                           value={editingResource.location}
+                           onChange={(e) => setEditingResource({ ...editingResource, location: e.target.value })}
+                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                         />
+                      </div>
+                      <div>
+                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Capacity</label>
+                         <input 
+                           type="number" 
+                           placeholder="e.g. 60"
+                           required 
+                           value={editingResource.capacity}
+                           onChange={(e) => setEditingResource({ ...editingResource, capacity: e.target.value })}
+                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                         />
+                      </div>
+                   </div>
+
+                   {/* Row 3: Status */}
+                   <div>
+                      <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Status</label>
+                      <select 
+                        value={editingResource.status}
+                        onChange={(e) => setEditingResource({ ...editingResource, status: e.target.value })}
+                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
+                        style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
+                      >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="MAINTENANCE">MAINTENANCE</option>
+                      </select>
+                   </div>
+
+                   {/* Buttons */}
+                   <div className="flex gap-4 pt-6">
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          setShowEditModal(false)
+                          setEditingResource(null)
+                        }} 
+                        className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        type="submit" 
+                        className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md"
+                      >
+                        Update Resource
+                      </button>
+                   </div>
+                </form>
+             </div>
           </div>
         )}
       </main>
