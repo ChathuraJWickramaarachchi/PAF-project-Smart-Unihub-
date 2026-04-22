@@ -10,7 +10,7 @@ export default function Resources() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [newResource, setNewResource] = useState({
     resourceName: '',
-    resourceType: 'CLASSROOM',
+    resourceType: 'LAB',
     location: '',
     capacity: ''
   })
@@ -59,7 +59,7 @@ export default function Resources() {
         status: 'ACTIVE'
       })
       setShowAddModal(false)
-      setNewResource({ resourceName: '', resourceType: 'CLASSROOM', location: '', capacity: '' })
+      setNewResource({ resourceName: '', resourceType: 'LAB', location: '', capacity: '' })
       fetchResources()
     } catch (err) {
       setError('Failed to create resource')
@@ -202,12 +202,10 @@ export default function Resources() {
                            className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
                            style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
                          >
-                           <option value="CLASSROOM">Classroom</option>
                            <option value="LAB">Laboratory</option>
                            <option value="AUDITORIUM">Auditorium</option>
                            <option value="MEETING_ROOM">Meeting Room</option>
                            <option value="SPORTS_FACILITY">Sports Facility</option>
-                           <option value="EQUIPMENT">Equipment</option>
                            <option value="LECTURE_HALL">Lecture Hall</option>
                          </select>
                       </div>
