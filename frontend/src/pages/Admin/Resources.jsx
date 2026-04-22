@@ -128,39 +128,43 @@ export default function Resources() {
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching nodes in registry.</p>
               </div>
             ) : (
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {resources.map((resource) => (
-                    <div key={resource.id} className="bg-white p-8 rounded-[3.5rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all">
-                       <div className="space-y-8">
-                          <div className="flex justify-between items-start">
-                             <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate">{resource.resourceName}</h3>
-                             <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border-emerald-100' : 'bg-rose-50 text-rose-500 border-rose-100'}`}>
-                                {resource.status}
-                             </span>
-                          </div>
-
-                          <div className="space-y-3">
-                             <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                               <span className="text-primary opacity-50 text-base">📍</span>
-                               {resource.location}
-                             </div>
-                             <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                               <span className="text-primary opacity-50 text-base">👥</span>
-                               {resource.capacity} Active Slots
-                             </div>
-                          </div>
-
-                          <div className="pt-8 border-t border-gray-50 flex items-center justify-between">
-                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType}</span>
-                            <div className="flex gap-2">
-                               <button className="text-[9px] font-black text-primary hover:text-black transition-colors uppercase italic underline underline-offset-4 decoration-primary/20 p-2">Edit</button>
-                               <button onClick={() => handleDeleteResource(resource.id)} className="text-[9px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic underline underline-offset-4 decoration-rose-500/20 p-2">Purge</button>
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/20 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50/50 border-b border-gray-100">
+                      <tr>
+                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Resource Name</th>
+                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Type</th>
+                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Location</th>
+                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Capacity</th>
+                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Status</th>
+                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {resources.map((resource) => (
+                        <tr key={resource.id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-8 py-6 text-sm font-black text-gray-900 uppercase tracking-tight italic">{resource.resourceName}</td>
+                          <td className="px-8 py-6 text-[11px] font-black text-gray-600 uppercase tracking-widest italic">{resource.resourceType?.replace(/_/g, ' ')}</td>
+                          <td className="px-8 py-6 text-sm font-bold text-gray-700">{resource.location}</td>
+                          <td className="px-8 py-6 text-center text-sm font-bold text-gray-700">{resource.capacity}</td>
+                          <td className="px-8 py-6 text-center">
+                            <span className={`inline-block px-4 py-2 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'}`}>
+                              {resource.status}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6 text-right">
+                            <div className="flex gap-3 justify-end">
+                              <button className="text-[9px] font-black text-primary hover:text-black transition-colors uppercase italic underline underline-offset-4 decoration-primary/20">Edit</button>
+                              <button onClick={() => handleDeleteResource(resource.id)} className="text-[9px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic underline underline-offset-4 decoration-rose-500/20">Delete</button>
                             </div>
-                          </div>
-                       </div>
-                    </div>
-                  ))}
-               </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
         </div>
 
