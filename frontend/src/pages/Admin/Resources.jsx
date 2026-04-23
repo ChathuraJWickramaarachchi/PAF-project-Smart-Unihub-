@@ -18,7 +18,10 @@ export default function Resources() {
     resourceType: 'LAB',
     location: '',
     capacity: '',
-    status: 'ACTIVE'
+    availableFrom: '08:00',
+    availableUntil: '20:00',
+    status: 'ACTIVE',
+    features: ''
   })
 
   useEffect(() => {
@@ -68,7 +71,7 @@ export default function Resources() {
         capacity: parseInt(newResource.capacity)
       })
       setShowAddModal(false)
-      setNewResource({ resourceName: '', resourceType: 'LAB', location: '', capacity: '', status: 'ACTIVE' })
+      setNewResource({ resourceName: '', resourceType: 'CLASSROOM', location: '', capacity: '', availableFrom: '08:00', availableUntil: '20:00', status: 'ACTIVE', features: '' })
       fetchResources()
     } catch (err) {
       setError('Failed to create resource')
@@ -127,7 +130,7 @@ export default function Resources() {
                onClick={() => setShowAddModal(true)}
                className="bg-primary text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all active:scale-95"
              >
-                + New Resource
+                + Add Resource
              </button>
           </div>
         </header>
@@ -185,35 +188,33 @@ export default function Resources() {
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching nodes in registry.</p>
               </div>
             ) : (
-              <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/20 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50/50 border-b border-gray-100">
-                      <tr>
-                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Resource Name</th>
-                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Type</th>
-                        <th className="px-8 py-5 text-left text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Location</th>
-                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Capacity</th>
-                        <th className="px-8 py-5 text-center text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Status</th>
-                        <th className="px-8 py-5 text-right text-[10px] font-black text-gray-600 uppercase tracking-widest italic">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {filteredResources.map((resource) => (
-                        <tr key={resource.id} className="hover:bg-gray-50/50 transition-colors">
-                          <td className="px-8 py-6 text-sm font-black text-gray-900 uppercase tracking-tight italic">{resource.resourceName}</td>
-                          <td className="px-8 py-6 text-[11px] font-black text-gray-600 uppercase tracking-widest italic">{resource.resourceType?.replace(/_/g, ' ')}</td>
-                          <td className="px-8 py-6 text-sm font-bold text-gray-700">{resource.location}</td>
-                          <td className="px-8 py-6 text-center text-sm font-bold text-gray-700">{resource.capacity}</td>
-                          <td className="px-8 py-6 text-center">
-                            <span className={`inline-block px-4 py-2 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'}`}>
-                              {resource.status}
-                            </span>
-                          </td>
-                          <td className="px-8 py-6 text-right">
-                            <div className="flex gap-3 justify-end">
-                              <button onClick={() => handleEditResource(resource)} className="px-6 py-3 bg-primary/10 text-primary font-black hover:bg-primary hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Edit</button>
-                              <button onClick={() => handleDeleteResource(resource.id)} className="px-6 py-3 bg-rose-50 text-rose-600 font-black hover:bg-rose-500 hover:text-white transition-all uppercase italic rounded-lg text-[11px] tracking-widest">Delete</button>
+               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {resources.map((resource) => (
+                    <div key={resource.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/20 group hover:-translate-y-1 transition-all">
+                       <div className="space-y-4">
+                          <div className="flex justify-between items-start gap-2">
+                             <h3 className="text-base font-black text-gray-900 tracking-tight italic uppercase truncate">{resource.resourceName}</h3>
+                             <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
+                                {resource.status}
+                             </span>
+                          </div>
+
+                          <div className="space-y-2">
+                             <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                               <span className="text-primary opacity-50">📍</span>
+                               <span className="truncate">{resource.location}</span>
+                             </div>
+                             <div className="flex items-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest italic">
+                               <span className="text-primary opacity-50">👥</span>
+                               {resource.capacity} Slots
+                             </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
+                            <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType}</span>
+                            <div className="flex gap-1">
+                               <button className="text-[8px] font-black text-primary hover:text-black transition-colors uppercase italic p-1 hover:bg-gray-50 rounded">Edit</button>
+                               <button onClick={() => handleDeleteResource(resource.id)} className="text-[8px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic p-1 hover:bg-rose-50 rounded">Del</button>
                             </div>
                           </td>
                         </tr>
@@ -227,11 +228,14 @@ export default function Resources() {
 
         {/* Create Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-             <div className="bg-white w-full max-w-3xl rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-                <div className="flex justify-between items-start mb-8">
-                   <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Add New Resource</h2>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
+             <div className="bg-white w-full max-w-2xl rounded-[4rem] p-12 lg:p-20 shadow-2xl relative overflow-hidden animate-zoom-in">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32"></div>
+                
+                <div className="relative space-y-12">
+                   <div className="space-y-4">
+                      <h2 className="text-4xl font-black text-gray-900 tracking-tighter italic uppercase leading-none">Add New <span className="text-primary not-italic">Resource</span></h2>
+                      <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em]">Register a new asset or facility</p>
                    </div>
                    <button 
                      onClick={() => setShowAddModal(false)}
@@ -241,19 +245,35 @@ export default function Resources() {
                    </button>
                 </div>
 
-                <form onSubmit={handleAddResource} className="space-y-6">
-                   {/* Row 1: Resource Name & Type */}
-                   <div className="grid grid-cols-2 gap-6">
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Resource Name</label>
-                         <input 
-                           type="text" 
-                           placeholder="e.g. Hall C-110"
-                           required 
-                           value={newResource.resourceName}
-                           onChange={(e) => setNewResource({ ...newResource, resourceName: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                         />
+                   <form onSubmit={handleAddResource} className="space-y-10">
+                      {/* Row 1: Resource Name & Type */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Resource Name</label>
+                            <input 
+                              type="text" 
+                              placeholder="e.g. Hall C-110"
+                              required 
+                              value={newResource.resourceName}
+                              onChange={(e) => setNewResource({ ...newResource, resourceName: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Type</label>
+                            <select 
+                              value={newResource.resourceType}
+                              onChange={(e) => setNewResource({ ...newResource, resourceType: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                            >
+                              <option value="LAB">Laboratory</option>
+                              <option value="AUDITORIUM">Auditorium</option>
+                              <option value="MEETING_ROOM">Meeting Room</option>
+                              <option value="SPORTS_FACILITY">Sports Facility</option>
+                              <option value="EQUIPMENT">Equipment</option>
+                              <option value="LECTURE_HALL">Lecture Hall</option>
+                            </select>
+                         </div>
                       </div>
                       <div>
                          <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Type</label>
@@ -278,18 +298,81 @@ export default function Resources() {
                       </div>
                    </div>
 
-                   {/* Row 2: Location & Capacity */}
-                   <div className="grid grid-cols-2 gap-6">
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Location / Block</label>
-                         <input 
-                           type="text" 
-                           placeholder="e.g. Block C, 1st Floor"
-                           required 
-                           value={newResource.location}
-                           onChange={(e) => setNewResource({ ...newResource, location: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                         />
+                      {/* Row 2: Location & Capacity */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Location / Block</label>
+                            <input 
+                              type="text" 
+                              placeholder="e.g. Block C, 1st Floor"
+                              required 
+                              value={newResource.location}
+                              onChange={(e) => setNewResource({ ...newResource, location: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Capacity</label>
+                            <input 
+                              type="number" 
+                              placeholder="e.g. 60"
+                              required 
+                              value={newResource.capacity}
+                              onChange={(e) => setNewResource({ ...newResource, capacity: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                            />
+                         </div>
+                      </div>
+
+                      {/* Row 3: Available From & Until */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Available From</label>
+                            <input 
+                              type="time" 
+                              value={newResource.availableFrom}
+                              onChange={(e) => setNewResource({ ...newResource, availableFrom: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Available Until</label>
+                            <input 
+                              type="time" 
+                              value={newResource.availableUntil}
+                              onChange={(e) => setNewResource({ ...newResource, availableUntil: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                            />
+                         </div>
+                      </div>
+
+                      {/* Row 4: Status */}
+                      <div className="grid grid-cols-1 gap-4">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Status</label>
+                            <select 
+                              value={newResource.status}
+                              onChange={(e) => setNewResource({ ...newResource, status: e.target.value })}
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                            >
+                              <option value="ACTIVE">ACTIVE</option>
+                              <option value="MAINTENANCE">MAINTENANCE</option>
+                            </select>
+                         </div>
+                      </div>
+
+                      {/* Row 5: Features */}
+                      <div className="grid grid-cols-1 gap-4">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Features</label>
+                            <textarea 
+                              placeholder="e.g. Projector, AC, Whiteboard..."
+                              value={newResource.features}
+                              onChange={(e) => setNewResource({ ...newResource, features: e.target.value })}
+                              rows="3"
+                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm resize-none" 
+                            />
+                         </div>
                       </div>
                       <div>
                          <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Capacity</label>
@@ -304,16 +387,9 @@ export default function Resources() {
                       </div>
                    </div>
 
-                   {/* Row 3: Available From & Until */}
-                   <div className="grid grid-cols-2 gap-6">
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Available From</label>
-                         <input 
-                           type="time" 
-                           value={newResource.availableFrom}
-                           onChange={(e) => setNewResource({ ...newResource, availableFrom: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                         />
+                      <div className="pt-10 flex gap-6">
+                         <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 px-10 py-4 text-[12px] font-black uppercase tracking-[0.2em] text-gray-700 hover:text-gray-900 transition-colors italic border border-gray-200 rounded-2xl hover:border-gray-300 bg-gray-50">Cancel</button>
+                         <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95">Add Resource</button>
                       </div>
                       <div>
                          <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Available Until</label>
