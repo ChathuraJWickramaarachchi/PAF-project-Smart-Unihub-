@@ -80,12 +80,16 @@ export default function Facilities() {
     }
   }
 
-  const filteredResources = resources.filter(res =>
-    (res.resourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    res.resourceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    res.location?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (selectedType === '' || res.resourceType === selectedType)
-  )
+  const filteredResources = resources.filter(res => {
+    const matchesSearch = (res.resourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          res.resourceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          res.location?.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesType = selectedType === '' || res.resourceType === selectedType;
+    const matchesAvailability = selectedAvailability === '' || 
+      (selectedAvailability === 'AVAILABLE' ? res.status === 'ACTIVE' : res.status !== 'ACTIVE');
+      
+    return matchesSearch && matchesType && matchesAvailability;
+  })
 
   const getStatusDisplay = (status) => {
     switch(status) {

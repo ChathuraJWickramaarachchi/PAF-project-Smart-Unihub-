@@ -8,6 +8,7 @@ export default function Resources() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState('')
+  const [selectedAvailability, setSelectedAvailability] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -59,9 +60,12 @@ export default function Resources() {
     }
   }
 
-  const filteredResources = resources.filter(res =>
-    (selectedType === '' || res.resourceType === selectedType)
-  )
+  const filteredResources = resources.filter(res => {
+    const matchesType = selectedType === '' || res.resourceType === selectedType;
+    const matchesAvailability = selectedAvailability === '' || 
+      (selectedAvailability === 'AVAILABLE' ? res.status === 'ACTIVE' : res.status !== 'ACTIVE');
+    return matchesType && matchesAvailability;
+  })
 
   const handleAddResource = async (e) => {
     e.preventDefault()
@@ -176,6 +180,16 @@ export default function Resources() {
                 <option value="SOUND_SYSTEM">Sound System</option>
                 <option value="MICROPHONE">Microphone</option>
                 <option value="VR_BOX">VR Box</option>
+              </select>
+
+              <select 
+                value={selectedAvailability}
+                onChange={(e) => setSelectedAvailability(e.target.value)}
+                className="bg-white border border-gray-100 rounded-[2rem] px-6 py-5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all shadow-xl shadow-gray-200/20 italic cursor-pointer"
+              >
+                <option value="">Any Status</option>
+                <option value="AVAILABLE">Available</option>
+                <option value="UNAVAILABLE">Unavailable</option>
               </select>
             </div>
 
