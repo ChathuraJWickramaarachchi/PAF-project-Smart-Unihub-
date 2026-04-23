@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 // Pages
 import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import Home from './pages/Home'
 import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
@@ -53,6 +54,11 @@ function AppContent() {
           <Route path="/login" element={
             <NavigateIfAuthenticated>
               <Login />
+            </NavigateIfAuthenticated>
+          } />
+          <Route path="/signup" element={
+            <NavigateIfAuthenticated>
+              <SignUp />
             </NavigateIfAuthenticated>
           } />
 

@@ -1,1 +1,1 @@
-# PAF-project-Smart-Unihub-
+# SmartUni Portal - Smart Campus Management System
