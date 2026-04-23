@@ -306,7 +306,6 @@ export default function Bookings() {
                     <th className="pb-6">Resource / Location</th>
                     <th className="pb-6">Schedule</th>
                     <th className="pb-6">User</th>
-                    <th className="pb-6">Email</th>
                     <th className="pb-6">Status</th>
                     <th className="pb-6 text-right">Actions</th>
                   </tr>
@@ -328,7 +327,6 @@ export default function Bookings() {
                         </div>
                       </td>
                       <td className="py-6 text-[12px] font-bold text-gray-500 uppercase">{booking.userFullName || 'Anonymous'}</td>
-                      <td className="py-6 text-[11px] font-medium text-gray-400 lowercase italic">{booking.userEmail}</td>
                       <td className="py-6">
                         <span className={`inline-flex items-center px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter ${booking.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                           booking.status === 'PENDING' ? 'bg-amber-50 text-amber-600' :
@@ -513,17 +511,17 @@ export default function Bookings() {
                   {!newBooking.resourceId || !newBooking.date || !newBooking.startTime || !newBooking.endTime ? '○' : checkingAvailability ? '⌚' : isAvailable ? '✓' : '⚡'}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[12px] font-black uppercase tracking-widest">
-                    {checkingAvailability ? 'Validation in progress' : isAvailable ? 'Sequence Approved' : 'CRITICAL CONFLICT'}
+                  <span className="text-[12px] font-bold uppercase tracking-tight">
+                    {checkingAvailability ? 'Validation in progress' : isAvailable ? 'Sequence Approved' : 'Operational Conflict'}
                   </span>
-                  <span className="text-[10px] font-bold opacity-90 uppercase tracking-tighter">
+                  <span className="text-[10px] font-medium opacity-70 italic font-serif">
                     {!newBooking.resourceId || !newBooking.date || !newBooking.startTime || !newBooking.endTime
                       ? 'Specify target parameters to initialize safety check'
                       : checkingAvailability
                         ? 'Cross-referencing temporal datasets...'
                         : isAvailable
-                          ? '✓ Spatial-temporal window is clear for allocation'
-                          : '✕ OPERATIONAL COLLISION: RESOURCE IS BANNED FOR THIS SLOT'}
+                          ? 'Spatial-temporal window is clear for allocation'
+                          : 'Conflict detected with existing sequence. Resource unavailable.'}
                   </span>
                 </div>
               </div>

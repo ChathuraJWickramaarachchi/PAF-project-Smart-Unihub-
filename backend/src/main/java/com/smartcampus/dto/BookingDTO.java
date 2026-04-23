@@ -31,152 +31,58 @@ public class BookingDTO {
     private String location;
     private Integer resourceCapacity;
     private String userFullName;
-    private String userEmail;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     // Getters and Setters
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getResourceId() { return resourceId; }
+    public void setResourceId(String resourceId) { this.resourceId = resourceId; }
 
-    public String getResourceId() {
-        return resourceId;
-    }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
+    public String getBookingPurpose() { return bookingPurpose; }
+    public void setBookingPurpose(String bookingPurpose) { this.bookingPurpose = bookingPurpose; }
 
-    public String getUserId() {
-        return userId;
-    }
+    public Integer getExpectedAttendees() { return expectedAttendees; }
+    public void setExpectedAttendees(Integer expectedAttendees) { this.expectedAttendees = expectedAttendees; }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public String getAdditionalNotes() { return additionalNotes; }
+    public void setAdditionalNotes(String additionalNotes) { this.additionalNotes = additionalNotes; }
 
-    public String getBookingPurpose() {
-        return bookingPurpose;
-    }
+    public LocalDateTime getStartTime() { return startTime; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
 
-    public void setBookingPurpose(String bookingPurpose) {
-        this.bookingPurpose = bookingPurpose;
-    }
+    public LocalDateTime getEndTime() { return endTime; }
+    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
 
-    public Integer getExpectedAttendees() {
-        return expectedAttendees;
-    }
+    public BookingStatus getStatus() { return status; }
+    public void setStatus(BookingStatus status) { this.status = status; }
 
-    public void setExpectedAttendees(Integer expectedAttendees) {
-        this.expectedAttendees = expectedAttendees;
-    }
+    public String getApprovalNotes() { return approvalNotes; }
+    public void setApprovalNotes(String approvalNotes) { this.approvalNotes = approvalNotes; }
 
-    public String getAdditionalNotes() {
-        return additionalNotes;
-    }
+    public String getApprovedById() { return approvedById; }
+    public void setApprovedById(String approvedById) { this.approvedById = approvedById; }
 
-    public void setAdditionalNotes(String additionalNotes) {
-        this.additionalNotes = additionalNotes;
-    }
+    public String getResourceName() { return resourceName; }
+    public void setResourceName(String resourceName) { this.resourceName = resourceName; }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
+    public Integer getResourceCapacity() { return resourceCapacity; }
+    public void setResourceCapacity(Integer resourceCapacity) { this.resourceCapacity = resourceCapacity; }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
+    public String getUserFullName() { return userFullName; }
+    public void setUserFullName(String userFullName) { this.userFullName = userFullName; }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public String getApprovalNotes() {
-        return approvalNotes;
-    }
-
-    public void setApprovalNotes(String approvalNotes) {
-        this.approvalNotes = approvalNotes;
-    }
-
-    public String getApprovedById() {
-        return approvedById;
-    }
-
-    public void setApprovedById(String approvedById) {
-        this.approvedById = approvedById;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Integer getResourceCapacity() {
-        return resourceCapacity;
-    }
-
-    public void setResourceCapacity(Integer resourceCapacity) {
-        this.resourceCapacity = resourceCapacity;
-    }
-
-    public String getUserFullName() {
-        return userFullName;
-    }
-
-    public void setUserFullName(String userFullName) {
-        this.userFullName = userFullName;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

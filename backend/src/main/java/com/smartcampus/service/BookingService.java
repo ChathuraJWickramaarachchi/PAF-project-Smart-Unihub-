@@ -36,17 +36,14 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
 
         // Check for conflicts
-        List<BookingStatus> activeStatuses = List.of(BookingStatus.APPROVED, BookingStatus.PENDING);
-        List<Booking> conflicts = bookingRepository.findByResource_IdAndStatusInAndIdNotAndStartTimeBeforeAndEndTimeAfter(
-                bookingDTO.getResourceId(),
-                activeStatuses,
-                "NEW_BOOKING",
+        List<Booking> conflicts = bookingRepository.findConflictingBookings(
+                resource,
+                bookingDTO.getStartTime(),
                 bookingDTO.getEndTime(),
-                bookingDTO.getStartTime());
+                "NEW_BOOKING");
 
         if (!conflicts.isEmpty()) {
-            throw new BookingConflictException(
-                    "Resource is already booked for this time period. Please select another time.");
+            throw new BookingConflictException("Resource is already booked for this time period. Please select another time.");
         }
 
         User creator = userRepository.findById(creatorUserId)
@@ -92,13 +89,11 @@ public class BookingService {
         }
 
         // Final check for conflicts before approving (in case another was approved in the meantime)
-        List<BookingStatus> activeStatuses = List.of(BookingStatus.APPROVED, BookingStatus.PENDING);
-        List<Booking> conflicts = bookingRepository.findByResource_IdAndStatusInAndIdNotAndStartTimeBeforeAndEndTimeAfter(
-                booking.getResource().getId(),
-                activeStatuses,
-                bookingId,
+        List<Booking> conflicts = bookingRepository.findConflictingBookings(
+                booking.getResource(),
+                booking.getStartTime(),
                 booking.getEndTime(),
-                booking.getStartTime());
+                bookingId);
 
         if (!conflicts.isEmpty()) {
             throw new BookingConflictException(
@@ -167,13 +162,11 @@ public class BookingService {
     }
 
     public boolean checkAvailability(String resourceId, LocalDateTime startTime, LocalDateTime endTime) {
-        List<BookingStatus> activeStatuses = List.of(BookingStatus.APPROVED, BookingStatus.PENDING);
-        List<Booking> conflicts = bookingRepository.findByResource_IdAndStatusInAndIdNotAndStartTimeBeforeAndEndTimeAfter(
-                resourceId,
-                activeStatuses,
-                "CHECK_AVAILABILITY",
-                endTime,
-                startTime);
+        Resource resource = resourceRepository.findById(resourceId).orElse(null);
+        if (resource == null) return false;
+        
+        List<Booking> conflicts = bookingRepository.findConflictingBookings(resource, startTime, endTime,
+                "CHECK_AVAILABILITY");
         return conflicts.isEmpty();
     }
 
@@ -206,14 +199,11 @@ public class BookingService {
     }
 
     public List<BookingDTO> getDailySchedule(String resourceId, LocalDateTime startOfDay) {
+        Resource resource = resourceRepository.findById(resourceId).orElse(null);
+        if (resource == null) return java.util.Collections.emptyList();
+
         LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
-        List<BookingStatus> activeStatuses = List.of(BookingStatus.APPROVED, BookingStatus.PENDING);
-        return bookingRepository.findByResource_IdAndStatusInAndIdNotAndStartTimeBeforeAndEndTimeAfter(
-                resourceId,
-                activeStatuses,
-                "DAILY_SCHEDULE",
-                endOfDay,
-                startOfDay)
+        return bookingRepository.findConflictingBookings(resource, startOfDay, endOfDay, "DAILY_SCHEDULE")
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -241,7 +231,6 @@ public class BookingService {
         dto.setResourceCapacity(booking.getResource().getCapacity());
         dto.setUserId(booking.getUser().getId());
         dto.setUserFullName(booking.getUser().getFullName());
-        dto.setUserEmail(booking.getUser().getEmail());
         dto.setBookingPurpose(booking.getBookingPurpose());
         dto.setExpectedAttendees(booking.getExpectedAttendees());
         dto.setAdditionalNotes(booking.getAdditionalNotes());
