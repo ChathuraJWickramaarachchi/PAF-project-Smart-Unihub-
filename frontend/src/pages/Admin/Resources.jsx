@@ -239,7 +239,7 @@ export default function Resources() {
                            </span>
                         </td>
                         <td className="px-10 py-6">
-                          <div className="flex justify-end gap-3 translate-x-4 group-hover:translate-x-0 transition-all opacity-0 group-hover:opacity-100">
+                          <div className="flex justify-end gap-3 transition-all">
                             <button
                               onClick={() => handleEditResource(resource)}
                               className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/10"
