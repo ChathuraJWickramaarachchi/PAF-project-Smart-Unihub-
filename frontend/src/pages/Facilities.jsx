@@ -6,6 +6,7 @@ export default function Facilities() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedType, setSelectedType] = useState('')
 
   useEffect(() => {
     fetchResources()
@@ -25,20 +26,22 @@ export default function Facilities() {
   }
 
   const filteredResources = resources.filter(res =>
-    res.resourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (res.resourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     res.resourceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    res.location?.toLowerCase().includes(searchTerm.toLowerCase())
+    res.location?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedType === '' || res.resourceType === selectedType)
   )
 
-  const getIconForType = (type) => {
-    switch (type) {
-      case 'CLASSROOM': return '🏫'
-      case 'LAB': return '🔬'
-      case 'AUDITORIUM': return '🎭'
-      case 'MEETING_ROOM': return '💼'
-      case 'SPORTS_FACILITY': return '⚽'
-      case 'EQUIPMENT': return '💻'
-      default: return '🏢'
+  const getStatusDisplay = (status) => {
+    switch(status) {
+      case 'ACTIVE':
+        return { label: 'Active', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600', borderColor: 'border-emerald-100' }
+      case 'MAINTENANCE':
+        return { label: 'Maintenance', bgColor: 'bg-rose-50', textColor: 'text-rose-600', borderColor: 'border-rose-100' }
+      case 'OUT_OF_SERVICE':
+        return { label: 'Out of Service', bgColor: 'bg-rose-50', textColor: 'text-rose-600', borderColor: 'border-rose-100' }
+      default:
+        return { label: status, bgColor: 'bg-gray-50', textColor: 'text-gray-600', borderColor: 'border-gray-100' }
     }
   }
 
@@ -65,6 +68,28 @@ export default function Facilities() {
               />
               <span className="absolute left-4 top-5 text-gray-500 group-focus-within:text-primary transition-colors">🔍</span>
             </div>
+
+            <div className="relative w-full max-w-xs">
+              <select 
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
+                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+              >
+                <option value="">All Resource Types</option>
+                <option value="LAB">Laboratory</option>
+                <option value="AUDITORIUM">Auditorium</option>
+                <option value="MEETING_ROOM">Meeting Room</option>
+                <option value="SPORTS_FACILITY">Sports Facility</option>
+                <option value="LECTURE_HALL">Lecture Hall</option>
+                <option value="PROJECTOR">Projector</option>
+                <option value="SMART_BOARD">Smart Board</option>
+                <option value="WHITEBOARD">Whiteboard</option>
+                <option value="SOUND_SYSTEM">Sound System</option>
+                <option value="MICROPHONE">Microphone</option>
+                <option value="VR_BOX">VR Box</option>
+              </select>
+            </div>
         </div>
       </div>
 
@@ -80,18 +105,18 @@ export default function Facilities() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredResources.map((resource) => (
-            <div key={resource.id} className="bg-white p-2 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
-              <div className="relative aspect-video bg-gray-900 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-6xl shadow-inner">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                {getIconForType(resource.resourceType)}
-              </div>
-              
-              <div className="p-8 space-y-6">
+            <div key={resource.id} className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
+              <div className="space-y-6">
                 <div className="flex justify-between items-start">
                    <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate max-w-[150px]">{resource.resourceName}</h3>
-                   <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
-                      {resource.status}
-                   </span>
+                   {(() => {
+                     const statusDisplay = getStatusDisplay(resource.status)
+                     return (
+                       <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${statusDisplay.bgColor} ${statusDisplay.textColor} border ${statusDisplay.borderColor}`}>
+                         {statusDisplay.label}
+                       </span>
+                     )
+                   })()}
                 </div>
 
                 <div className="space-y-3">
@@ -107,7 +132,17 @@ export default function Facilities() {
 
                 <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
                   <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType?.replace('_', ' ')}</span>
-                  <button className="bg-primary text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors">Details</button>
+                  <button 
+                    disabled={resource.status !== 'ACTIVE'}
+                    title={resource.status !== 'ACTIVE' ? `Unavailable - Resource is under ${resource.status.toLowerCase()}` : 'Book this resource'}
+                    className={`px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors ${
+                      resource.status === 'ACTIVE' 
+                        ? 'bg-primary text-white shadow-lg shadow-primary/20 hover:bg-gray-900 cursor-pointer' 
+                        : 'bg-gray-300 text-gray-500 shadow-none cursor-not-allowed opacity-60'
+                    }`}
+                  >
+                    Book Now
+                  </button>
                 </div>
               </div>
             </div>
