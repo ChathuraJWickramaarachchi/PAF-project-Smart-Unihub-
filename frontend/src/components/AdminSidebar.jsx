@@ -18,52 +18,53 @@ export default function AdminSidebar() {
   ]
 
   return (
-    <aside className="w-72 h-screen bg-white flex flex-col shrink-0 border-r border-gray-100 selection:bg-primary/10">
+    <aside className="w-64 h-screen bg-white flex flex-col shrink-0 border-r border-gray-200">
       {/* Brand Section */}
-      <div className="p-8 pb-4">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary/20">🎓</div>
+      <div className="p-6 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center text-lg">🎓</div>
           <div>
-            <div className="text-gray-900 font-black text-base tracking-tight leading-none italic">SmartUni Portal</div>
-            <div className="text-gray-400 font-bold text-[8px] uppercase tracking-widest mt-1">Admin Portal</div>
+            <div className="text-base font-semibold text-gray-900">SmartUni Portal</div>
+            <div className="text-xs text-gray-500 mt-0.5">Admin Dashboard</div>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-4 py-8 space-y-2">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
-            className={`flex items-center justify-between px-5 py-4 rounded-xl transition-all group ${isActive(item.path) ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-500 hover:bg-gray-50/50 hover:text-gray-900'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+              isActive(item.path) 
+                ? 'bg-primary/5 text-primary border-l-2 border-primary' 
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
           >
-            <div className="flex items-center gap-4">
-              <span className={`text-lg opacity-60 group-hover:opacity-100 transition-opacity ${isActive(item.path) ? 'opacity-100' : ''}`}>{item.icon}</span>
-              <span className="font-bold text-[13px] tracking-tight">{item.name}</span>
-            </div>
-            {isActive(item.path) && <span className="text-gray-400 text-xs">›</span>}
+            <span className="text-lg">{item.icon}</span>
+            <span>{item.name}</span>
           </Link>
         ))}
       </nav>
 
       {/* Bottom User Profile */}
-      <div className="p-4 border-t border-gray-100 space-y-4">
-        <div className="flex items-center gap-4 p-4">
-          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-black text-gray-400 text-xs uppercase shadow-inner">
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-semibold text-primary text-sm">
             {user?.fullName?.charAt(0) || 'A'}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-gray-900 font-bold text-[12px] truncate">{user?.fullName || 'Administrator'}</div>
-            <div className="text-gray-400 font-medium text-[10px] truncate">{user?.email || 'admin@smartuni.edu'}</div>
+            <div className="text-sm font-medium text-gray-900 truncate">{user?.fullName || 'Administrator'}</div>
+            <div className="text-xs text-gray-500 truncate">{user?.email || 'admin@smartuni.edu'}</div>
           </div>
         </div>
 
         <button
           onClick={() => { logout(); navigate('/'); }}
-          className="w-full flex items-center gap-3 px-6 py-4 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-95 group font-bold text-[12px]"
+          className="w-full flex items-center gap-2 px-4 py-2.5 mt-2 text-sm font-medium text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
         >
-          <span className="opacity-40 group-hover:opacity-100 transition-opacity">🚪</span>
+          <span>🚪</span>
           <span>Sign Out</span>
         </button>
       </div>

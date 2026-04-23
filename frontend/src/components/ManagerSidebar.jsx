@@ -18,14 +18,14 @@ export default function ManagerSidebar() {
   ]
 
   return (
-    <aside className="w-72 h-screen bg-white flex flex-col shrink-0 border-r border-gray-100 selection:bg-primary/10">
+    <aside className="w-64 h-screen bg-white flex flex-col shrink-0 border-r border-gray-200 selection:bg-primary/10">
       {/* Brand Section */}
-      <div className="p-8 pb-4">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary/20">🎓</div>
+      <div className="p-6 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center text-lg">🎓</div>
           <div>
-            <div className="text-gray-900 font-black text-base tracking-tight leading-none italic">SmartUni Portal</div>
-            <div className="text-gray-400 font-bold text-[8px] uppercase tracking-widest mt-1">Manager Portal</div>
+            <div className="text-gray-900 font-semibold text-gray-900">SmartUni Portal</div>
+            <div className="text-gray-400 text-xs text-gray-500 mt-1">Manager Portal</div>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@ export default function ManagerSidebar() {
             to={item.path}
             className={`flex items-center justify-between px-5 py-4 rounded-xl transition-all group ${isActive(item.path) ? 'bg-gray-50 text-gray-900 shadow-sm' : 'text-gray-500 hover:bg-gray-50/50 hover:text-gray-900'}`}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <span className={`text-lg opacity-60 group-hover:opacity-100 transition-opacity ${isActive(item.path) ? 'opacity-100' : ''}`}>{item.icon}</span>
               <span className="font-bold text-[13px] tracking-tight">{item.name}</span>
             </div>
@@ -48,8 +48,8 @@ export default function ManagerSidebar() {
       </nav>
 
       {/* Bottom User Profile */}
-      <div className="p-4 border-t border-gray-100 space-y-4">
-        <div className="flex items-center gap-4 p-4">
+      <div className="p-4 border-t border-gray-200 space-y-4">
+        <div className="flex items-center gap-3 p-4">
           <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-black text-gray-400 text-xs uppercase shadow-inner">
             {user?.fullName?.charAt(0) || 'U'}
           </div>

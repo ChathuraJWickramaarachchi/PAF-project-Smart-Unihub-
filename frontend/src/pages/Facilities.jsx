@@ -43,77 +43,92 @@ export default function Facilities() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-8 flex flex-col gap-10 selection:bg-primary/10">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gray-900 p-20 rounded-[4rem] group shadow-2xl shadow-gray-200">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px] -mr-48 -mt-48 group-hover:bg-primary/20 transition-all duration-1000"></div>
-        <div className="relative z-10 flex flex-col items-center text-center space-y-8">
-            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none italic">
-              Campus <span className="text-primary not-italic">Infrastructure</span>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center space-y-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-white">
+              Campus Facilities
             </h1>
-            <p className="max-w-2xl text-gray-400 font-medium text-lg leading-relaxed italic">
-              Access the complete inventory of academic and technical facilities. 
-              Search, filter, and allocate resources in real-time.
+            <p className="max-w-2xl mx-auto text-gray-300 text-lg">
+              Browse and manage all campus resources, classrooms, labs, and equipment.
             </p>
-            <div className="relative w-full max-w-xl group">
+            <div className="relative w-full max-w-xl mx-auto">
               <input 
                 type="text" 
-                placeholder="Search classrooms, labs, telemetry nodes..." 
+                placeholder="Search facilities..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-12 py-5 text-white placeholder:text-gray-500 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all" 
+                className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg pl-12 pr-4 py-3 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" 
               />
-              <span className="absolute left-4 top-5 text-gray-500 group-focus-within:text-primary transition-colors">🔍</span>
+              <span className="absolute left-4 top-3.5 text-gray-400">🔍</span>
             </div>
+          </div>
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center italic text-gray-400 font-black uppercase tracking-widest text-xs">Accessing Facility Matrix...</div>
-      ) : error ? (
-        <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-xl text-[10px] font-black text-rose-700 uppercase tracking-widest animate-fade-in mx-auto max-w-xl w-full">{error}</div>
-      ) : filteredResources.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-20 text-center space-y-8 animate-fade-in opacity-50 italic grayscale">
-           <div className="text-6xl text-gray-300">🕵️</div>
-           <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching entities in the registry.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredResources.map((resource) => (
-            <div key={resource.id} className="bg-white p-2 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 group hover:-translate-y-2 transition-all cursor-pointer">
-              <div className="relative aspect-video bg-gray-900 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-6xl shadow-inner">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                {getIconForType(resource.resourceType)}
-              </div>
-              
-              <div className="p-8 space-y-6">
-                <div className="flex justify-between items-start">
-                   <h3 className="text-xl font-black text-gray-900 tracking-tight italic uppercase truncate max-w-[150px]">{resource.resourceName}</h3>
-                   <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${resource.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-500 border border-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100'}`}>
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 border border-red-200 p-4 rounded-lg text-sm text-red-700 max-w-xl mx-auto">
+            {error}
+          </div>
+        ) : filteredResources.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🔍</div>
+            <p className="text-gray-500 text-lg">No facilities found matching your search.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredResources.map((resource) => (
+              <div key={resource.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                <div className="aspect-video bg-gray-100 flex items-center justify-center text-5xl relative">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
+                  {getIconForType(resource.resourceType)}
+                </div>
+                
+                <div className="p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-base font-semibold text-gray-900 truncate flex-1">{resource.resourceName}</h3>
+                    <span className={`ml-2 px-2.5 py-1 rounded-md text-xs font-medium ${
+                      resource.status === 'ACTIVE' 
+                        ? 'bg-green-50 text-green-700 border border-green-200' 
+                        : 'bg-red-50 text-red-700 border border-red-200'
+                    }`}>
                       {resource.status}
-                   </span>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                    <span className="text-primary opacity-50 text-base">📍</span>
-                    {resource.location}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                    <span className="text-primary opacity-50 text-base">👥</span>
-                    Capacity: {resource.capacity} Nodes
-                  </div>
-                </div>
 
-                <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
-                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">{resource.resourceType?.replace('_', ' ')}</span>
-                  <button className="bg-primary text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors">Details</button>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <span>📍</span>
+                      <span>{resource.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span>👥</span>
+                      <span>Capacity: {resource.capacity}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">
+                      {resource.resourceType?.replace('_', ' ')}
+                    </span>
+                    <button className="px-4 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition-colors">
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

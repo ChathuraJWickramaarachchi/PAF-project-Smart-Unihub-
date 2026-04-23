@@ -1,19 +1,29 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../context/AuthContext'
 import { FaEye, FaEyeSlash, FaLock, FaUser, FaGoogle } from 'react-icons/fa'
 
 export default function Login() {
   const [selectedRole, setSelectedRole] = useState('admin')
-  const [email, setEmail] = useState('admin@smartuni.edu')
-  const [password, setPassword] = useState('password123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [focusedField, setFocusedField] = useState(null)
+  const [rememberMe, setRememberMe] = useState(false)
   const { login, googleLogin, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
+
+  // Load remembered email on mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail')
+    if (rememberedEmail) {
+      setEmail(rememberedEmail)
+      setRememberMe(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -39,18 +49,37 @@ export default function Login() {
     { id: 'manager', title: 'Manager', description: 'Governance', icon: '📋', demoEmail: 'faculty@smartuni.edu', demoPassword: 'password123' }
   ]
 
-  const handleRoleSelect = (roleId) => {
+  const handleRoleSelect = useCallback((roleId) => {
     setSelectedRole(roleId)
     const role = roles.find(r => r.id === roleId)
     if (role) {
       setEmail(role.demoEmail)
       setPassword(role.demoPassword)
+      setError('') // Clear error on role change
     }
-  }
+  }, [roles])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    
+    // Validate inputs
+    if (!email.trim()) {
+      setError('Email is required')
+      return
+    }
+    if (!password) {
+      setError('Password is required')
+      return
+    }
+    
+    // Handle remember me
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', email)
+    } else {
+      localStorage.removeItem('rememberedEmail')
+    }
+    
     setLoading(true)
     try {
       const result = await login(email, password)
@@ -85,10 +114,15 @@ export default function Login() {
       else redirectPath = '/user-dashboard'
       navigate(redirectPath, { replace: true })
     } catch (err) {
+      console.error('Google login error:', err)
       setError(err.message || 'Google Auth relay interrupted.')
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleGoogleError = () => {
+    setError('Google Authentication Failed.')
   }
 
   if (isAuthenticated && user) {
@@ -187,11 +221,11 @@ export default function Login() {
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             {error && (
-              <div className="bg-rose-500/10 border-l-2 border-rose-500 text-rose-500 p-4 rounded-xl text-[10px] font-black uppercase tracking-widest animate-shake italic flex items-center gap-2">
+              <div className="bg-rose-500/10 border-l-2 border-rose-500 text-rose-500 p-4 rounded-xl text-[10px] font-black uppercase tracking-widest animate-shake italic flex items-center gap-2" role="alert" aria-live="assertive">
                 <span className="text-sm">⚠️</span>
-                {error}
+                <span>{error}</span>
               </div>
             )}
 
@@ -209,6 +243,8 @@ export default function Login() {
                   className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4.5 text-sm font-bold text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-600 italic shadow-inner"
                   placeholder="Registry Identity (Email)"
                   required
+                  autoComplete="email"
+                  aria-label="Email Address"
                 />
               </div>
               
@@ -225,11 +261,14 @@ export default function Login() {
                   className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-14 py-4.5 text-sm font-bold text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-600 italic shadow-inner"
                   placeholder="Security Key (Password)"
                   required
+                  autoComplete="current-password"
+                  aria-label="Password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors duration-300 focus:outline-none"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary rounded"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <FaEyeSlash className="w-4 h-4" /> : <FaEye className="w-4 h-4" />}
                 </button>
@@ -237,9 +276,14 @@ export default function Login() {
             </div>
 
             <div className="flex items-center justify-between text-[10px]">
-              <label className="flex items-center gap-2 text-gray-400 cursor-pointer hover:text-white transition-colors">
-                <input type="checkbox" className="rounded border-white/10 bg-white/5 text-primary focus:ring-primary focus:ring-offset-0" />
-                <span className="font-bold uppercase tracking-wider">Remember me</span>
+              <label className="flex items-center gap-2 text-gray-400 cursor-pointer hover:text-white transition-colors group">
+                <input 
+                  type="checkbox" 
+                  className="rounded border-white/10 bg-white/5 text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <span className="font-bold uppercase tracking-wider group-hover:underline">Remember me</span>
               </label>
               <button type="button" className="text-primary hover:text-primary/80 font-black uppercase tracking-wider transition-colors">
                 Forgot Password?
@@ -249,7 +293,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-5 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-5 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-900"
+              aria-label="Sign in to your account"
             >
               {loading ? (
                 <>
@@ -276,11 +321,10 @@ export default function Login() {
                <div className="flex-1 min-w-[200px]">
                   <GoogleLogin
                     onSuccess={handleGoogleLogin}
-                    onError={() => setError('Google Authentication Failed.')}
+                    onError={handleGoogleError}
                     theme="filled_black"
                     shape="pill"
                     size="large"
-                    width="100%"
                     text="signin_with"
                   />
                </div>
@@ -293,10 +337,10 @@ export default function Login() {
           
           <div className="pt-8 text-center">
              <p className="text-gray-500 text-xs">
-               Don't have access?{' '}
-               <button className="text-primary hover:text-primary/80 font-black uppercase tracking-wider transition-colors">
-                 Request Credentials
-               </button>
+               Don't have an account?{' '}
+               <Link to="/signup" className="text-primary hover:text-primary/80 font-black uppercase tracking-wider transition-colors hover:underline">
+                 Sign Up
+               </Link>
              </p>
           </div>
           

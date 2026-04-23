@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { NotificationAPI } from '../services/api'
-import { FaBell } from 'react-icons/fa'
+import { FaBell, FaUser, FaSignOutAlt, FaChevronDown } from 'react-icons/fa'
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth()
@@ -39,6 +39,8 @@ export default function Navbar() {
     navigate('/notifications')
   }
 
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
+
   const dashboardPages = [
     '/admin-dashboard',
     '/admin/users',
@@ -58,15 +60,22 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center">
-      <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary/20">🎓</div>
-          <span className="text-lg font-black text-gray-900 tracking-tight">SmartUni <span className="text-primary italic">Portal</span></span>
-        </Link>
+    <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all">
+              🎓
+            </div>
+            <div>
+              <span className="text-lg font-bold text-gray-900">SmartUni</span>
+              <span className="text-lg font-bold text-primary ml-1">Portal</span>
+            </div>
+          </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-1">
           {isAuthenticated ? (
             <>
               {[
@@ -79,38 +88,71 @@ export default function Navbar() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`text-[10px] font-black uppercase tracking-widest transition-all ${isActive(link.path) ? 'text-primary' : 'text-gray-400 hover:text-gray-900'}`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    isActive(link.path) 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="h-4 w-px bg-gray-100 mx-2"></div>
-              <Link to="/profile" className="flex items-center gap-3 group">
-                <div className="text-right">
-                  <div className="text-[10px] font-black text-gray-900 uppercase tracking-widest">{user?.fullName || 'Identity'}</div>
-                  <div className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{user?.role}</div>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                  {user?.fullName?.charAt(0).toUpperCase() || '👤'}
-                </div>
-              </Link>
+                        
+              {/* Divider */}
+              <div className="h-6 w-px bg-gray-200 mx-2"></div>
+                        
+              {/* Notification Bell */}
               <button
                 onClick={handleNotificationClick}
-                className="relative p-2 rounded-xl bg-gray-50 hover:bg-primary/10 transition-all group"
+                className="relative p-2.5 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <FaBell className="w-5 h-5 text-gray-600 group-hover:text-primary transition-all" />
+                <FaBell className="w-5 h-5 text-gray-600" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
-                    {unreadCount > 99 ? '99+' : unreadCount}
+                  <span className="absolute top-1.5 right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                    {unreadCount > 99 ? '9+' : unreadCount}
                   </span>
                 )}
               </button>
-              <button
-                onClick={handleLogout}
-                className="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95"
-              >
-                Exit
-              </button>
+                        
+              {/* Profile Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-all"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white text-sm font-semibold shadow-md">
+                    {user?.fullName?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <FaChevronDown className={`w-3 h-3 text-gray-500 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                          
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-2 animate-fade-in">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-900">{user?.fullName || 'User'}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{user?.email}</p>
+                      <span className="inline-block mt-2 px-2 py-1 bg-primary/10 text-primary text-[10px] font-semibold rounded-md capitalize">
+                        {user?.role}
+                      </span>
+                    </div>
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <FaUser className="w-4 h-4" />
+                      <span>Profile Settings</span>
+                    </Link>
+                    <button
+                      onClick={() => { logout(); navigate('/'); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <FaSignOutAlt className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <>
@@ -122,14 +164,18 @@ export default function Navbar() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`text-[10px] font-black uppercase tracking-widest transition-all ${isActive(link.path) ? 'text-primary' : 'text-gray-400 hover:text-gray-900'}`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    isActive(link.path) 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
               <Link
                 to="/login"
-                className="bg-primary text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-0.5 transition-all"
+                className="ml-3 px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-all shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/30"
               >
                 Login
               </Link>
@@ -138,15 +184,80 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-2xl" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? '✕' : '☰'}
+        <button 
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <div className="w-6 h-6 flex flex-col justify-center items-center">
+            <span className={`block w-5 h-0.5 bg-gray-600 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+            <span className={`block w-5 h-0.5 bg-gray-600 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : 'mt-1.5'}`}></span>
+            <span className={`block w-5 h-0.5 bg-gray-600 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : 'mt-1.5'}`}></span>
+          </div>
         </button>
       </div>
+    </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-20 left-0 w-full bg-white border-b border-gray-100 p-6 flex flex-col gap-4 animate-slide-in md:hidden">
-          {/* Mobile links here if needed */}
+        <div className="md:hidden border-t border-gray-200 bg-white animate-slide-in">
+          <div className="px-6 py-4 space-y-1">
+            {isAuthenticated ? (
+              <>
+                {['Home', 'Facilities', 'Tickets', 'About', 'Contact'].map((name, i) => (
+                  <Link 
+                    key={i} 
+                    to={['/', '/facilities', '/tickets', '/about', '/contact'][i]} 
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {name}
+                  </Link>
+                ))}
+                <div className="border-t border-gray-200 pt-3 mt-3 space-y-2">
+                  <Link 
+                    to="/profile" 
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-semibold shadow-md">
+                      {user?.fullName?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-gray-900">{user?.fullName}</div>
+                      <div className="text-xs text-gray-500 capitalize">{user?.role}</div>
+                    </div>
+                  </Link>
+                  <button 
+                    onClick={() => { logout(); navigate('/'); setIsMobileMenuOpen(false); }} 
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <FaSignOutAlt className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {['Home', 'About', 'Contact'].map((name, i) => (
+                  <Link 
+                    key={i} 
+                    to={['/home', '/about', '/contact'][i]} 
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {name}
+                  </Link>
+                ))}
+                <Link 
+                  to="/login" 
+                  className="block mt-4 bg-primary text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-primary-dark transition-all shadow-md text-center"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
     </nav>
