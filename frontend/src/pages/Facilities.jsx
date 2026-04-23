@@ -9,6 +9,7 @@ export default function Facilities() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState('')
+  const [selectedAvailability, setSelectedAvailability] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newBooking, setNewBooking] = useState({
     resourceId: '',
@@ -174,6 +175,43 @@ export default function Facilities() {
               className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-12 py-5 text-white placeholder:text-gray-500 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all"
             />
             <span className="absolute left-4 top-5 text-gray-500 group-focus-within:text-primary transition-colors">🔍</span>
+          </div>
+
+          <div className="flex gap-4 w-full max-w-2xl justify-center">
+            <div className="relative flex-1 max-w-xs">
+              <select 
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
+                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+              >
+                <option value="">All Resource Types</option>
+                <option value="LAB">Laboratory</option>
+                <option value="AUDITORIUM">Auditorium</option>
+                <option value="MEETING_ROOM">Meeting Room</option>
+                <option value="SPORTS_FACILITY">Sports Facility</option>
+                <option value="LECTURE_HALL">Lecture Hall</option>
+                <option value="PROJECTOR">Projector</option>
+                <option value="SMART_BOARD">Smart Board</option>
+                <option value="WHITEBOARD">Whiteboard</option>
+                <option value="SOUND_SYSTEM">Sound System</option>
+                <option value="MICROPHONE">Microphone</option>
+                <option value="VR_BOX">VR Box</option>
+              </select>
+            </div>
+
+            <div className="relative flex-1 max-w-xs">
+              <select 
+                value={selectedAvailability}
+                onChange={(e) => setSelectedAvailability(e.target.value)}
+                className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
+                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+              >
+                <option value="">Any Status</option>
+                <option value="AVAILABLE">Available</option>
+                <option value="UNAVAILABLE">Unavailable</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
