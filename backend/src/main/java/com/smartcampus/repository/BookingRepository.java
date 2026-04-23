@@ -11,14 +11,15 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends MongoRepository<Booking, String> {
     List<Booking> findByUserId(String userId);
-    List<Booking> findByResourceId(String resourceId);
+    List<Booking> findByResource_Id(String resourceId);
     List<Booking> findByStatus(BookingStatus status);
     
-    @Query(value = "{'resource.id': ?0, 'status': 'APPROVED', 'startTime': {$lte: ?2}, 'endTime': {$gte: ?1}}")
+    @Query(value = "{'resource': ?0, 'id': { $ne: ?3 }, 'status': { $in: ['APPROVED', 'PENDING'] }, 'startTime': { $lt: ?2 }, 'endTime': { $gt: ?1 } }")
     List<Booking> findConflictingBookings(
-            String resourceId,
+            com.smartcampus.entity.Resource resource,
             LocalDateTime startTime,
-            LocalDateTime endTime
+            LocalDateTime endTime,
+            String excludeBookingId
     );
     
     List<Booking> findByUserIdAndStatus(String userId, BookingStatus status);

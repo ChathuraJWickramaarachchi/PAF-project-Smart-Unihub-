@@ -58,6 +58,9 @@ export const BookingAPI = {
   approve: (id, notes) => apiClient.post(`/bookings/${id}/approve`, null, { params: { notes } }),
   reject: (id, notes) => apiClient.post(`/bookings/${id}/reject`, null, { params: { notes } }),
   cancel: (id) => apiClient.post(`/bookings/${id}/cancel`),
+  delete: (id) => apiClient.delete(`/bookings/${id}`),
+  checkAvailability: (resourceId, startTime, endTime) => apiClient.get('/bookings/check-availability', { params: { resourceId, startTime, endTime } }),
+  getDailySchedule: (resourceId, date) => apiClient.get('/bookings/daily-schedule', { params: { resourceId, date } }),
 }
 
 // Tickets API
@@ -97,10 +100,10 @@ export const NotificationAPI = {
 // Auth API
 export const AuthAPI = {
   login: (email, password) => apiClient.post('/auth/login', { email, password }),
-  googleLogin: (idToken, requestedRole = 'USER') => apiClient.post('/auth/google-login', { 
-    idToken: typeof idToken === 'string' ? idToken : null, 
+  googleLogin: (idToken, requestedRole = 'USER') => apiClient.post('/auth/google-login', {
+    idToken: typeof idToken === 'string' ? idToken : null,
     requestedRole,
-    ...typeof idToken === 'object' ? idToken : {} 
+    ...typeof idToken === 'object' ? idToken : {}
   }),
   logout: () => apiClient.post('/auth/logout'),
   health: () => apiClient.get('/auth/health'),

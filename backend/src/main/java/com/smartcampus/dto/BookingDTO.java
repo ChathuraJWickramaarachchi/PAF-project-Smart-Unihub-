@@ -28,6 +28,8 @@ public class BookingDTO {
     private String approvalNotes;
     private String approvedById;
     private String resourceName;
+    private String location;
+    private Integer resourceCapacity;
     private String userFullName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -68,6 +70,12 @@ public class BookingDTO {
 
     public String getResourceName() { return resourceName; }
     public void setResourceName(String resourceName) { this.resourceName = resourceName; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public Integer getResourceCapacity() { return resourceCapacity; }
+    public void setResourceCapacity(Integer resourceCapacity) { this.resourceCapacity = resourceCapacity; }
 
     public String getUserFullName() { return userFullName; }
     public void setUserFullName(String userFullName) { this.userFullName = userFullName; }
