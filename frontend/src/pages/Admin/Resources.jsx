@@ -268,41 +268,36 @@ export default function Resources() {
         {/* Create Modal */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white w-full max-w-2xl rounded-[4rem] p-12 lg:p-20 shadow-2xl relative overflow-hidden animate-zoom-in">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32"></div>
-
-              <div className="relative space-y-12">
-                <div className="space-y-4">
-                  <h2 className="text-4xl font-black text-gray-900 tracking-tighter italic uppercase leading-none">Add New <span className="text-primary not-italic">Resource</span></h2>
-                  <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em]">Register a new asset or facility</p>
-                </div>
+            <div className="bg-white w-full max-w-xl rounded-3xl p-10 shadow-2xl relative animate-zoom-in">
+              <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-6">
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight italic uppercase">Add New <span className="text-primary not-italic">Resource</span></h2>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   ✕
                 </button>
               </div>
 
-              <form onSubmit={handleAddResource} className="space-y-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Resource Name</label>
+              <form onSubmit={handleAddResource} className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Resource Name</label>
                     <input
                       type="text"
                       placeholder="e.g. Hall C-110"
                       required
                       value={newResource.resourceName}
                       onChange={(e) => setNewResource({ ...newResource, resourceName: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                     />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Type</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Type</label>
                     <select
                       value={newResource.resourceType}
                       onChange={(e) => setNewResource({ ...newResource, resourceType: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                     >
                       <option value="LAB">Laboratory</option>
                       <option value="AUDITORIUM">Auditorium</option>
@@ -319,34 +314,78 @@ export default function Resources() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Location / Block</label>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Location / Block</label>
                     <input
                       type="text"
                       placeholder="e.g. Block C, 1st Floor"
                       required
                       value={newResource.location}
                       onChange={(e) => setNewResource({ ...newResource, location: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                     />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Capacity</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Capacity</label>
                     <input
                       type="number"
                       placeholder="e.g. 60"
                       required
                       value={newResource.capacity}
                       onChange={(e) => setNewResource({ ...newResource, capacity: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                     />
                   </div>
                 </div>
 
-                <div className="pt-10 flex gap-6">
-                  <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 px-10 py-4 text-[12px] font-black uppercase tracking-[0.2em] text-gray-700 hover:text-gray-900 transition-colors italic border border-gray-200 rounded-2xl hover:border-gray-300 bg-gray-50">Cancel</button>
-                  <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95">Add Resource</button>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Available From</label>
+                    <input
+                      type="time"
+                      value={newResource.availableFrom}
+                      onChange={(e) => setNewResource({ ...newResource, availableFrom: e.target.value })}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Available Until</label>
+                    <input
+                      type="time"
+                      value={newResource.availableUntil}
+                      onChange={(e) => setNewResource({ ...newResource, availableUntil: e.target.value })}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Status</label>
+                  <select
+                    value={newResource.status}
+                    onChange={(e) => setNewResource({ ...newResource, status: e.target.value })}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="MAINTENANCE">MAINTENANCE</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Features</label>
+                  <textarea
+                    placeholder="e.g. Projector, AC, Whiteboard..."
+                    value={newResource.features}
+                    onChange={(e) => setNewResource({ ...newResource, features: e.target.value })}
+                    rows="2"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-6 border-t border-gray-50">
+                  <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 px-8 py-4 text-[10px] font-black uppercase tracking-widest text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all italic border border-gray-100">Cancel</button>
+                  <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all active:scale-95">Add Resource</button>
                 </div>
               </form>
             </div>
@@ -388,44 +427,39 @@ export default function Resources() {
         {/* Edit Modal */}
         {showEditModal && editingResource && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white w-full max-w-2xl rounded-[4rem] p-12 lg:p-20 shadow-2xl relative overflow-hidden animate-zoom-in">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32"></div>
-
-              <div className="relative space-y-12">
-                <div className="space-y-4">
-                  <h2 className="text-4xl font-black text-gray-900 tracking-tighter italic uppercase leading-none">Edit <span className="text-primary not-italic">Resource</span></h2>
-                  <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em]">Modify existing asset configuration</p>
-                </div>
+            <div className="bg-white w-full max-w-xl rounded-3xl p-10 shadow-2xl relative animate-zoom-in">
+              <div className="flex justify-between items-center mb-10 border-b border-gray-100 pb-6">
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight italic uppercase">Edit <span className="text-primary not-italic">Resource</span></h2>
                 <button
                   onClick={() => {
                     setShowEditModal(false)
                     setEditingResource(null)
                   }}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   ✕
                 </button>
               </div>
 
-              <form onSubmit={handleUpdateResource} className="space-y-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Resource Name</label>
+              <form onSubmit={handleUpdateResource} className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Resource Name</label>
                     <input
                       type="text"
                       placeholder="e.g. Hall C-110"
                       required
                       value={editingResource.resourceName}
                       onChange={(e) => setEditingResource({ ...editingResource, resourceName: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                     />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Type</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Type</label>
                     <select
                       value={editingResource.resourceType}
                       onChange={(e) => setEditingResource({ ...editingResource, resourceType: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                     >
                       <option value="LAB">Laboratory</option>
                       <option value="AUDITORIUM">Auditorium</option>
@@ -442,57 +476,89 @@ export default function Resources() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Location / Block</label>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Location / Block</label>
                     <input
                       type="text"
                       placeholder="e.g. Block C, 1st Floor"
                       required
                       value={editingResource.location}
                       onChange={(e) => setEditingResource({ ...editingResource, location: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                     />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Capacity</label>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Capacity</label>
                     <input
                       type="number"
                       placeholder="e.g. 60"
                       required
                       value={editingResource.capacity}
                       onChange={(e) => setEditingResource({ ...editingResource, capacity: e.target.value })}
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Status</label>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Available From</label>
+                    <input
+                      type="time"
+                      value={editingResource.availableFrom}
+                      onChange={(e) => setEditingResource({ ...editingResource, availableFrom: e.target.value })}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Available Until</label>
+                    <input
+                      type="time"
+                      value={editingResource.availableUntil}
+                      onChange={(e) => setEditingResource({ ...editingResource, availableUntil: e.target.value })}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Status</label>
                   <select
                     value={editingResource.status}
                     onChange={(e) => setEditingResource({ ...editingResource, status: e.target.value })}
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                   >
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="MAINTENANCE">MAINTENANCE</option>
                   </select>
                 </div>
 
-                <div className="pt-10 flex gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Features</label>
+                  <textarea
+                    placeholder="e.g. Projector, AC, Whiteboard..."
+                    value={editingResource.features}
+                    onChange={(e) => setEditingResource({ ...editingResource, features: e.target.value })}
+                    rows="2"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-6 border-t border-gray-50">
                   <button
                     type="button"
                     onClick={() => {
                       setShowEditModal(false)
                       setEditingResource(null)
                     }}
-                    className="flex-1 px-10 py-4 text-[12px] font-black uppercase tracking-[0.2em] text-gray-700 hover:text-gray-900 transition-colors italic border border-gray-200 rounded-2xl hover:border-gray-300 bg-gray-50"
+                    className="flex-1 px-8 py-4 text-[10px] font-black uppercase tracking-widest text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all italic border border-gray-100"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95"
+                    className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all active:scale-95"
                   >
                     Update Resource
                   </button>
