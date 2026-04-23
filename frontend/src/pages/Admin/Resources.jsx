@@ -71,7 +71,7 @@ export default function Resources() {
         capacity: parseInt(newResource.capacity)
       })
       setShowAddModal(false)
-      setNewResource({ resourceName: '', resourceType: 'CLASSROOM', location: '', capacity: '', availableFrom: '08:00', availableUntil: '20:00', status: 'ACTIVE', features: '' })
+      setNewResource({ resourceName: '', resourceType: 'LAB', location: '', capacity: '', availableFrom: '08:00', availableUntil: '20:00', status: 'ACTIVE', features: '' })
       fetchResources()
     } catch (err) {
       setError('Failed to create resource')
@@ -162,8 +162,7 @@ export default function Resources() {
               <select 
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="bg-white border border-gray-100 rounded-[2rem] px-6 py-5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all shadow-xl shadow-gray-200/20 italic cursor-pointer appearance-none bg-no-repeat"
-                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+                className="bg-white border border-gray-100 rounded-[2rem] px-6 py-5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all shadow-xl shadow-gray-200/20 italic cursor-pointer"
               >
                 <option value="">All Types</option>
                 <option value="LAB">Laboratory</option>
@@ -188,8 +187,8 @@ export default function Resources() {
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.4em]">No matching nodes in registry.</p>
               </div>
             ) : (
-               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {resources.map((resource) => (
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {filteredResources.map((resource) => (
                     <div key={resource.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/20 group hover:-translate-y-1 transition-all">
                        <div className="space-y-4">
                           <div className="flex justify-between items-start gap-2">
@@ -213,16 +212,19 @@ export default function Resources() {
                           <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
                             <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType}</span>
                             <div className="flex gap-1">
-                               <button className="text-[8px] font-black text-primary hover:text-black transition-colors uppercase italic p-1 hover:bg-gray-50 rounded">Edit</button>
+                               <button 
+                                 onClick={() => handleEditResource(resource)}
+                                 className="text-[8px] font-black text-primary hover:text-black transition-colors uppercase italic p-1 hover:bg-gray-50 rounded"
+                               >
+                                 Edit
+                               </button>
                                <button onClick={() => handleDeleteResource(resource.id)} className="text-[8px] font-black text-rose-500 hover:text-rose-700 transition-colors uppercase italic p-1 hover:bg-rose-50 rounded">Del</button>
                             </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                          </div>
+                       </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
             )}
         </div>
 
@@ -245,43 +247,25 @@ export default function Resources() {
                    </button>
                 </div>
 
-                   <form onSubmit={handleAddResource} className="space-y-10">
-                      {/* Row 1: Resource Name & Type */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Resource Name</label>
-                            <input 
-                              type="text" 
-                              placeholder="e.g. Hall C-110"
-                              required 
-                              value={newResource.resourceName}
-                              onChange={(e) => setNewResource({ ...newResource, resourceName: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
-                            />
-                         </div>
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Type</label>
-                            <select 
-                              value={newResource.resourceType}
-                              onChange={(e) => setNewResource({ ...newResource, resourceType: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
-                            >
-                              <option value="LAB">Laboratory</option>
-                              <option value="AUDITORIUM">Auditorium</option>
-                              <option value="MEETING_ROOM">Meeting Room</option>
-                              <option value="SPORTS_FACILITY">Sports Facility</option>
-                              <option value="EQUIPMENT">Equipment</option>
-                              <option value="LECTURE_HALL">Lecture Hall</option>
-                            </select>
-                         </div>
+                <form onSubmit={handleAddResource} className="space-y-10">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Resource Name</label>
+                         <input 
+                            type="text" 
+                            placeholder="e.g. Hall C-110"
+                            required 
+                            value={newResource.resourceName}
+                            onChange={(e) => setNewResource({ ...newResource, resourceName: e.target.value })}
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                         />
                       </div>
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Type</label>
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Type</label>
                          <select 
                            value={newResource.resourceType}
                            onChange={(e) => setNewResource({ ...newResource, resourceType: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
-                           style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
+                           className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                          >
                            <option value="LAB">Laboratory</option>
                            <option value="AUDITORIUM">Auditorium</option>
@@ -298,152 +282,34 @@ export default function Resources() {
                       </div>
                    </div>
 
-                      {/* Row 2: Location & Capacity */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Location / Block</label>
-                            <input 
-                              type="text" 
-                              placeholder="e.g. Block C, 1st Floor"
-                              required 
-                              value={newResource.location}
-                              onChange={(e) => setNewResource({ ...newResource, location: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
-                            />
-                         </div>
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Capacity</label>
-                            <input 
-                              type="number" 
-                              placeholder="e.g. 60"
-                              required 
-                              value={newResource.capacity}
-                              onChange={(e) => setNewResource({ ...newResource, capacity: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
-                            />
-                         </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Location / Block</label>
+                         <input 
+                           type="text" 
+                           placeholder="e.g. Block C, 1st Floor"
+                           required 
+                           value={newResource.location}
+                           onChange={(e) => setNewResource({ ...newResource, location: e.target.value })}
+                           className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
+                         />
                       </div>
-
-                      {/* Row 3: Available From & Until */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Available From</label>
-                            <input 
-                              type="time" 
-                              value={newResource.availableFrom}
-                              onChange={(e) => setNewResource({ ...newResource, availableFrom: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
-                            />
-                         </div>
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Available Until</label>
-                            <input 
-                              type="time" 
-                              value={newResource.availableUntil}
-                              onChange={(e) => setNewResource({ ...newResource, availableUntil: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
-                            />
-                         </div>
-                      </div>
-
-                      {/* Row 4: Status */}
-                      <div className="grid grid-cols-1 gap-4">
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Status</label>
-                            <select 
-                              value={newResource.status}
-                              onChange={(e) => setNewResource({ ...newResource, status: e.target.value })}
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
-                            >
-                              <option value="ACTIVE">ACTIVE</option>
-                              <option value="MAINTENANCE">MAINTENANCE</option>
-                            </select>
-                         </div>
-                      </div>
-
-                      {/* Row 5: Features */}
-                      <div className="grid grid-cols-1 gap-4">
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Features</label>
-                            <textarea 
-                              placeholder="e.g. Projector, AC, Whiteboard..."
-                              value={newResource.features}
-                              onChange={(e) => setNewResource({ ...newResource, features: e.target.value })}
-                              rows="3"
-                              className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm resize-none" 
-                            />
-                         </div>
-                      </div>
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Capacity</label>
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Capacity</label>
                          <input 
                            type="number" 
                            placeholder="e.g. 60"
                            required 
                            value={newResource.capacity}
                            onChange={(e) => setNewResource({ ...newResource, capacity: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                           className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
                          />
                       </div>
                    </div>
 
-                      <div className="pt-10 flex gap-6">
-                         <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 px-10 py-4 text-[12px] font-black uppercase tracking-[0.2em] text-gray-700 hover:text-gray-900 transition-colors italic border border-gray-200 rounded-2xl hover:border-gray-300 bg-gray-50">Cancel</button>
-                         <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95">Add Resource</button>
-                      </div>
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Available Until</label>
-                         <input 
-                           type="time" 
-                           value={newResource.availableUntil}
-                           onChange={(e) => setNewResource({ ...newResource, availableUntil: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                         />
-                      </div>
-                   </div>
-
-                   {/* Row 4: Status */}
-                   <div>
-                      <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Status</label>
-                      <select 
-                        value={newResource.status}
-                        onChange={(e) => setNewResource({ ...newResource, status: e.target.value })}
-                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
-                        style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
-                      >
-                        <option value="ACTIVE">Active</option>
-
-                        <option value="MAINTENANCE">Maintenance</option>
-                      </select>
-                   </div>
-
-                   {/* Row 5: Features */}
-                   <div>
-                      <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Features</label>
-                      <textarea 
-                        placeholder="e.g. Projector, AC, Whiteboard..."
-                        value={newResource.features}
-                        onChange={(e) => setNewResource({ ...newResource, features: e.target.value })}
-                        rows="4"
-                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" 
-                      />
-                   </div>
-
-                   {/* Buttons */}
-                   <div className="flex gap-4 pt-6">
-                      <button 
-                        type="button" 
-                        onClick={() => setShowAddModal(false)} 
-                        className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        type="submit" 
-                        className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md"
-                      >
-                        Add Resource
-                      </button>
+                   <div className="pt-10 flex gap-6">
+                      <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 px-10 py-4 text-[12px] font-black uppercase tracking-[0.2em] text-gray-700 hover:text-gray-900 transition-colors italic border border-gray-200 rounded-2xl hover:border-gray-300 bg-gray-50">Cancel</button>
+                      <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95">Add Resource</button>
                    </div>
                 </form>
              </div>
@@ -484,16 +350,19 @@ export default function Resources() {
 
         {/* Edit Modal */}
         {showEditModal && editingResource && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-             <div className="bg-white w-full max-w-3xl rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-                <div className="flex justify-between items-start mb-8">
-                   <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Edit Resource</h2>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
+             <div className="bg-white w-full max-w-2xl rounded-[4rem] p-12 lg:p-20 shadow-2xl relative overflow-hidden animate-zoom-in">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32"></div>
+                
+                <div className="relative space-y-12">
+                   <div className="space-y-4">
+                      <h2 className="text-4xl font-black text-gray-900 tracking-tighter italic uppercase leading-none">Edit <span className="text-primary not-italic">Resource</span></h2>
+                      <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em]">Modify existing asset configuration</p>
                    </div>
                    <button 
                      onClick={() => {
-                       setShowEditModal(false)
-                       setEditingResource(null)
+                        setShowEditModal(false)
+                        setEditingResource(null)
                      }}
                      className="text-gray-400 hover:text-gray-600 text-2xl"
                    >
@@ -501,27 +370,25 @@ export default function Resources() {
                    </button>
                 </div>
 
-                <form onSubmit={handleUpdateResource} className="space-y-6">
-                   {/* Row 1: Resource Name & Type */}
-                   <div className="grid grid-cols-2 gap-6">
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Resource Name</label>
+                <form onSubmit={handleUpdateResource} className="space-y-10">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Resource Name</label>
                          <input 
-                           type="text" 
-                           placeholder="e.g. Hall C-110"
-                           required 
-                           value={editingResource.resourceName}
-                           onChange={(e) => setEditingResource({ ...editingResource, resourceName: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                            type="text" 
+                            placeholder="e.g. Hall C-110"
+                            required 
+                            value={editingResource.resourceName}
+                            onChange={(e) => setEditingResource({ ...editingResource, resourceName: e.target.value })}
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
                          />
                       </div>
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Type</label>
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Type</label>
                          <select 
                            value={editingResource.resourceType}
                            onChange={(e) => setEditingResource({ ...editingResource, resourceType: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
-                           style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
+                           className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                          >
                            <option value="LAB">Laboratory</option>
                            <option value="AUDITORIUM">Auditorium</option>
@@ -538,62 +405,57 @@ export default function Resources() {
                       </div>
                    </div>
 
-                   {/* Row 2: Location & Capacity */}
-                   <div className="grid grid-cols-2 gap-6">
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Location / Block</label>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Location / Block</label>
                          <input 
                            type="text" 
                            placeholder="e.g. Block C, 1st Floor"
                            required 
                            value={editingResource.location}
                            onChange={(e) => setEditingResource({ ...editingResource, location: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                           className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
                          />
                       </div>
-                      <div>
-                         <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Capacity</label>
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Capacity</label>
                          <input 
                            type="number" 
                            placeholder="e.g. 60"
                            required 
                            value={editingResource.capacity}
                            onChange={(e) => setEditingResource({ ...editingResource, capacity: e.target.value })}
-                           className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                           className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm" 
                          />
                       </div>
                    </div>
 
-                   {/* Row 3: Status */}
-                   <div>
-                      <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Status</label>
+                   <div className="space-y-4">
+                      <label className="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Status</label>
                       <select 
                         value={editingResource.status}
                         onChange={(e) => setEditingResource({ ...editingResource, status: e.target.value })}
-                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-no-repeat"
-                        style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23666\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 12px center'}}
+                        className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-4 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm cursor-pointer"
                       >
-                        <option value="ACTIVE">Active</option>
-
-                        <option value="MAINTENANCE">Maintenance</option>
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="MAINTENANCE">MAINTENANCE</option>
                       </select>
                    </div>
 
-                   {/* Buttons */}
-                   <div className="flex gap-4 pt-6">
+                   <div className="pt-10 flex gap-6">
                       <button 
                         type="button" 
                         onClick={() => {
                           setShowEditModal(false)
                           setEditingResource(null)
                         }} 
-                        className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="flex-1 px-10 py-4 text-[12px] font-black uppercase tracking-[0.2em] text-gray-700 hover:text-gray-900 transition-colors italic border border-gray-200 rounded-2xl hover:border-gray-300 bg-gray-50"
                       >
                         Cancel
                       </button>
                       <button 
                         type="submit" 
-                        className="flex-1 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md"
+                        className="flex-1 bg-primary text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95"
                       >
                         Update Resource
                       </button>

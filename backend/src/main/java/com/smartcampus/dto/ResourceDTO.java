@@ -21,6 +21,9 @@ public class ResourceDTO {
     private String location;
 
     private String description;
+    private String availableFrom;
+    private String availableUntil;
+    private String features;
     private ResourceStatus status;
     private String imageUrl;
     private String createdById;
@@ -59,4 +62,13 @@ public class ResourceDTO {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getAvailableFrom() { return availableFrom; }
+    public void setAvailableFrom(String availableFrom) { this.availableFrom = availableFrom; }
+
+    public String getAvailableUntil() { return availableUntil; }
+    public void setAvailableUntil(String availableUntil) { this.availableUntil = availableUntil; }
+
+    public String getFeatures() { return features; }
+    public void setFeatures(String features) { this.features = features; }
 }
