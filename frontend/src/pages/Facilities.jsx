@@ -8,6 +8,7 @@ export default function Facilities() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedType, setSelectedType] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newBooking, setNewBooking] = useState({
     resourceId: '',
@@ -80,20 +81,22 @@ export default function Facilities() {
   }
 
   const filteredResources = resources.filter(res =>
-    res.resourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (res.resourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     res.resourceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    res.location?.toLowerCase().includes(searchTerm.toLowerCase())
+    res.location?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedType === '' || res.resourceType === selectedType)
   )
 
-  const getIconForType = (type) => {
-    switch (type) {
-      case 'CLASSROOM': return '🏫'
-      case 'LAB': return '🔬'
-      case 'AUDITORIUM': return '🎭'
-      case 'MEETING_ROOM': return '💼'
-      case 'SPORTS_FACILITY': return '⚽'
-      case 'EQUIPMENT': return '💻'
-      default: return '🏢'
+  const getStatusDisplay = (status) => {
+    switch(status) {
+      case 'ACTIVE':
+        return { label: 'Active', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600', borderColor: 'border-emerald-100' }
+      case 'MAINTENANCE':
+        return { label: 'Maintenance', bgColor: 'bg-rose-50', textColor: 'text-rose-600', borderColor: 'border-rose-100' }
+      case 'OUT_OF_SERVICE':
+        return { label: 'Out of Service', bgColor: 'bg-rose-50', textColor: 'text-rose-600', borderColor: 'border-rose-100' }
+      default:
+        return { label: status, bgColor: 'bg-gray-50', textColor: 'text-gray-600', borderColor: 'border-gray-100' }
     }
   }
 
