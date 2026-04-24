@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash, FaLock, FaUser, FaEnvelope, FaPhone } from 'react-ic
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const [selectedRole, setSelectedRole] = useState('') // 'lecture' or 'student'
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -29,6 +30,12 @@ export default function SignUp() {
     e.preventDefault()
     setError('')
     
+    // Validate role selection
+    if (!selectedRole) {
+      setError('Please select a role (Lecture or Student)')
+      return
+    }
+    
     // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
@@ -46,7 +53,8 @@ export default function SignUp() {
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
-        phoneNumber: formData.phoneNumber
+        phoneNumber: formData.phoneNumber,
+        role: selectedRole === 'lecture' ? 'MANAGER' : 'USER'
       })
       
       setSuccess(true)
@@ -90,7 +98,74 @@ export default function SignUp() {
                  <h1 className="text-2xl font-black text-gray-900 tracking-tight">SmartUni Portal</h1>
                  <p className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Create Your Account</p>
                  <h2 className="text-3xl font-black text-gray-900 tracking-tight mt-4">Join SmartUni</h2>
-                 <p className="text-sm font-medium text-gray-600">Fill in your details to create an account</p>
+                 <p className="text-sm font-medium text-gray-600">Select your role and create an account</p>
+              </div>
+
+              {/* Role Selection Cards */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Lecture Card */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('lecture')}
+                  className={`relative p-6 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-3 group hover:-translate-y-1 ${
+                    selectedRole === 'lecture'
+                      ? 'border-primary bg-primary/5 shadow-xl shadow-primary/20'
+                      : 'border-gray-200 bg-white hover:border-primary/50 hover:shadow-lg'
+                  }`}
+                >
+                  {selectedRole === 'lecture' && (
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className={`text-5xl transition-transform duration-300 ${
+                    selectedRole === 'lecture' ? 'scale-110' : 'group-hover:scale-105'
+                  }`}>
+                    👨‍🏫
+                  </div>
+                  <div className="text-center">
+                    <h3 className={`text-base font-bold uppercase tracking-wider ${
+                      selectedRole === 'lecture' ? 'text-primary' : 'text-gray-900'
+                    }`}>
+                      Lecture
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">Teaching Staff</p>
+                  </div>
+                </button>
+
+                {/* Student Card */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('student')}
+                  className={`relative p-6 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-3 group hover:-translate-y-1 ${
+                    selectedRole === 'student'
+                      ? 'border-primary bg-primary/5 shadow-xl shadow-primary/20'
+                      : 'border-gray-200 bg-white hover:border-primary/50 hover:shadow-lg'
+                  }`}
+                >
+                  {selectedRole === 'student' && (
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className={`text-5xl transition-transform duration-300 ${
+                    selectedRole === 'student' ? 'scale-110' : 'group-hover:scale-105'
+                  }`}>
+                    👨‍🎓
+                  </div>
+                  <div className="text-center">
+                    <h3 className={`text-base font-bold uppercase tracking-wider ${
+                      selectedRole === 'student' ? 'text-primary' : 'text-gray-900'
+                    }`}>
+                      Student
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">Enrolled Learner</p>
+                  </div>
+                </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">

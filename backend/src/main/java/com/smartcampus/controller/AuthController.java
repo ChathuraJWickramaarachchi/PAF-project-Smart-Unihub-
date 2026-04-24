@@ -80,6 +80,53 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/signup")
+    public ResponseEntity<Map<String, String>> signup(@RequestBody Map<String, String> userData) {
+        String fullName = userData.get("fullName");
+        String email = userData.get("email");
+        String password = userData.get("password");
+        String phoneNumber = userData.get("phoneNumber");
+        String role = userData.get("role");
+        
+        // Check if email already exists
+        if (userRepository.findByEmail(email).isPresent()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Email already exists");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        // Create new user
+        User newUser = new User();
+        newUser.setFullName(fullName);
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setPhoneNumber(phoneNumber);
+        newUser.setIsActive(true);
+        
+        // Assign role
+        String userRole = role != null ? role : "USER";
+        Role newUserRole = roleRepository.findByRoleName(userRole)
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setRoleName(userRole);
+                    newRole.setDescription(userRole + " role");
+                    return roleRepository.save(newRole);
+                });
+        
+        Set<Role> roles = new HashSet<>();
+        roles.add(newUserRole);
+        newUser.setRoles(roles);
+        
+        userRepository.save(newUser);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+        response.put("email", email);
+        response.put("fullName", fullName);
+        
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/google-login")
     public ResponseEntity<Map<String, String>> googleLogin(@RequestBody Map<String, String> googleUserData) {
         try {

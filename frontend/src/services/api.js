@@ -97,6 +97,7 @@ export const NotificationAPI = {
 // Auth API
 export const AuthAPI = {
   login: (email, password) => apiClient.post('/auth/login', { email, password }),
+  signup: (userData) => apiClient.post('/auth/signup', userData),
   googleLogin: (idToken, requestedRole = 'USER') => apiClient.post('/auth/google-login', { 
     idToken: typeof idToken === 'string' ? idToken : null, 
     requestedRole,

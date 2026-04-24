@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import UserLayout from './layouts/UserLayout'
 
 // Pages
 import Login from './pages/Login'
@@ -17,6 +18,8 @@ import ManagerDashboard from './pages/Manager/ManagerDashboard'
 import ManagerBookings from './pages/Manager/Bookings'
 import ManagerAnalytics from './pages/Manager/Analytics'
 import UserDashboard from './pages/UserDashboard'
+import UserTickets from './pages/User/MyTickets'
+import UserBookings from './pages/User/MyBookings'
 import Resources from './pages/Admin/Resources'
 import AdminTickets from './pages/Technician/Tickets'
 import Notifications from './pages/Admin/Notifications'
@@ -26,6 +29,7 @@ import Analytics from './pages/Admin/Analytics'
 import UserProfile from './pages/UserProfile'
 import Facilities from './pages/Facilities'
 import PublicTickets from './pages/PublicTickets'
+import WelcomeScreen from './components/WelcomeScreen'
 
 // Component to handle conditional Navbar/Footer
 function AppContent() {
@@ -38,6 +42,7 @@ function AppContent() {
     '/technician',
     '/tech',
     '/user-dashboard',
+    '/user/',
     '/resources',
     '/bookings',
     '/notifications',
@@ -68,14 +73,21 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
 
           <Route element={<ProtectedRoute />}>
+            {/* User routes with persistent sidebar */}
+            <Route element={<UserLayout />}>
+              <Route path="/user-dashboard" element={<UserDashboard />} />
+              <Route path="/user/tickets" element={<UserTickets />} />
+              <Route path="/user/bookings" element={<UserBookings />} />
+              <Route path="/user/profile" element={<UserProfile />} />
+            </Route>
+            
+            <Route path="/profile" element={<UserProfile />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
             <Route path="/manager-dashboard" element={<ManagerDashboard />} />
             <Route path="/manager/analytics" element={<ManagerAnalytics />} />
-            <Route path="/user-dashboard" element={<UserDashboard />} />
-            <Route path="/profile" element={<UserProfile />} />
 
             <Route path="/facilities" element={<Facilities />} />
             <Route path="/resources" element={<Resources />} />
@@ -83,6 +95,7 @@ function AppContent() {
             <Route path="/tech/tickets" element={<AdminTickets />} />
             <Route path="/tickets" element={<PublicTickets />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/welcome" element={<WelcomeScreen />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
