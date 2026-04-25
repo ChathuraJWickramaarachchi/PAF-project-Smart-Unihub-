@@ -1,20 +1,27 @@
 package com.smartcampus.controller;
 
-import com.smartcampus.entity.Role;
-import com.smartcampus.entity.User;
-import com.smartcampus.repository.RoleRepository;
-import com.smartcampus.repository.UserRepository;
-import com.smartcampus.service.GoogleOAuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.smartcampus.entity.Role;
+import com.smartcampus.entity.User;
+import com.smartcampus.repository.RoleRepository;
+import com.smartcampus.repository.UserRepository;
+import com.smartcampus.service.GoogleOAuthService;
 
 @RestController
 @RequestMapping("/auth")
@@ -76,6 +83,53 @@ public class AuthController {
         response.put("fullName", user.getFullName());
         response.put("role", role);  // Add role to response
         response.put("userId", user.getId());  // Add userId to response
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Map<String, String>> signup(@RequestBody Map<String, String> userData) {
+        String fullName = userData.get("fullName");
+        String email = userData.get("email");
+        String password = userData.get("password");
+        String phoneNumber = userData.get("phoneNumber");
+        String role = userData.get("role");
+        
+        // Check if email already exists
+        if (userRepository.findByEmail(email).isPresent()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Email already exists");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        // Create new user
+        User newUser = new User();
+        newUser.setFullName(fullName);
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setPhoneNumber(phoneNumber);
+        newUser.setIsActive(true);
+        
+        // Assign role
+        String userRole = role != null ? role : "USER";
+        Role newUserRole = roleRepository.findByRoleName(userRole)
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setRoleName(userRole);
+                    newRole.setDescription(userRole + " role");
+                    return roleRepository.save(newRole);
+                });
+        
+        Set<Role> roles = new HashSet<>();
+        roles.add(newUserRole);
+        newUser.setRoles(roles);
+        
+        userRepository.save(newUser);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+        response.put("email", email);
+        response.put("fullName", fullName);
         
         return ResponseEntity.ok(response);
     }

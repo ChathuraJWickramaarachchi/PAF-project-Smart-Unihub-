@@ -1,13 +1,9 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import ManagerSidebar from '../components/ManagerSidebar'
-import AdminSidebar from '../components/AdminSidebar'
-import TechnicianSidebar from '../components/TechnicianSidebar'
+import { FaUser, FaEnvelope, FaPhone, FaShieldAlt, FaEdit, FaCheck, FaTimes, FaLock, FaBell, FaPalette, FaTrash, FaCamera } from 'react-icons/fa'
 
 export default function UserProfile() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
@@ -15,11 +11,7 @@ export default function UserProfile() {
     phone: user?.phone || '',
     role: user?.role || 'User'
   })
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+  const [activeTab, setActiveTab] = useState('profile')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -31,6 +23,7 @@ export default function UserProfile() {
 
   const handleSave = () => {
     setIsEditing(false)
+    // TODO: Add API call to update profile
     console.log('Profile updated:', formData)
   }
 
@@ -44,139 +37,304 @@ export default function UserProfile() {
     setIsEditing(false)
   }
 
-  const renderSidebar = () => {
-    const role = user?.role?.toUpperCase() || ''
-    if (role.includes('ADMIN')) return <AdminSidebar />
-    if (role.includes('MANAGER')) return <ManagerSidebar />
-    if (role.includes('TECHNICIAN')) return <TechnicianSidebar />
-    return null
-  }
-
-  const hasSidebar = ['ADMIN', 'MANAGER', 'TECHNICIAN'].some(r => user?.role?.toUpperCase().includes(r))
-
   return (
-    <div className={`flex bg-gray-50/50 min-h-screen selection:bg-primary/10 ${!hasSidebar ? 'flex-col' : ''}`}>
-      {renderSidebar()}
-
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-8 max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <header className="bg-white border-b border-gray-100 px-8 py-5 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-6">
-            {!hasSidebar && (
-              <button onClick={() => navigate('/')} className="text-gray-400 hover:text-gray-900 transition-colors">
-                <span className="text-xl">←</span>
-              </button>
-            )}
-            <h1 className="text-xl font-black text-gray-900 tracking-tight italic">Registry <span className="text-primary not-italic">Identity</span></h1>
-          </div>
-          <div className="flex items-center gap-6">
-            <button className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl text-lg hover:bg-gray-100 transition-colors">🔔</button>
-            <button onClick={handleLogout} className="w-10 h-10 flex items-center justify-center bg-rose-50 rounded-xl text-lg text-rose-500 hover:bg-rose-100 transition-colors">🚪</button>
-          </div>
-        </header>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
+          <p className="text-gray-500">Manage your account settings and preferences</p>
+        </div>
 
-        <div className="flex-1 overflow-y-auto p-8 lg:p-12 custom-scrollbar">
-          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12 items-start">
-             
-             {/* Left: Identity Card */}
-             <div className="w-full lg:w-1/3 flex flex-col gap-8">
-                <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/20 text-center space-y-6 relative overflow-hidden group">
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000"></div>
-                   
-                   <div className="relative mx-auto w-24 h-24 rounded-[2rem] bg-gray-900 flex items-center justify-center text-3xl text-white font-black shadow-2xl shadow-gray-900/20">
-                     {user?.fullName?.charAt(0).toUpperCase()}
-                   </div>
- 
-                   <div className="space-y-2">
-                     <h2 className="text-xl font-black text-gray-900 tracking-tight italic uppercase">{formData.fullName}</h2>
-                     <div className="flex justify-center">
-                        <span className="bg-primary/5 text-primary text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl border border-primary/20">
-                          {formData.role}
-                        </span>
-                     </div>
-                   </div>
- 
-                   <div className="pt-6 border-t border-gray-50 flex flex-col gap-2 text-center">
-                     <div className="text-[9px] font-black text-gray-300 uppercase tracking-widest italic">Node Address</div>
-                     <div className="text-xs font-medium text-gray-500 truncate italic">{formData.email}</div>
-                   </div>
-                </div>
- 
-                {/* Quick Stats */}
-                <div className="bg-gray-900 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-gray-900/20 space-y-6">
-                   <h3 className="text-[9px] font-black text-primary uppercase tracking-[0.4em]">Sector Metrics</h3>
-                   <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-1">
-                         <div className="text-xl font-black italic">05</div>
-                         <div className="text-[8px] font-black text-gray-500 uppercase tracking-widest">Bookings</div>
-                      </div>
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-1">
-                         <div className="text-xl font-black italic">02</div>
-                         <div className="text-[8px] font-black text-gray-500 uppercase tracking-widest">Reports</div>
-                      </div>
-                   </div>
-                </div>
-             </div>
- 
-             {/* Right: Telemetry Form */}
-             <div className="flex-1 w-full bg-white p-10 lg:p-14 rounded-[3.5rem] border border-gray-100 shadow-sm space-y-12">
-                <div className="space-y-4">
-                   <h2 className="text-2xl font-black text-gray-900 tracking-tighter italic capitalize">Identity <span className="text-primary not-italic">Parameters</span></h2>
-                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">Configure personal node telemetry and verification data.</p>
-                </div>
- 
-                <div className="space-y-10">
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                     <div className="space-y-4">
-                       <label className="text-[9px] font-black text-gray-300 uppercase tracking-[0.3em] pl-1">Full Identity</label>
-                       {isEditing ? (
-                         <input name="fullName" value={formData.fullName} onChange={handleChange} className="w-full bg-gray-50 border-none rounded-xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all" />
-                       ) : (
-                         <div className="text-lg font-black text-gray-900 tracking-tight italic pl-1">{formData.fullName}</div>
-                       )}
-                     </div>
-                     <div className="space-y-4">
-                       <label className="text-[9px] font-black text-gray-300 uppercase tracking-[0.3em] pl-1">Relay Channel</label>
-                       <div className="text-lg font-black text-gray-900 tracking-tight italic pl-1 flex items-center gap-3">
-                         {formData.email}
-                         <span className="bg-emerald-500 w-2 h-2 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
-                       </div>
-                     </div>
-                   </div>
- 
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                     <div className="space-y-4">
-                       <label className="text-[9px] font-black text-gray-300 uppercase tracking-[0.3em] pl-1">Communication Line</label>
-                       {isEditing ? (
-                         <input name="phone" value={formData.phone} onChange={handleChange} className="w-full bg-gray-50 border-none rounded-xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all" />
-                       ) : (
-                         <div className="text-lg font-black text-gray-900 tracking-tight italic pl-1">{formData.phone || 'N/A'}</div>
-                       )}
-                     </div>
-                     <div className="space-y-4">
-                       <label className="text-[9px] font-black text-gray-300 uppercase tracking-[0.3em] pl-1">Authorization Range</label>
-                       <div className="text-lg font-black text-primary tracking-tight italic pl-1 uppercase">{formData.role}</div>
-                     </div>
-                   </div>
-                </div>
- 
-                <div className="pt-12 border-t border-gray-50 flex flex-wrap gap-4">
-                  {!isEditing ? (
-                    <>
-                      <button onClick={() => setIsEditing(true)} className="bg-gray-900 text-white px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:-translate-y-1 transition-all active:scale-95">Reconfigure Profile</button>
-                      <button className="bg-white border border-gray-100 text-gray-400 px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-50 transition-all">Security Protocol</button>
-                    </>
-                  ) : (
-                    <>
-                      <button onClick={handleSave} className="bg-primary text-white px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all">Authorize Updates</button>
-                      <button onClick={handleCancel} className="bg-gray-50 text-gray-400 px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-100 transition-all">Abort</button>
-                    </>
-                  )}
-                </div>
-             </div>
+        {/* Profile Banner */}
+        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-8 text-white shadow-xl">
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-4xl font-bold border-4 border-white/30">
+                {user?.fullName?.charAt(0).toUpperCase() || 'U'}
+              </div>
+              <button className="absolute -bottom-2 -right-2 p-2 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50">
+                <FaCamera className="text-gray-600 text-sm" />
+              </button>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-1">{user?.fullName || 'User'}</h2>
+              <p className="text-blue-100">{user?.email}</p>
+              <span className="inline-block mt-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-semibold">
+                {user?.role || 'User'}
+              </span>
+            </div>
           </div>
         </div>
-      </main>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="border-b border-gray-200">
+            <div className="flex">
+              {[
+                { id: 'profile', label: 'Profile', icon: FaUser },
+                { id: 'security', label: 'Security', icon: FaShieldAlt },
+                { id: 'notifications', label: 'Notifications', icon: FaBell },
+                { id: 'appearance', label: 'Appearance', icon: FaPalette },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition-all ${
+                    activeTab === tab.id
+                      ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <tab.icon className="text-lg" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-8">
+            {/* Profile Tab */}
+            {activeTab === 'profile' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Personal Information</h3>
+                    <p className="text-sm text-gray-500 mt-1">Update your personal details</p>
+                  </div>
+                  {!isEditing && (
+                    <button 
+                      onClick={() => setIsEditing(true)} 
+                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 font-semibold"
+                    >
+                      <FaEdit />
+                      <span>Edit Profile</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                        <FaUser className="text-gray-400" />
+                        Full Name
+                      </label>
+                      {isEditing ? (
+                        <input 
+                          name="fullName" 
+                          value={formData.fullName} 
+                          onChange={handleChange} 
+                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                          placeholder="Enter your full name"
+                        />
+                      ) : (
+                        <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-900 font-medium border border-gray-100">{formData.fullName}</div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                        <FaEnvelope className="text-gray-400" />
+                        Email Address
+                      </label>
+                      <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-900 font-medium flex items-center justify-between border border-gray-100">
+                        <span>{formData.email}</span>
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                        <FaPhone className="text-gray-400" />
+                        Phone Number
+                      </label>
+                      {isEditing ? (
+                        <input 
+                          name="phone" 
+                          value={formData.phone} 
+                          onChange={handleChange} 
+                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                          placeholder="Enter your phone number"
+                        />
+                      ) : (
+                        <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-900 font-medium border border-gray-100">{formData.phone || 'Not set'}</div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                        <FaShieldAlt className="text-gray-400" />
+                        Role
+                      </label>
+                      <div className="px-4 py-3 rounded-xl font-medium flex items-center gap-2 border bg-blue-50 text-blue-700 border-blue-200">
+                        <FaShieldAlt />
+                        <span>{formData.role}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {isEditing && (
+                  <div className="flex gap-4 pt-6 border-t border-gray-200">
+                    <button 
+                      onClick={handleSave} 
+                      className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-600/30 font-semibold"
+                    >
+                      <FaCheck />
+                      <span>Save Changes</span>
+                    </button>
+                    <button 
+                      onClick={handleCancel} 
+                      className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all border border-gray-200 font-semibold"
+                    >
+                      <FaTimes />
+                      <span>Cancel</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Security Tab */}
+            {activeTab === 'security' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Security Settings</h3>
+                  <p className="text-sm text-gray-500">Manage your password and security preferences</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-blue-100 rounded-xl">
+                          <FaLock className="text-2xl text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">Password</h4>
+                          <p className="text-sm text-gray-500">Last changed 30 days ago</p>
+                        </div>
+                      </div>
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-semibold text-sm">
+                        Change Password
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-green-100 rounded-xl">
+                          <FaShieldAlt className="text-2xl text-green-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">Two-Factor Authentication</h4>
+                          <p className="text-sm text-gray-500">Add an extra layer of security</p>
+                        </div>
+                      </div>
+                      <button className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all font-semibold text-sm">
+                        Enable
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-gray-200">
+                  <h4 className="font-bold text-red-600 mb-4">Danger Zone</h4>
+                  <div className="p-6 rounded-2xl border border-red-200 bg-red-50">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h5 className="font-bold text-gray-900 mb-1">Delete Account</h5>
+                        <p className="text-sm text-gray-600">Permanently delete your account and all associated data</p>
+                      </div>
+                      <button className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-semibold text-sm flex items-center gap-2">
+                        <FaTrash />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Notifications Tab */}
+            {activeTab === 'notifications' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Notification Preferences</h3>
+                  <p className="text-sm text-gray-500">Choose what notifications you want to receive</p>
+                </div>
+
+                <div className="space-y-4">
+                  {[
+                    { title: 'Booking Confirmations', desc: 'Get notified when your bookings are confirmed', defaultChecked: true },
+                    { title: 'Ticket Updates', desc: 'Receive updates on your support tickets', defaultChecked: true },
+                    { title: 'System Announcements', desc: 'Important system updates and maintenance', defaultChecked: false },
+                    { title: 'Reminder Emails', desc: 'Get reminders before your bookings', defaultChecked: true },
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-6 rounded-2xl border border-gray-200 hover:border-blue-300 transition-colors">
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-1">{item.title}</h4>
+                        <p className="text-sm text-gray-500">{item.desc}</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" defaultChecked={item.defaultChecked} className="sr-only peer" />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Appearance Tab */}
+            {activeTab === 'appearance' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Appearance Settings</h3>
+                  <p className="text-sm text-gray-500">Customize the look and feel of your dashboard</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-6 rounded-2xl border border-gray-200">
+                    <h4 className="font-bold text-gray-900 mb-4">Theme</h4>
+                    <div className="grid grid-cols-3 gap-4">
+                      {[
+                        { name: 'Light', color: 'bg-white border-2 border-gray-300' },
+                        { name: 'Dark', color: 'bg-gray-900 border-2 border-gray-700' },
+                        { name: 'Auto', color: 'bg-gradient-to-r from-white to-gray-900 border-2 border-gray-400' },
+                      ].map((theme, index) => (
+                        <button
+                          key={index}
+                          className={`p-4 rounded-xl ${theme.color} hover:scale-105 transition-all`}
+                        >
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">{theme.name}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-2xl border border-gray-200">
+                    <h4 className="font-bold text-gray-900 mb-4">Accent Color</h4>
+                    <div className="flex gap-3">
+                      {['bg-blue-600', 'bg-purple-600', 'bg-green-600', 'bg-orange-600', 'bg-pink-600'].map((color, index) => (
+                        <button
+                          key={index}
+                          className={`w-12 h-12 rounded-xl ${color} hover:scale-110 transition-all ${index === 0 ? 'ring-4 ring-offset-2 ring-blue-600' : ''}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

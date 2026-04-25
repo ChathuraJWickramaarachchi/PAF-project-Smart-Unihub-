@@ -177,41 +177,41 @@ export default function Facilities() {
             <span className="absolute left-4 top-5 text-gray-500 group-focus-within:text-primary transition-colors">🔍</span>
           </div>
 
-          <div className="flex gap-4 w-full max-w-2xl justify-center">
-            <div className="relative flex-1 max-w-xs">
-              <select 
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
-                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
-              >
-                <option value="">All Resource Types</option>
-                <option value="LAB">Laboratory</option>
-                <option value="AUDITORIUM">Auditorium</option>
-                <option value="MEETING_ROOM">Meeting Room</option>
-                <option value="SPORTS_FACILITY">Sports Facility</option>
-                <option value="LECTURE_HALL">Lecture Hall</option>
-                <option value="PROJECTOR">Projector</option>
-                <option value="SMART_BOARD">Smart Board</option>
-                <option value="WHITEBOARD">Whiteboard</option>
-                <option value="SOUND_SYSTEM">Sound System</option>
-                <option value="MICROPHONE">Microphone</option>
-                <option value="VR_BOX">VR Box</option>
-              </select>
-            </div>
+          <div className="flex flex-col md:flex-row gap-4 w-full max-w-2xl justify-center">
+              <div className="relative flex-1">
+                <select 
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
+                  style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+                >
+                  <option value="">All Resource Types</option>
+                  <option value="LAB">Laboratory</option>
+                  <option value="AUDITORIUM">Auditorium</option>
+                  <option value="MEETING_ROOM">Meeting Room</option>
+                  <option value="SPORTS_FACILITY">Sports Facility</option>
+                  <option value="LECTURE_HALL">Lecture Hall</option>
+                  <option value="PROJECTOR">Projector</option>
+                  <option value="SMART_BOARD">Smart Board</option>
+                  <option value="WHITEBOARD">Whiteboard</option>
+                  <option value="SOUND_SYSTEM">Sound System</option>
+                  <option value="MICROPHONE">Microphone</option>
+                  <option value="VR_BOX">VR Box</option>
+                </select>
+              </div>
 
-            <div className="relative flex-1 max-w-xs">
-              <select 
-                value={selectedAvailability}
-                onChange={(e) => setSelectedAvailability(e.target.value)}
-                className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
-                style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
-              >
-                <option value="">Any Status</option>
-                <option value="AVAILABLE">Available</option>
-                <option value="UNAVAILABLE">Unavailable</option>
-              </select>
-            </div>
+              <div className="relative flex-1">
+                <select 
+                  value={selectedAvailability}
+                  onChange={(e) => setSelectedAvailability(e.target.value)}
+                  className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-5 text-gray-900 font-medium italic focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none bg-no-repeat"
+                  style={{backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" viewBox=\"0 0 12 8\"><path fill=\"%23374151\" d=\"M1 1l5 5 5-5\"/></svg>')", backgroundPosition: 'right 14px center', backgroundSize: '16px 12px', paddingRight: '40px'}}
+                >
+                  <option value="">Any Status</option>
+                  <option value="AVAILABLE">Available</option>
+                  <option value="UNAVAILABLE">Unavailable</option>
+                </select>
+              </div>
           </div>
         </div>
       </div>
@@ -246,7 +246,6 @@ export default function Facilities() {
                     <span className="text-primary opacity-50">👥</span>
                     Cap: {resource.capacity}
                   </div>
-                </div>
 
                 <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
                   <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType?.replace('_', ' ')}</span>
