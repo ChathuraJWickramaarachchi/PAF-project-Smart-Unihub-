@@ -58,9 +58,9 @@ public class DataInitializer implements CommandLineRunner {
                 });
 
         // Create default admin user if doesn't exist
-        if (userRepository.findByEmail("admin@smartcampus.edu").isEmpty()) {
+        if (userRepository.findByEmail("admin@smartuni.edu").isEmpty()) {
             User admin = new User();
-            admin.setEmail("admin@smartcampus.edu");
+            admin.setEmail("admin@smartuni.edu");
             admin.setFullName("System Administrator");
             admin.setPassword(passwordEncoder.encode("password123"));
             admin.setIsActive(true);
@@ -68,14 +68,14 @@ public class DataInitializer implements CommandLineRunner {
             
             userRepository.save(admin);
             System.out.println("✅ Default admin user created:");
-            System.out.println("   Email: admin@smartcampus.edu");
+            System.out.println("   Email: admin@smartuni.edu");
             System.out.println("   Password: password123");
         }
 
         // Create sample test user
-        if (userRepository.findByEmail("user@smartcampus.edu").isEmpty()) {
+        if (userRepository.findByEmail("user@smartuni.edu").isEmpty()) {
             User user = new User();
-            user.setEmail("user@smartcampus.edu");
+            user.setEmail("user@smartuni.edu");
             user.setFullName("Test User");
             user.setPassword(passwordEncoder.encode("password123"));
             user.setIsActive(true);
@@ -83,14 +83,14 @@ public class DataInitializer implements CommandLineRunner {
             
             userRepository.save(user);
             System.out.println("✅ Sample user created:");
-            System.out.println("   Email: user@smartcampus.edu");
+            System.out.println("   Email: user@smartuni.edu");
             System.out.println("   Password: password123");
         }
 
         // Create sample technician user
-        if (userRepository.findByEmail("tech@smartcampus.edu").isEmpty()) {
+        if (userRepository.findByEmail("tech@smartuni.edu").isEmpty()) {
             User tech = new User();
-            tech.setEmail("tech@smartcampus.edu");
+            tech.setEmail("tech@smartuni.edu");
             tech.setFullName("Test Technician");
             tech.setPassword(passwordEncoder.encode("password123"));
             tech.setIsActive(true);
@@ -98,14 +98,14 @@ public class DataInitializer implements CommandLineRunner {
             
             userRepository.save(tech);
             System.out.println("✅ Sample technician created:");
-            System.out.println("   Email: tech@smartcampus.edu");
+            System.out.println("   Email: tech@smartuni.edu");
             System.out.println("   Password: password123");
         }
 
         // Create sample manager user
-        if (userRepository.findByEmail("faculty@smartcampus.edu").isEmpty()) {
+        if (userRepository.findByEmail("faculty@smartuni.edu").isEmpty()) {
             User manager = new User();
-            manager.setEmail("faculty@smartcampus.edu");
+            manager.setEmail("faculty@smartuni.edu");
             manager.setFullName("Test Manager");
             manager.setPassword(passwordEncoder.encode("password123"));
             manager.setIsActive(true);
@@ -113,7 +113,7 @@ public class DataInitializer implements CommandLineRunner {
             
             userRepository.save(manager);
             System.out.println("✅ Sample manager created:");
-            System.out.println("   Email: faculty@smartcampus.edu");
+            System.out.println("   Email: faculty@smartuni.edu");
             System.out.println("   Password: password123");
         }
     }

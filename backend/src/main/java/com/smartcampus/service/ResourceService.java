@@ -27,7 +27,10 @@ public class ResourceService {
         resource.setCapacity(resourceDTO.getCapacity());
         resource.setLocation(resourceDTO.getLocation());
         resource.setDescription(resourceDTO.getDescription());
-        resource.setStatus(ResourceStatus.ACTIVE);
+        resource.setStatus(resourceDTO.getStatus() != null ? resourceDTO.getStatus() : ResourceStatus.ACTIVE);
+        resource.setAvailableFrom(resourceDTO.getAvailableFrom());
+        resource.setAvailableUntil(resourceDTO.getAvailableUntil());
+        resource.setFeatures(resourceDTO.getFeatures());
         
         User createdBy = userRepository.findById(createdById)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -58,6 +61,18 @@ public class ResourceService {
         }
         if (resourceDTO.getImageUrl() != null) {
             resource.setImageUrl(resourceDTO.getImageUrl());
+        }
+        if (resourceDTO.getStatus() != null) {
+            resource.setStatus(resourceDTO.getStatus());
+        }
+        if (resourceDTO.getAvailableFrom() != null) {
+            resource.setAvailableFrom(resourceDTO.getAvailableFrom());
+        }
+        if (resourceDTO.getAvailableUntil() != null) {
+            resource.setAvailableUntil(resourceDTO.getAvailableUntil());
+        }
+        if (resourceDTO.getFeatures() != null) {
+            resource.setFeatures(resourceDTO.getFeatures());
         }
         
         Resource updated = resourceRepository.save(resource);
@@ -139,6 +154,9 @@ public class ResourceService {
         dto.setImageUrl(resource.getImageUrl());
         dto.setCreatedAt(resource.getCreatedAt());
         dto.setUpdatedAt(resource.getUpdatedAt());
+        dto.setAvailableFrom(resource.getAvailableFrom());
+        dto.setAvailableUntil(resource.getAvailableUntil());
+        dto.setFeatures(resource.getFeatures());
         return dto;
     }
 }
