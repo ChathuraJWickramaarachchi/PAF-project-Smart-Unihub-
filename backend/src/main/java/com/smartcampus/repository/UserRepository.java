@@ -13,4 +13,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByGoogleId(String googleId);
     boolean existsByEmail(String email);
     List<User> findByApprovalStatus(ApprovalStatus approvalStatus);
+
+    long countByIsActive(boolean isActive);
 }
