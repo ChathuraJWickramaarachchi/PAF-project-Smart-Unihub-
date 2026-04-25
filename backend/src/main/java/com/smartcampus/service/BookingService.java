@@ -80,7 +80,22 @@ public class BookingService {
         booking.setUpdatedAt(LocalDateTime.now());
 
         Booking saved = bookingRepository.save(booking);
+
+        // Notify the user that their booking has been submitted
+        notificationService.createNotification(
+                creator.getId(),
+                "Booking Submitted",
+                "Your booking request for \"" + resource.getResourceName() + "\" on " +
+                        booking.getStartTime().toLocalDate() + " from " +
+                        booking.getStartTime().toLocalTime().withSecond(0).withNano(0) + " to " +
+                        booking.getEndTime().toLocalTime().withSecond(0).withNano(0) +
+                        " has been received and is pending approval.",
+                com.smartcampus.entity.Notification.NotificationType.BOOKING_SUBMITTED,
+                "BOOKING",
+                saved.getId());
+
         return convertToDTO(saved);
+
     }
 
     public BookingDTO approveBooking(String bookingId, String approvedById, String notes) {

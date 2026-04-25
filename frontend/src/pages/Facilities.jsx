@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { ResourceAPI, BookingAPI } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function Facilities() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [resources, setResources] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -23,6 +25,15 @@ export default function Facilities() {
   const [checkingAvailability, setCheckingAvailability] = useState(false)
   const [dailySchedule, setDailySchedule] = useState([])
   const [loadingSchedule, setLoadingSchedule] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  const showToast = useCallback((message, type = 'success') => {
+    setToast({ message, type })
+    setTimeout(() => {
+      setToast(null)
+      navigate('/facilities')
+    }, 2000)
+  }, [navigate])
 
   useEffect(() => {
     fetchResources()
@@ -142,13 +153,14 @@ export default function Facilities() {
       await BookingAPI.create(data)
       setShowCreateModal(false)
       setNewBooking({ resourceId: '', date: '', expectedAttendees: '', startTime: '', endTime: '', bookingPurpose: '', additionalNotes: '' })
-      alert("Booking request submitted successfully!")
+      showToast('Booking Successfully!')
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create booking. Please check for scheduling conflicts.')
     }
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50/50 p-8 flex flex-col gap-10 selection:bg-primary/10">
       {/* Header Banner */}
       <div className="relative overflow-hidden bg-gray-900 p-20 rounded-[4rem] group shadow-2xl shadow-gray-200">
@@ -371,5 +383,40 @@ export default function Facilities() {
         </div>
       )}
     </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            background: toast.type === 'success' ? '#059669' : '#dc2626',
+            color: '#fff',
+            padding: '1rem 1.5rem',
+            borderRadius: '1rem',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+            fontWeight: 700,
+            fontSize: '0.95rem',
+            letterSpacing: '0.02em',
+            animation: 'slideInToast 0.35s cubic-bezier(.21,1.02,.73,1) forwards',
+          }}
+        >
+          <span style={{ fontSize: '1.3rem' }}>{toast.type === 'success' ? '✅' : '❌'}</span>
+          {toast.message}
+        </div>
+      )}
+
+      <style>{`
+        @keyframes slideInToast {
+          from { opacity: 0; transform: translateY(2rem) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0)   scale(1); }
+        }
+      `}</style>
+    </>
   )
 }

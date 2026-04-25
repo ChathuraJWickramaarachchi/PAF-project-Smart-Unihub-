@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { BookingAPI, ResourceAPI, TicketAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import ManagerSidebar from '../../components/ManagerSidebar'
 
 export default function ManagerDashboard() {
    const { user } = useAuth()
+   const location = useLocation()
+   const [toast, setToast] = useState(location.state?.showLoginToast || false)
    const [stats, setStats] = useState({
       pendingBookings: 0,
       activeBookings: 0,
@@ -17,7 +19,12 @@ export default function ManagerDashboard() {
 
    useEffect(() => {
       fetchDashboardData()
-   }, [])
+      if (toast) {
+         window.history.replaceState({}, document.title)
+         const timer = setTimeout(() => setToast(false), 3000)
+         return () => clearTimeout(timer)
+      }
+   }, [toast])
 
    const fetchDashboardData = async () => {
       try {
@@ -166,6 +173,30 @@ export default function ManagerDashboard() {
                </div>
             </div>
          </main>
+
+         {/* Login Toast */}
+         {toast && (
+            <div style={{
+               position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 99999,
+               display: 'flex', alignItems: 'center', gap: '0.75rem',
+               background: '#059669',
+               color: '#fff', padding: '1rem 1.5rem', borderRadius: '1rem',
+               boxShadow: '0 8px 32px rgba(0,0,0,0.22)',
+               fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.01em',
+               animation: 'slideInLoginToast 0.35s cubic-bezier(.21,1.02,.73,1) forwards',
+               maxWidth: '360px',
+            }}>
+               <span style={{ fontSize: '1.3rem' }}>✅</span>
+               Login Succesfully!
+            </div>
+         )}
+
+         <style>{`
+            @keyframes slideInLoginToast {
+               from { opacity: 0; transform: translateY(2rem) scale(0.95); }
+               to   { opacity: 1; transform: translateY(0) scale(1); }
+            }
+         `}</style>
       </div>
    )
 }

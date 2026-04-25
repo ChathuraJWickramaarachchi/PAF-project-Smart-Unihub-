@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -6,18 +6,27 @@ export default function ManagerSidebar() {
   const { logout, user } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+  const [toast, setToast] = useState(false)
 
   const isActive = (path) => location.pathname === path
 
   const navItems = [
     { name: 'Dashboard Overview', path: '/manager-dashboard', icon: '📊' },
-    { name: 'Facility Management', path: '/resources', icon: '🏢' },
+    { name: 'Facility Management', path: '/manager/resources', icon: '🏢' },
     { name: 'Booking Control', path: '/bookings', icon: '📅' },
     { name: 'Real-time Analytics', path: '/manager/analytics', icon: '📈' },
-
   ]
 
+  const handleSignOut = () => {
+    setToast(true)
+    setTimeout(() => {
+      logout()
+      navigate('/')
+    }, 2000)
+  }
+
   return (
+    <>
     <aside className="w-72 h-screen bg-white flex flex-col shrink-0 border-r border-gray-100 selection:bg-primary/10">
       {/* Brand Section */}
       <div className="p-8 pb-4">
@@ -60,13 +69,39 @@ export default function ManagerSidebar() {
         </div>
 
         <button
-          onClick={() => { logout(); navigate('/'); }}
-          className="w-full flex items-center gap-3 px-6 py-4 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-95 group font-bold text-[12px]"
+          onClick={handleSignOut}
+          disabled={toast}
+          className="w-full flex items-center gap-3 px-6 py-4 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-95 group font-bold text-[12px] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <span className="opacity-40 group-hover:opacity-100 transition-opacity">🚪</span>
-          <span>Sign Out</span>
+          <span>{toast ? 'Signing out...' : 'Sign Out'}</span>
         </button>
       </div>
     </aside>
+
+    {/* Sign-out Toast */}
+    {toast && (
+      <div style={{
+        position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 99999,
+        display: 'flex', alignItems: 'center', gap: '0.75rem',
+        background: '#1e293b',
+        color: '#fff', padding: '1rem 1.5rem', borderRadius: '1rem',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.22)',
+        fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.01em',
+        animation: 'slideInSidebar 0.35s cubic-bezier(.21,1.02,.73,1) forwards',
+        maxWidth: '360px',
+      }}>
+        <span style={{ fontSize: '1.3rem' }}>👋</span>
+        Sign out the Manager Dashboard Successfully!
+      </div>
+    )}
+
+    <style>{`
+      @keyframes slideInSidebar {
+        from { opacity: 0; transform: translateY(2rem) scale(0.95); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+    `}</style>
+    </>
   )
 }

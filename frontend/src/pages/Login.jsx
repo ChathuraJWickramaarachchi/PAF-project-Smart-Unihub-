@@ -25,7 +25,7 @@ export default function Login() {
       } else {
         redirectPath = '/user-dashboard'
       }
-      navigate(redirectPath, { replace: true })
+      navigate(redirectPath, { replace: true, state: { showLoginToast: true } })
     }
   }, [isAuthenticated, user, navigate])
 
@@ -57,7 +57,7 @@ export default function Login() {
       else if (userRole.includes('technician')) redirectPath = '/technician-dashboard'
       else if (userRole.includes('manager')) redirectPath = '/manager-dashboard'
       else redirectPath = '/user-dashboard'
-      navigate(redirectPath, { replace: true })
+      navigate(redirectPath, { replace: true, state: { showLoginToast: true } })
     } catch (err) {
       setError(err.message || 'Verification sequence failed. Invalid credentials.')
     } finally {
@@ -80,7 +80,7 @@ export default function Login() {
       else if (userRole.includes('technician')) redirectPath = '/technician-dashboard'
       else if (userRole.includes('manager')) redirectPath = '/manager-dashboard'
       else redirectPath = '/user-dashboard'
-      navigate(redirectPath, { replace: true })
+      navigate(redirectPath, { replace: true, state: { showLoginToast: true } })
     } catch (err) {
       setError(err.message || 'Google Auth relay interrupted.')
     } finally {

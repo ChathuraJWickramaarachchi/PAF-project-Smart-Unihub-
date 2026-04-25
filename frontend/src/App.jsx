@@ -15,6 +15,7 @@ import TechnicianDashboard from './pages/Technician/TechnicianDashboard'
 import ManagerDashboard from './pages/Manager/ManagerDashboard'
 import ManagerBookings from './pages/Manager/Bookings'
 import ManagerAnalytics from './pages/Manager/Analytics'
+import ManagerResources from './pages/Manager/Resources'
 import UserDashboard from './pages/UserDashboard'
 import Resources from './pages/Admin/Resources'
 import AdminTickets from './pages/Technician/Tickets'
@@ -68,6 +69,7 @@ function AppContent() {
             <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
             <Route path="/manager-dashboard" element={<ManagerDashboard />} />
             <Route path="/manager/analytics" element={<ManagerAnalytics />} />
+            <Route path="/manager/resources" element={<ManagerResources />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/profile" element={<UserProfile />} />
 

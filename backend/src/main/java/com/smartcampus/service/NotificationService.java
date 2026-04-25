@@ -34,9 +34,11 @@ public class NotificationService {
         notification.setRelatedEntityType(entityType);
         notification.setRelatedEntityId(entityId);
         notification.setIsRead(false);
+        notification.setCreatedAt(LocalDateTime.now());
         
         Notification saved = notificationRepository.save(notification);
         return convertToDTO(saved);
+
     }
 
     public NotificationDTO markAsRead(String notificationId) {
