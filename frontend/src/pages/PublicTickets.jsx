@@ -15,6 +15,7 @@ export default function PublicTickets() {
     priority: 'MEDIUM',
     resourceId: ''
   })
+  const [selectedFiles, setSelectedFiles] = useState([])
   const [activeTab, setActiveTab] = useState('ALL') // ALL, OPEN, RESOLVED
 
   const userId = user?.userId ? parseInt(user.userId) : 1
@@ -51,18 +52,35 @@ export default function PublicTickets() {
 
   const handleCreateTicket = async (e) => {
     e.preventDefault()
+    setLoading(true)
     try {
-      await TicketAPI.create({
+      const response = await TicketAPI.create({
         ...newTicket,
         resourceId: parseInt(newTicket.resourceId),
         reportedById: userId
       })
+
+      const createdTicket = response.data
+
+      // Upload images if any
+      if (selectedFiles.length > 0) {
+        await TicketAPI.uploadAttachments(createdTicket.id, selectedFiles)
+      }
+
       setShowCreateModal(false)
       setNewTicket({ title: '', description: '', priority: 'MEDIUM', resourceId: '' })
+      setSelectedFiles([])
       fetchMyTickets()
     } catch (err) {
       setError('Failed to create ticket')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files)
+    setSelectedFiles(files)
   }
 
   const getPriorityIcon = (priority) => {
@@ -229,6 +247,40 @@ export default function PublicTickets() {
                     onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
                     className="w-full bg-gray-50 border-none rounded-2xl px-6 py-5 text-sm font-medium text-gray-600 focus:ring-2 focus:ring-primary outline-none transition-all min-h-[120px] italic placeholder:text-gray-300"
                   />
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Evidence Capture (Images)</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-[2rem] cursor-pointer hover:bg-gray-100 hover:border-primary/30 transition-all group"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">📸</span>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                          {selectedFiles.length > 0 ? `${selectedFiles.length} files selected` : 'Drop evidence or click to upload'}
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                  {selectedFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {selectedFiles.map((f, i) => (
+                        <div key={i} className="px-3 py-1 bg-primary/5 border border-primary/10 rounded-lg text-[9px] font-black text-primary uppercase tracking-tighter italic">
+                          {f.name.length > 15 ? f.name.substring(0, 15) + '...' : f.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-4 pt-6">

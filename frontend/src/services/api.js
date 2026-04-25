@@ -72,6 +72,13 @@ export const TicketAPI = {
   updateStatus: (id, status) => apiClient.patch(`/tickets/${id}/status`, null, { params: { status } }),
   assign: (id, technicianId) => apiClient.post(`/tickets/${id}/assign`, null, { params: { technicianId } }),
   addResolutionNotes: (id, notes) => apiClient.patch(`/tickets/${id}/resolution-notes`, null, { params: { notes } }),
+  uploadAttachments: (ticketId, files) => {
+    const formData = new FormData()
+    files.forEach(file => formData.append('files', file))
+    return apiClient.post(`/tickets/${ticketId}/attachments`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+  },
 }
 
 // Comments API
