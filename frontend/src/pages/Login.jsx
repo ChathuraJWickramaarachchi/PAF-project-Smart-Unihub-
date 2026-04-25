@@ -80,7 +80,7 @@ export default function Login() {
     setLoading(true)
     try {
       const result = await login(email, password)
-      const userRole = result.data.role.toLowerCase()
+      const userRole = result.role.toLowerCase()
       let redirectPath = '/'
       if (userRole.includes('admin')) redirectPath = '/admin-dashboard'
       else if (userRole.includes('technician')) redirectPath = '/technician-dashboard'

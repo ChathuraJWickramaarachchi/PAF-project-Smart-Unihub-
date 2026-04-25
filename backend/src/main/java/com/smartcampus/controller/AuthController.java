@@ -70,10 +70,24 @@ public class AuthController {
         // Generate simple JWT-like token (for demo purposes)
         String token = System.currentTimeMillis() + "_" + user.getId();
         
-        // Get user's primary role
+        // Get user's primary role (prioritize ADMIN > MANAGER > TECHNICIAN > USER)
         String role = "USER";
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
-            role = user.getRoles().iterator().next().getRoleName();
+            List<String> rolePriority = Arrays.asList("ADMIN", "MANAGER", "TECHNICIAN", "USER");
+            for (String roleName : rolePriority) {
+                for (Role userRole : user.getRoles()) {
+                    if (userRole.getRoleName().equals(roleName)) {
+                        role = roleName;
+                        break;
+                    }
+                }
+                if (!role.equals("USER")) break;
+            }
+            
+            // Fallback to first role if no priority match found
+            if (role.equals("USER")) {
+                role = user.getRoles().iterator().next().getRoleName();
+            }
         }
         
         Map<String, String> response = new HashMap<>();
@@ -81,8 +95,8 @@ public class AuthController {
         response.put("message", "Login successful");
         response.put("email", user.getEmail());
         response.put("fullName", user.getFullName());
-        response.put("role", role);  // Add role to response
-        response.put("userId", user.getId());  // Add userId to response
+        response.put("role", role);
+        response.put("userId", user.getId());
         
         return ResponseEntity.ok(response);
     }
