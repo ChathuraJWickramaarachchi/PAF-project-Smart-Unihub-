@@ -83,7 +83,7 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
         
         ticket.setAssignedTo(technician);
-        ticket.setStatus(TicketStatus.IN_PROGRESS);
+        // Status remains unchanged (e.g. OPEN) until technician accepts
         
         Ticket updated = ticketRepository.save(ticket);
         
@@ -97,6 +97,18 @@ public class TicketService {
                 ticketId
         );
         
+        return convertToDTO(updated);
+    }
+
+    public TicketDTO unassignTicket(String ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        
+        ticket.setAssignedTo(null);
+        // If status was somehow changed, we could revert to OPEN here if needed.
+        ticket.setStatus(TicketStatus.OPEN);
+        
+        Ticket updated = ticketRepository.save(ticket);
         return convertToDTO(updated);
     }
 

@@ -71,6 +71,7 @@ export const TicketAPI = {
   getByResource: (resourceId) => apiClient.get(`/tickets/resource/${resourceId}`),
   updateStatus: (id, status) => apiClient.patch(`/tickets/${id}/status`, null, { params: { status } }),
   assign: (id, technicianId) => apiClient.post(`/tickets/${id}/assign`, null, { params: { technicianId } }),
+  unassign: (id) => apiClient.post(`/tickets/${id}/unassign`),
   addResolutionNotes: (id, notes) => apiClient.patch(`/tickets/${id}/resolution-notes`, null, { params: { notes } }),
   uploadAttachments: (ticketId, files) => {
     const formData = new FormData()

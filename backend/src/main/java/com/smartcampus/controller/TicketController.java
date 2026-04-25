@@ -73,6 +73,13 @@ public class TicketController {
         return ResponseEntity.ok(assigned);
     }
 
+    @PostMapping("/{id}/unassign")
+    @PreAuthorize("hasRole('TECHNICIAN') or hasRole('ADMIN')")
+    public ResponseEntity<TicketDTO> unassignTicket(@PathVariable String id) {
+        TicketDTO unassigned = ticketService.unassignTicket(id);
+        return ResponseEntity.ok(unassigned);
+    }
+
     @PatchMapping("/{id}/resolution-notes")
     @PreAuthorize("hasRole('TECHNICIAN') or hasRole('ADMIN')")
     public ResponseEntity<TicketDTO> addResolutionNotes(@PathVariable String id,

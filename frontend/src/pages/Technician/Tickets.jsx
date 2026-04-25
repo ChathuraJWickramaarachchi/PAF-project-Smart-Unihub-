@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TicketAPI, CommentAPI, ResourceAPI } from '../../services/api'
+import { TicketAPI, CommentAPI, ResourceAPI, UserAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import AdminSidebar from '../../components/AdminSidebar'
 import TechnicianSidebar from '../../components/TechnicianSidebar'
@@ -21,11 +21,18 @@ export default function Tickets() {
   })
   const [resources, setResources] = useState([])
   const [newComment, setNewComment] = useState('')
+  const [technicians, setTechnicians] = useState([])
+  const [assigningId, setAssigningId] = useState(null)
+  
+  const isTechnician = user?.role?.includes('TECHNICIAN')
 
   useEffect(() => {
     fetchTickets()
     if (showCreateModal) {
       fetchResources()
+    }
+    if (!isTechnician) {
+      fetchTechnicians()
     }
   }, [statusFilter])
 
@@ -33,12 +40,28 @@ export default function Tickets() {
     setLoading(true)
     setError('')
     try {
-      const response = await TicketAPI.getByStatus(statusFilter)
-      setTickets(response.data)
+      if (statusFilter === 'MY_TICKETS' && isTechnician) {
+        const response = await TicketAPI.getAssigned(user.userId)
+        setTickets(response.data)
+      } else {
+        const response = await TicketAPI.getByStatus(statusFilter)
+        setTickets(response.data)
+      }
     } catch (err) {
       setError('Failed to load tickets')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchTechnicians = async () => {
+    try {
+      const response = await UserAPI.getAll()
+      // Filter users who have TECHNICIAN role
+      const techs = response.data.filter(u => u.roles?.some(r => r.name === 'ROLE_TECHNICIAN') || u.role?.includes('TECHNICIAN'))
+      setTechnicians(techs)
+    } catch (err) {
+      console.error('Failed to fetch technicians', err)
     }
   }
 
@@ -100,7 +123,47 @@ export default function Tickets() {
     }
   }
 
-  const isTechnician = user?.role?.includes('TECHNICIAN')
+  const handleAssignTicket = async (technicianId) => {
+    try {
+      await TicketAPI.assign(selectedTicket.id, technicianId)
+      fetchTickets()
+      setSelectedTicket({ ...selectedTicket, assignedToId: technicianId })
+    } catch (err) {
+      setError('Failed to assign ticket')
+    }
+  }
+
+  const handleQuickAssign = async (ticketId, technicianId) => {
+    if (!technicianId) return;
+    try {
+      await TicketAPI.assign(ticketId, technicianId)
+      fetchTickets()
+    } catch (err) {
+      setError('Failed to assign ticket')
+    }
+  }
+
+  const handleAcceptTicket = async (id) => {
+    try {
+      await TicketAPI.updateStatus(id, 'IN_PROGRESS')
+      fetchTickets()
+      setSelectedTicket({ ...selectedTicket, status: 'IN_PROGRESS' })
+    } catch (err) {
+      setError('Failed to accept ticket')
+    }
+  }
+
+  const handleDenyTicket = async (id) => {
+    try {
+      await TicketAPI.unassign(id)
+      fetchTickets()
+      setSelectedTicket(null)
+    } catch (err) {
+      setError('Failed to deny ticket')
+    }
+  }
+
+  const myNewAssignments = tickets.filter(t => t.assignedToId === user?.userId && t.status === 'OPEN')
 
   return (
     <div className="flex bg-gray-50/50 min-h-screen selection:bg-primary/10">
@@ -126,17 +189,32 @@ export default function Tickets() {
 
           <div className="flex items-center gap-6 pb-2">
             <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
-              {['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'].map(status => (
+              {['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', ...(isTechnician ? ['MY_TICKETS'] : [])].map(status => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
                   className={`px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === status ? 'bg-gray-900 text-white shadow-xl' : 'text-gray-400 hover:text-gray-900'}`}
                 >
                   {status.replace('_', ' ')}
+                  {status === 'MY_TICKETS' && myNewAssignments.length > 0 && (
+                    <span className="ml-2 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[8px]">{myNewAssignments.length}</span>
+                  )}
                 </button>
               ))}
             </div>
           </div>
+
+          {isTechnician && myNewAssignments.length > 0 && statusFilter === 'MY_TICKETS' && (
+            <div className="bg-primary/10 border border-primary/20 p-4 rounded-2xl flex items-center justify-between animate-fade-in">
+              <div className="flex items-center gap-4">
+                <span className="text-2xl">🔔</span>
+                <div>
+                  <h3 className="text-sm font-bold text-primary">New Assignment Received</h3>
+                  <p className="text-xs font-medium text-primary/70">System Administrator has assigned new tasks for your node. Inspect and accept to begin protocol.</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-white rounded-[3rem] p-4 border border-gray-100 shadow-sm overflow-hidden">
             <table className="w-full text-left border-collapse">
@@ -176,7 +254,21 @@ export default function Tickets() {
                         </span>
                       </td>
                       <td className="px-6 py-6 text-right">
-                        <button onClick={() => handleSelectTicket(t)} className="bg-gray-50 text-[10px] font-black text-gray-900 px-6 py-2 rounded-xl uppercase tracking-widest border border-gray-100 hover:bg-gray-900 hover:text-white transition-all">Inspect</button>
+                        <div className="flex justify-end items-center gap-3">
+                          {!isTechnician && (
+                            <select
+                              onChange={(e) => handleQuickAssign(t.id, e.target.value)}
+                              value={t.assignedToId || ''}
+                              className="bg-white border border-gray-100 text-[9px] font-bold text-gray-600 px-3 py-2 rounded-lg outline-none cursor-pointer focus:ring-1 focus:ring-primary w-28 uppercase"
+                            >
+                              <option value="">UNASSIGNED</option>
+                              {technicians.map(tech => (
+                                <option key={tech.userId} value={tech.userId}>{tech.fullName?.split(' ')[0] || tech.email.split('@')[0]}</option>
+                              ))}
+                            </select>
+                          )}
+                          <button onClick={() => handleSelectTicket(t)} className="bg-gray-50 text-[10px] font-black text-gray-900 px-6 py-2 rounded-xl uppercase tracking-widest border border-gray-100 hover:bg-gray-900 hover:text-white transition-all shrink-0">Inspect</button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -216,6 +308,29 @@ export default function Tickets() {
                   <div className="h-10 w-[1px] bg-gray-100"></div>
                   <p className="text-sm font-medium text-gray-500 leading-relaxed italic max-w-lg">{selectedTicket.description}</p>
                 </div>
+
+                {isTechnician && selectedTicket.status === 'OPEN' && selectedTicket.assignedToId === user?.userId && (
+                  <div className="mt-8 flex gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                    <button onClick={() => handleAcceptTicket(selectedTicket.id)} className="flex-1 bg-primary text-white text-[11px] font-black py-4 rounded-xl uppercase tracking-widest shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all">Accept Assignment</button>
+                    <button onClick={() => handleDenyTicket(selectedTicket.id)} className="flex-1 bg-white text-rose-500 border border-rose-100 text-[11px] font-black py-4 rounded-xl uppercase tracking-widest hover:bg-rose-50 transition-all">Deny Assignment</button>
+                  </div>
+                )}
+
+                {!isTechnician && (
+                  <div className="mt-8 p-4 bg-gray-50 rounded-2xl flex items-center gap-4">
+                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest w-32">Assign Technician</h4>
+                    <select
+                      value={selectedTicket.assignedToId || ''}
+                      onChange={(e) => handleAssignTicket(e.target.value)}
+                      className="flex-1 bg-white border border-gray-100 rounded-xl px-4 py-3 text-[11px] font-bold text-gray-700 focus:ring-2 focus:ring-primary outline-none transition-all"
+                    >
+                      <option value="">-- Unassigned --</option>
+                      {technicians.map(tech => (
+                        <option key={tech.userId} value={tech.userId}>{tech.fullName || tech.email}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="flex-1 overflow-y-auto p-12 space-y-10 custom-scrollbar">
