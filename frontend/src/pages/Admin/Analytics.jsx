@@ -173,40 +173,7 @@ export default function Analytics() {
             </div>
           </div>
 
-          {/* Logs Table */}
-          <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm space-y-8">
-            <h3 className="text-lg font-black text-gray-900 tracking-tight italic">Audit <span className="text-primary not-italic">Telemetry</span></h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-gray-50">
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest">Sequence</th>
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest">Identifier</th>
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest">Description</th>
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest text-right">State</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {[
-                    { time: '10:45 AM', id: 'EVT-9092', desc: 'Auth protocol success. Global backup stable.', status: 'SUCCESS', color: 'bg-emerald-400' },
-                    { time: '09:12 AM', id: 'EVT-9091', desc: 'Illegal access attempt at firewall node 4.', status: 'WARNING', color: 'bg-amber-400' },
-                    { time: '08:30 AM', id: 'EVT-9090', desc: 'Optimizing resource indexing in database.', status: 'INFO', color: 'bg-primary' }
-                  ].map((log, i) => (
-                    <tr key={i} className="group hover:bg-gray-50/50 transition-colors">
-                      <td className="px-4 py-6 text-[11px] font-black text-gray-400 uppercase italic">{log.time}</td>
-                      <td className="px-4 py-6 text-sm font-black text-gray-900 tracking-tighter">{log.id}</td>
-                      <td className="px-4 py-6 text-sm font-medium text-gray-500 italic">{log.desc}</td>
-                      <td className="px-4 py-6 text-right">
-                        <span className={`text-[9px] font-black text-white uppercase tracking-widest px-3 py-1 rounded-lg ${log.color} shadow-lg shadow-opacity-20`}>
-                          {log.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          {/* Logs Table removed as per user request */}
         </div>
       </main>
     </div>
