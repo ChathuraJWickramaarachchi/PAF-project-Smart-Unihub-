@@ -52,7 +52,12 @@ export default function TechnicianDashboard() {
         <header className="bg-white border-b border-gray-100 flex justify-between items-center px-12 py-5 sticky top-0 z-10">
           <div className="text-[14px] font-bold text-gray-900 tracking-tight">Dashboard Overview</div>
           <div className="flex items-center gap-6">
-            <div className="h-8 w-px bg-gray-100"></div>
+            <div className="h-8 w-px bg-gray-100">
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl text-lg hover:bg-gray-100">🔔</button>
+
+            </div>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm">👤</div>
               <div className="text-right hidden sm:block">

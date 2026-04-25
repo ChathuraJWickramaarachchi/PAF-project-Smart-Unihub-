@@ -11,7 +11,8 @@ export default function TechnicianSidebar() {
 
   const navItems = [
     { name: 'Dashboard Overview', path: '/technician-dashboard', icon: '📊' },
-    { name: 'Tickets', path: '/tech/tickets', icon: '🔧' }, // Using admin tickets for now or a filtered version
+    { name: 'Tickets', path: '/tech/tickets', icon: '🔧' },
+    { name: 'Analytics', path: '/tech/analytics', icon: '📈' },
   ]
 
   return (
