@@ -20,6 +20,9 @@ public class Resource {
     private String location;
 
     private String description;
+    private String availableFrom;
+    private String availableUntil;
+    private String features;
 
     private ResourceStatus status = ResourceStatus.ACTIVE;
 
@@ -69,4 +72,13 @@ public class Resource {
 
     public User getCreatedBy() { return createdBy; }
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
+
+    public String getAvailableFrom() { return availableFrom; }
+    public void setAvailableFrom(String availableFrom) { this.availableFrom = availableFrom; }
+
+    public String getAvailableUntil() { return availableUntil; }
+    public void setAvailableUntil(String availableUntil) { this.availableUntil = availableUntil; }
+
+    public String getFeatures() { return features; }
+    public void setFeatures(String features) { this.features = features; }
 }

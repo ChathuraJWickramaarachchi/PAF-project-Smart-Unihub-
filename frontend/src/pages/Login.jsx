@@ -134,13 +134,16 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
-      {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-blue-700 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-        </div>
+    <div className="min-h-screen bg-slate-950 flex selection:bg-primary/20 relative overflow-hidden font-['Inter',_sans-serif]">
+      {/* Visual Side: Background Image with Gradient Overlay */}
+      <div className="hidden lg:flex w-[55%] relative overflow-hidden">
+        <img 
+          src="/login-bg.png" 
+          alt="SmartUni Campus"
+          className="absolute inset-0 w-full h-full object-cover scale-105 animate-slow-zoom"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
         
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
           <div className="mb-8">
@@ -322,8 +325,7 @@ export default function Login() {
                     theme="outline"
                     shape="rectangular"
                     size="large"
-                    text="signin_with"
-                    width="100%"
+                    width={300}
                   />
                </div>
             </div>
