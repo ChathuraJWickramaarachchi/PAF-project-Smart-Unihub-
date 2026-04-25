@@ -29,6 +29,9 @@ public class TicketDTO {
     private String resolutionNotes;
     private String ticketNumber;
     
+    private String category;
+    private String preferredContact;
+    
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime resolvedAt;
@@ -37,6 +40,12 @@ public class TicketDTO {
     private List<AttachmentDTO> attachments;
 
     // Getters and Setters
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public String getPreferredContact() { return preferredContact; }
+    public void setPreferredContact(String preferredContact) { this.preferredContact = preferredContact; }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

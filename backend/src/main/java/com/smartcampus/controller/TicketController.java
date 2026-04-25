@@ -1,16 +1,27 @@
 package com.smartcampus.controller;
 
+import com.smartcampus.dto.AttachmentDTO;
 import com.smartcampus.dto.TicketDTO;
 import com.smartcampus.entity.Ticket.TicketStatus;
+import com.smartcampus.service.AttachmentService;
 import com.smartcampus.service.TicketService;
 import com.smartcampus.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @RestController
@@ -20,6 +31,9 @@ public class TicketController {
     
     @Autowired
     private TicketService ticketService;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -57,6 +71,13 @@ public class TicketController {
                                                   @RequestParam String technicianId) {
         TicketDTO assigned = ticketService.assignTicket(id, technicianId);
         return ResponseEntity.ok(assigned);
+    }
+
+    @PostMapping("/{id}/unassign")
+    @PreAuthorize("hasRole('TECHNICIAN') or hasRole('ADMIN')")
+    public ResponseEntity<TicketDTO> unassignTicket(@PathVariable String id) {
+        TicketDTO unassigned = ticketService.unassignTicket(id);
+        return ResponseEntity.ok(unassigned);
     }
 
     @PatchMapping("/{id}/resolution-notes")
@@ -102,5 +123,44 @@ public class TicketController {
     public ResponseEntity<List<TicketDTO>> getResourceTickets(@PathVariable String resourceId) {
         List<TicketDTO> tickets = ticketService.getTicketsByResource(resourceId);
         return ResponseEntity.ok(tickets);
+    }
+
+    @PostMapping("/{id}/attachments")
+    public ResponseEntity<List<AttachmentDTO>> uploadAttachments(
+            @PathVariable String id,
+            @RequestParam("files") List<MultipartFile> files,
+            HttpServletRequest request) {
+        try {
+            String userId = getCurrentUserId(request);
+            List<AttachmentDTO> attachments = attachmentService.uploadFiles(id, userId != null ? userId : "1", files);
+            return ResponseEntity.status(HttpStatus.CREATED).body(attachments);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{id}/attachments")
+    public ResponseEntity<List<AttachmentDTO>> getAttachments(@PathVariable String id) {
+        List<AttachmentDTO> attachments = attachmentService.getAttachmentsByTicket(id);
+        return ResponseEntity.ok(attachments);
+    }
+
+    @GetMapping("/attachments/file/{fileName}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String fileName) {
+        try {
+            Path filePath = attachmentService.getFilePath(fileName);
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) contentType = "application/octet-stream";
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

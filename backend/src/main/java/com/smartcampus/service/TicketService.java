@@ -35,6 +35,8 @@ public class TicketService {
         ticket.setTitle(ticketDTO.getTitle());
         ticket.setDescription(ticketDTO.getDescription());
         ticket.setPriority(ticketDTO.getPriority());
+        ticket.setCategory(ticketDTO.getCategory());
+        ticket.setPreferredContact(ticketDTO.getPreferredContact());
         ticket.setStatus(TicketStatus.OPEN);
         ticket.setResource(resourceRepository.findById(ticketDTO.getResourceId())
                 .orElseThrow(() -> new RuntimeException("Resource not found")));
@@ -81,7 +83,7 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
         
         ticket.setAssignedTo(technician);
-        ticket.setStatus(TicketStatus.IN_PROGRESS);
+        // Status remains unchanged (e.g. OPEN) until technician accepts
         
         Ticket updated = ticketRepository.save(ticket);
         
@@ -95,6 +97,18 @@ public class TicketService {
                 ticketId
         );
         
+        return convertToDTO(updated);
+    }
+
+    public TicketDTO unassignTicket(String ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        
+        ticket.setAssignedTo(null);
+        // If status was somehow changed, we could revert to OPEN here if needed.
+        ticket.setStatus(TicketStatus.OPEN);
+        
+        Ticket updated = ticketRepository.save(ticket);
         return convertToDTO(updated);
     }
 
@@ -170,6 +184,8 @@ public class TicketService {
             dto.setAssignedToId(ticket.getAssignedTo().getId());
         }
         dto.setResolutionNotes(ticket.getResolutionNotes());
+        dto.setCategory(ticket.getCategory());
+        dto.setPreferredContact(ticket.getPreferredContact());
         dto.setCreatedAt(ticket.getCreatedAt());
         dto.setUpdatedAt(ticket.getUpdatedAt());
         dto.setResolvedAt(ticket.getResolvedAt());

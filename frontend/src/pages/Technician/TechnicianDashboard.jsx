@@ -11,6 +11,8 @@ export default function TechnicianDashboard() {
     pendingTickets: 0,
     assignedToMe: 0
   })
+  const [assignedTickets, setAssignedTickets] = useState([])
+  const [showMyTickets, setShowMyTickets] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function TechnicianDashboard() {
       let assignedCount = 0
       if (user?.userId) {
         const assignedResponse = await TicketAPI.getAssigned(user.userId)
+        setAssignedTickets(assignedResponse.data)
         assignedCount = assignedResponse.data.length
       }
       setStats({
@@ -33,6 +36,24 @@ export default function TechnicianDashboard() {
       console.error('Failed to load technician dashboard data:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleAcceptTicket = async (id) => {
+    try {
+      await TicketAPI.updateStatus(id, 'IN_PROGRESS')
+      fetchDashboardData() // Refresh data to update lists and stats
+    } catch (err) {
+      console.error('Failed to accept ticket', err)
+    }
+  }
+
+  const handleDenyTicket = async (id) => {
+    try {
+      await TicketAPI.unassign(id)
+      fetchDashboardData()
+    } catch (err) {
+      console.error('Failed to deny ticket', err)
     }
   }
 
@@ -52,7 +73,12 @@ export default function TechnicianDashboard() {
         <header className="bg-white border-b border-gray-100 flex justify-between items-center px-12 py-5 sticky top-0 z-10">
           <div className="text-[14px] font-bold text-gray-900 tracking-tight">Dashboard Overview</div>
           <div className="flex items-center gap-6">
-            <div className="h-8 w-px bg-gray-100"></div>
+            <div className="h-8 w-px bg-gray-100">
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl text-lg hover:bg-gray-100">🔔</button>
+
+            </div>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm">👤</div>
               <div className="text-right hidden sm:block">
@@ -72,9 +98,17 @@ export default function TechnicianDashboard() {
 
           <div className="flex flex-col lg:flex-row gap-4 justify-between">
             <div className="flex gap-4">
-              <button className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-100 rounded-xl text-gray-600 hover:shadow-sm transition-all focus:ring-2 focus:ring-primary/20">
+              <button 
+                onClick={() => setShowMyTickets(true)}
+                className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-100 rounded-xl text-gray-600 hover:shadow-sm transition-all focus:ring-2 focus:ring-primary/20 relative"
+              >
                 <span className="text-lg">🎫</span>
                 <span className="text-[12px] font-bold text-gray-700">My Tickets</span>
+                {assignedTickets.filter(t => t.status === 'OPEN').length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-rose-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold shadow-md animate-bounce">
+                    {assignedTickets.filter(t => t.status === 'OPEN').length}
+                  </span>
+                )}
               </button>
               <button className="flex items-center gap-3 px-8 py-3 bg-[#1e293b] rounded-xl text-white shadow-lg shadow-slate-200 hover:bg-slate-800 transition-all font-bold text-[12px]">
                 Report Protocol
@@ -139,6 +173,78 @@ export default function TechnicianDashboard() {
             </div>
           </div>
         </div>
+
+        {/* My Tickets Modal */}
+        {showMyTickets && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-gray-900/40 animate-fade-in" onClick={() => setShowMyTickets(false)}>
+            <div className="bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl border border-gray-100 p-10 flex flex-col overflow-hidden max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-start mb-8 shrink-0">
+                <div>
+                  <h2 className="text-2xl font-black text-gray-900 tracking-tighter italic">My <span className="text-primary not-italic">Assignments</span></h2>
+                  <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mt-1">Review and accept assigned tasks</p>
+                </div>
+                <button onClick={() => setShowMyTickets(false)} className="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-100 hover:text-gray-900 transition-colors flex items-center justify-center text-xl">✕</button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto custom-scrollbar space-y-6 pr-2">
+                {assignedTickets.length === 0 ? (
+                  <div className="py-20 text-center space-y-4">
+                    <div className="text-4xl">📭</div>
+                    <div className="text-[11px] font-black text-gray-300 uppercase tracking-[0.2em]">No tickets currently assigned to you.</div>
+                  </div>
+                ) : (
+                  assignedTickets.map(ticket => (
+                    <div key={ticket.id} className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-lg font-black italic text-gray-900">#{ticket.ticketNumber}</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg ${ticket.status === 'OPEN' ? 'bg-amber-50 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                              {ticket.status === 'OPEN' ? 'NEW ASSIGNMENT' : ticket.status}
+                            </span>
+                          </div>
+                          <h3 className="text-sm font-bold text-gray-700">{ticket.title}</h3>
+                        </div>
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border ${ticket.priority === 'URGENT' ? 'bg-rose-50 text-rose-500 border-rose-100' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                          {ticket.priority}
+                        </span>
+                      </div>
+                      
+                      <p className="text-[12px] text-gray-500 font-medium italic mb-6 bg-gray-50 p-4 rounded-xl">
+                        {ticket.description}
+                      </p>
+
+                      {ticket.status === 'OPEN' && (
+                        <div className="space-y-4">
+                          <div className="bg-primary/5 border border-primary/20 p-4 rounded-2xl flex items-center gap-4">
+                            <span className="text-xl">🔔</span>
+                            <p className="text-[11px] font-bold text-primary tracking-wide">
+                              System Administrator has assigned this task to your node. Do you accept the protocol?
+                            </p>
+                          </div>
+                          <div className="flex gap-4">
+                            <button 
+                              onClick={() => handleAcceptTicket(ticket.id)} 
+                              className="flex-1 bg-primary text-white text-[11px] font-black py-4 rounded-xl uppercase tracking-widest shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all"
+                            >
+                              Accept Assignment
+                            </button>
+                            <button 
+                              onClick={() => handleDenyTicket(ticket.id)} 
+                              className="flex-1 bg-white text-rose-500 border border-rose-100 text-[11px] font-black py-4 rounded-xl uppercase tracking-widest hover:bg-rose-50 transition-all"
+                            >
+                              Deny Assignment
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )

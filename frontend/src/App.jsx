@@ -22,6 +22,7 @@ import UserTickets from './pages/User/MyTickets'
 import UserBookings from './pages/User/MyBookings'
 import Resources from './pages/Admin/Resources'
 import AdminTickets from './pages/Technician/Tickets'
+import TechnicianAnalytics from './pages/Technician/Analytics'
 import Notifications from './pages/Admin/Notifications'
 import NotFound from './pages/NotFound'
 import UserManagement from './pages/Admin/UserManagement'
@@ -93,6 +94,7 @@ function AppContent() {
             <Route path="/resources" element={<Resources />} />
             <Route path="/bookings" element={<ManagerBookings />} />
             <Route path="/tech/tickets" element={<AdminTickets />} />
+            <Route path="/tech/analytics" element={<TechnicianAnalytics />} />
             <Route path="/tickets" element={<PublicTickets />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/welcome" element={<WelcomeScreen />} />

@@ -95,12 +95,12 @@ export default function AdminDashboard() {
                {/* Stats Bar */}
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
-                     { title: 'Operational Nodes', value: stats.totalResources, desc: 'Across 12 sectors', icon: '🏢' },
-                     { title: 'Active Sessions', value: stats.activeBookings, desc: `${pendingApprovals.length} awaiting auth`, icon: '📅' },
-                     { title: 'Incident Reports', value: stats.openTickets, desc: 'Technical issues', icon: '🎫' },
-                     { title: 'Protocols Ready', value: stats.resolvedToday, desc: 'Sync complete', icon: '✅' }
+                     { title: 'Operational Nodes', value: stats.totalResources, desc: 'Across 12 sectors', icon: '🏢', path: '/resources' },
+                     { title: 'Active Sessions', value: stats.activeBookings, desc: `${pendingApprovals.length} awaiting auth`, icon: '📅', path: '/bookings' },
+                     { title: 'Incident Reports', value: stats.openTickets, desc: 'Technical issues', icon: '🎫', path: '/tech/tickets' },
+                     { title: 'Protocols Ready', value: stats.resolvedToday, desc: 'Sync complete', icon: '✅', path: '/admin-dashboard' }
                   ].map((stat, i) => (
-                     <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 flex justify-between items-start group hover:shadow-xl hover:shadow-gray-200/40 transition-all">
+                     <Link to={stat.path} key={i} className="bg-white p-6 rounded-2xl border border-gray-100 flex justify-between items-start group hover:shadow-xl hover:shadow-gray-200/40 transition-all block">
                         <div className="space-y-4">
                            <div className="text-[12px] font-medium text-gray-400">{stat.title}</div>
                            <div className="space-y-1">
@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                            </div>
                         </div>
                         <div className="p-3 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-primary/5 group-hover:text-primary transition-colors">{stat.icon}</div>
-                     </div>
+                     </Link>
                   ))}
                </div>
 
