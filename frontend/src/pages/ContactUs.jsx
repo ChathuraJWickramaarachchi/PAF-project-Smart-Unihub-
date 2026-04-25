@@ -184,23 +184,20 @@ export default function ContactUs() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative py-28 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-primary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl"></div>
+      <section className="relative py-20 lg:py-28 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 right-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl"></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-primary/20 backdrop-blur-sm rounded-full mb-8 border border-primary/30">
-            <FaRocket className="text-primary text-sm" />
-            <span className="text-primary text-sm font-semibold">Get in Touch</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
+            <span className="text-white text-sm font-medium">We're Here to Help</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Let's Start a <span className="text-primary">Conversation</span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10">
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10">
             Have questions about SmartUni Portal? We'd love to hear from you. Our team is ready to help you transform campus management.
           </p>
           
@@ -222,95 +219,44 @@ export default function ContactUs() {
       </section>
 
       {/* Contact Info Cards */}
-      <section className="py-20 bg-gray-50 -mt-16 relative z-10">
+      <section className="py-16 bg-white -mt-16 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {contactInfo.map((info, index) => (
-              <div key={index} className="group relative bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
-                {/* Gradient overlay on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${info.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
-                
-                {/* Top accent line */}
-                <div className={`h-1 bg-gradient-to-r ${info.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
-                
-                <div className="p-6 relative">
-                  {/* Icon with animated background */}
-                  <div className="relative mb-5">
-                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${info.color} text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
-                      <info.icon className="w-7 h-7" />
-                    </div>
-                    {/* Pulsing ring effect */}
-                    <div className={`absolute inset-0 w-16 h-16 rounded-2xl bg-gradient-to-br ${info.color} opacity-0 group-hover:opacity-30 group-hover:scale-150 transition-all duration-500 animate-ping`}></div>
-                  </div>
-                  
-                  {/* Stats badge */}
-                  <div className="absolute top-6 right-6">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 group-hover:bg-gray-900 group-hover:text-white transition-all duration-300">
-                      {info.stats}
-                    </span>
-                  </div>
-                  
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-5 group-hover:text-gray-900 transition-colors">{info.title}</h3>
-                  
-                  {/* Contact items */}
-                  <div className="space-y-4 mb-5">
-                    {info.items.map((item, i) => (
-                      <div key={i} className="group/item relative">
-                        {/* Hover background */}
-                        <div className="absolute inset-0 bg-gray-50 rounded-lg transform scale-x-0 group-hover/item:scale-x-100 transition-transform duration-300 origin-left"></div>
-                        
-                        <div className="relative flex items-start justify-between py-2 px-2 -mx-2 rounded-lg">
-                          <div className="flex-1 pr-2">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{item.label}</p>
-                            {item.link ? (
-                              <a href={item.link} className="text-sm text-gray-900 hover:text-primary font-medium transition-colors hover:underline block">
-                                {item.value}
-                              </a>
-                            ) : (
-                              <p className="text-sm text-gray-900 font-medium">{item.value}</p>
-                            )}
-                          </div>
-                          {item.value.includes('@') && (
-                            <button
-                              onClick={() => copyToClipboard(item.value, `${info.title}-${i}`)}
-                              className="relative flex-shrink-0 p-2 rounded-lg hover:bg-white hover:shadow-md transition-all duration-300 group/btn"
-                            >
-                              {copiedField === `${info.title}-${i}` ? (
-                                <FaCheck className="w-3.5 h-3.5 text-green-500" />
-                              ) : (
-                                <FaCopy className="w-3.5 h-3.5 text-gray-400 group-hover/btn:text-primary transition-colors" />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Status badge */}
-                  <div className={`relative px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 overflow-hidden transition-all duration-300 ${
-                    info.isLive 
-                      ? isOfficeOpen()
-                        ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200 group-hover:from-green-100 group-hover:to-green-200'
-                        : 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 border border-red-200 group-hover:from-red-100 group-hover:to-red-200'
-                      : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 border border-gray-200 group-hover:from-gray-100 group-hover:to-gray-200'
-                  }`}>
-                    {/* Animated shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    
-                    {info.isLive && (
-                      <span className={`relative flex h-2.5 w-2.5 ${isOfficeOpen() ? 'text-green-500' : 'text-red-500'}`}>
-                        {isOfficeOpen() && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>}
-                        <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isOfficeOpen() ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                      </span>
-                    )}
-                    <span className="relative z-10">{info.description}</span>
-                  </div>
+              <div key={index} className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${info.color} text-white mb-5 group-hover:scale-110 transition-transform shadow-lg`}>
+                  <info.icon className="w-6 h-6" />
                 </div>
-                
-                {/* Bottom gradient line */}
-                <div className={`h-0.5 bg-gradient-to-r ${info.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 delay-100 origin-right`}></div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">{info.title}</h3>
+                <div className="space-y-3 mb-4">
+                  {info.items.map((item, i) => (
+                    <div key={i}>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{item.label}</p>
+                      {item.link ? (
+                        <a href={item.link} className="text-sm text-gray-900 hover:text-primary font-medium transition-colors hover:underline block">
+                          {item.value}
+                        </a>
+                      ) : (
+                        <p className="text-sm text-gray-900 font-medium">{item.value}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className={`px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 ${
+                  info.isLive 
+                    ? isOfficeOpen()
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                    : 'bg-gray-50 text-gray-600 border border-gray-200'
+                }`}>
+                  {info.isLive && (
+                    <span className={`relative flex h-2 w-2`}>
+                      {isOfficeOpen() && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>}
+                      <span className={`relative inline-flex rounded-full h-2 w-2 ${isOfficeOpen() ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    </span>
+                  )}
+                  <span>{info.description}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -335,13 +281,13 @@ export default function ContactUs() {
       </section>
 
       {/* Contact Form & Info Section */}
-      <section className="py-20">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Form */}
-            <div className="lg:col-span-2 bg-white p-10 rounded-2xl border border-gray-200 shadow-lg">
+            <div className="lg:col-span-2 bg-white p-8 lg:p-10 rounded-2xl border border-gray-200 shadow-sm">
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h2>
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h2>
                 <p className="text-gray-600">Fill out the form below and we'll get back to you within 24 hours.</p>
               </div>
               
@@ -367,7 +313,7 @@ export default function ContactUs() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       placeholder="John Doe"
                     />
                   </div>
@@ -382,7 +328,7 @@ export default function ContactUs() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       placeholder="john@university.edu"
                     />
                   </div>
@@ -398,7 +344,7 @@ export default function ContactUs() {
                       value={formData.inquiryType}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                     >
                       <option value="general">General Inquiry</option>
                       <option value="support">Technical Support</option>
@@ -417,7 +363,7 @@ export default function ContactUs() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                       placeholder="How can we help?"
                     />
                   </div>
@@ -433,7 +379,7 @@ export default function ContactUs() {
                     onChange={handleChange}
                     required
                     rows="6"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
                     placeholder="Tell us more about your needs..."
                   ></textarea>
                 </div>
@@ -441,7 +387,7 @@ export default function ContactUs() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transform hover:-translate-y-0.5"
+                  className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
                 >
                   {isSubmitting ? (
                     <>
@@ -452,7 +398,6 @@ export default function ContactUs() {
                     <>
                       <FaPaperPlane />
                       <span>Send Message</span>
-                      <FaArrowRight className="ml-2" />
                     </>
                   )}
                 </button>
