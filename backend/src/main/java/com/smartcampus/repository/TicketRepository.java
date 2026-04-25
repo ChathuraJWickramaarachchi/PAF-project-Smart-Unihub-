@@ -21,6 +21,4 @@ public interface TicketRepository extends MongoRepository<Ticket, String> {
     
     @Query(value = "{'status': ?0, 'assignedTo.id': ?1}")
     Long countByStatusAndAssignedToId(TicketStatus status, String userId);
-
-    long countByStatus(TicketStatus status);
 }

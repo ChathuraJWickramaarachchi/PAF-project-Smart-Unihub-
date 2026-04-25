@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ResourceAPI, BookingAPI, TicketAPI, AnalyticsAPI } from '../../services/api'
+import { ResourceAPI, BookingAPI, TicketAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import AdminSidebar from '../../components/AdminSidebar'
 
@@ -26,13 +26,12 @@ export default function AdminDashboard() {
          const bookingsResponse = await BookingAPI.getByStatus('APPROVED')
          const ticketsResponse = await TicketAPI.getByStatus('OPEN')
          const allBookings = await BookingAPI.getAll()
-         const analyticsResponse = await AnalyticsAPI.getStats()
 
          setStats({
             totalResources: resourcesResponse.data.length,
             activeBookings: bookingsResponse.data.length,
             openTickets: ticketsResponse.data.length,
-            resolvedToday: analyticsResponse.data.resolvedToday
+            resolvedToday: 7
          })
 
          setPendingApprovals(allBookings.data.filter(b => b.status === 'PENDING').slice(0, 4))

@@ -17,6 +17,4 @@ public interface ResourceRepository extends MongoRepository<Resource, String> {
     List<Resource> searchResources(String searchTerm);
     
     List<Resource> findByCapacityGreaterThanEqual(Integer capacity);
-
-    long countByStatus(ResourceStatus status);
 }

@@ -129,11 +129,6 @@ export const UserAPI = {
   delete: (userId) => apiClient.delete(`/users/${userId}`),
 }
 
-// Analytics API (Admin only)
-export const AnalyticsAPI = {
-  getStats: () => apiClient.get('/analytics'),
-}
-
 // Admin API
 export const AdminAPI = {
   getPendingApprovals: () => apiClient.get('/users/pending-approvals'),
