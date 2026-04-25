@@ -246,7 +246,6 @@ export default function Facilities() {
                     <span className="text-primary opacity-50">👥</span>
                     Cap: {resource.capacity}
                   </div>
-                </div>
 
                 <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
                   <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType?.replace('_', ' ')}</span>

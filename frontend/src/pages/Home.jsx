@@ -1,98 +1,310 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { FaRocket, FaShieldAlt, FaUsers, FaChartLine, FaStar, FaCheckCircle, FaBuilding, FaCalendarAlt, FaTicketAlt, FaBell, FaArrowRight } from 'react-icons/fa'
 
 export default function Home() {
   const features = [
-    { icon: '🏢', title: 'Asset Logic', desc: 'Book and manage campus facilities via intelligent routing.' },
-    { icon: '📅', title: 'Scheduling', desc: 'Real-time synchronization of shared lecture and lab spaces.' },
-    { icon: '🎫', title: 'Ticket Flow', desc: 'Instant dispatch of maintenance telemetry to field staff.' },
-    { icon: '🔔', title: 'Alert Node', desc: 'Instant push notifications for all status changes.' }
+    { icon: FaBuilding, title: 'Asset Management', desc: 'Book and manage campus facilities through intelligent scheduling.' },
+    { icon: FaCalendarAlt, title: 'Smart Scheduling', desc: 'Real-time synchronization of shared lecture halls and lab spaces.' },
+    { icon: FaTicketAlt, title: 'Ticket System', desc: 'Instant dispatch of maintenance requests to field technicians.' },
+    { icon: FaBell, title: 'Notifications', desc: 'Real-time alerts for all booking and maintenance status changes.' }
   ]
 
   return (
-    <div className="bg-white min-h-screen selection:bg-primary/10">
+    <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-40 bg-gray-900 overflow-hidden">
-        {/* Background Animation Bits */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px] -mr-96 -mt-96 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -ml-64 -mb-64"></div>
+      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
+        {/* Subtle background effects */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[150px]"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px]"></div>
+        </div>
         
-        <div className="relative max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div className="space-y-10 animate-fade-in-up">
-            <div className="inline-block px-4 py-1.5 bg-primary/20 backdrop-blur-md rounded-full border border-primary/30">
-              <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Deployment v2.4.0</span>
+        <div className="relative max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="space-y-8 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span className="text-xs font-medium text-white">Trusted by 500+ Universities</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                Optimize Your <span className="text-primary">Campus</span> Resources
+              </h1>
+              <p className="text-lg text-gray-300 leading-relaxed max-w-xl">
+                The central platform for smart university infrastructure management. Streamline bookings, maintenance, and resource allocation in one unified system.
+              </p>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Link to="/login" className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5">
+                  Get Started
+                  <FaArrowRight className="w-4 h-4" />
+                </Link>
+                <Link to="/about" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-white/20 transition-all hover:-translate-y-0.5">
+                  Learn More
+                </Link>
+              </div>
+              <div className="flex items-center gap-6 pt-6">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 border-2 border-gray-900 flex items-center justify-center text-white text-xs font-bold">
+                      {String.fromCharCode(64 + i)}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-sm text-gray-400">
+                  <span className="font-semibold text-white">10,000+</span> active users
+                </div>
+              </div>
             </div>
-            <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-[0.9] italic">
-              Optimize <span className="text-primary not-italic">Campus</span> <br/> Resources.
-            </h1>
-            <p className="max-w-md text-xl text-gray-400 font-medium leading-relaxed italic">
-              The neural center for smart university infrastructure management. 
-            </p>
-            <div className="flex flex-wrap gap-6 pt-4">
-              <Link to="/login" className="bg-primary text-white px-10 py-5 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:-translate-y-1 hover:shadow-primary/50 transition-all active:scale-95">
-                Initialize System
-              </Link>
-              <Link to="/about" className="bg-white/5 backdrop-blur-md border border-white/10 text-white px-10 py-5 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
-                Registry Information
-              </Link>
+            <div className="hidden lg:block">
+              <div className="relative">
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                  <div className="bg-gray-900/50 px-4 py-3 border-b border-white/10 flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="ml-2 text-xs text-gray-400">SmartUni Dashboard</span>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="bg-primary/10 border border-primary/20 rounded-xl p-4">
+                        <div className="text-2xl font-bold text-primary mb-1">150+</div>
+                        <div className="text-xs text-gray-400">Resources</div>
+                      </div>
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                        <div className="text-2xl font-bold text-green-400 mb-1">98%</div>
+                        <div className="text-xs text-gray-400">Uptime</div>
+                      </div>
+                      <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4">
+                        <div className="text-2xl font-bold text-purple-400 mb-1">24/7</div>
+                        <div className="text-xs text-gray-400">Support</div>
+                      </div>
+                    </div>
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-4 h-40 flex items-center justify-center">
+                      <FaChartLine className="w-16 h-16 text-primary/30" />
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-4 border border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                      <FaCheckCircle className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-gray-900">Booking Confirmed</div>
+                      <div className="text-xs text-gray-500">Hall A - 2:00 PM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="hidden lg:block relative group">
-             <div className="absolute inset-0 bg-primary/20 rounded-[4rem] rotate-3 group-hover:rotate-6 transition-transform"></div>
-             <div className="relative bg-gray-800 border border-white/10 aspect-square rounded-[4rem] shadow-2xl overflow-hidden flex items-center justify-center -rotate-3 group-hover:-rotate-0 transition-transform">
-                <div className="text-[200px] animate-float italic font-black text-primary opacity-20">UNI</div>
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
-             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-40 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
-            <div className="max-w-xl">
-              <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em] mb-6 pl-1">Capability Matrix</h2>
-              <p className="text-5xl font-black text-gray-900 tracking-tighter italic leading-none">Modules built for total campus <span className="text-primary not-italic underline decoration-primary/20">autonomy</span>.</p>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+              <span className="text-xs font-semibold text-primary">Features</span>
             </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Everything you need to manage your campus</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Powerful tools designed to streamline campus operations and improve efficiency</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <div key={index} className="bg-gray-50/50 p-12 rounded-[3.5rem] border border-gray-100 hover:bg-white hover:border-white hover:shadow-2xl hover:shadow-gray-200/50 transition-all hover:-translate-y-2 group">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl mb-10 shadow-sm group-hover:bg-primary group-hover:text-white transition-all">{feature.icon}</div>
-                <h3 className="text-xl font-black text-gray-900 mb-4 tracking-tight uppercase italic">{feature.title}</h3>
-                <p className="text-sm text-gray-500 font-medium leading-relaxed">{feature.desc}</p>
+              <div key={index} className="group bg-white p-8 rounded-2xl border border-gray-200 hover:border-primary/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <feature.icon className="w-7 h-7" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{feature.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Modern Grid Break */}
-      <section className="py-20">
+      {/* Stats Section */}
+      <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-gray-900 rounded-[4rem] p-20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[100px] -mr-32 -mt-32"></div>
-            <div className="relative z-10 flex flex-col lg:flex-row items-center gap-20">
-              <div className="lg:w-1/2 space-y-8">
-                <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-snug italic">Synchronizing the <span className="text-primary not-italic">Academic</span> Ecosystem.</h2>
-                <p className="text-gray-400 text-lg font-medium leading-relaxed">
-                  SmartUni Portal isn't just an interface; it's a protocol for campus efficiency. We reduce administrative overhead by 40% through automated allocation algorithms.
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-12 lg:p-16 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full blur-[100px]"></div>
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">Simplifying Campus Management</h2>
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  SmartUni Portal reduces administrative overhead by 40% through automated scheduling and resource allocation.
                 </p>
-                <div className="flex gap-10 pt-4">
+                <div className="flex gap-8 pt-4">
                   <div>
-                    <div className="text-3xl font-black text-white italic tracking-tighter">150+</div>
-                    <div className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Managed Assets</div>
+                    <div className="text-3xl font-bold text-white">150+</div>
+                    <div className="text-sm text-gray-400 mt-1">Managed Resources</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-black text-white italic tracking-tighter">24/7</div>
-                    <div className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Active Uptime</div>
+                    <div className="text-3xl font-bold text-white">24/7</div>
+                    <div className="text-sm text-gray-400 mt-1">System Uptime</div>
                   </div>
                 </div>
               </div>
-              <div className="lg:w-1/2 grid grid-cols-2 gap-4">
-                <div className="aspect-[4/5] bg-white/5 rounded-[3rem] border border-white/10 group-hover:rotate-2 transition-transform"></div>
-                <div className="aspect-[4/5] bg-primary/10 rounded-[3rem] border border-white/10 mt-12 group-hover:-rotate-2 transition-transform"></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="aspect-square bg-white/5 rounded-xl border border-white/10"></div>
+                <div className="aspect-square bg-primary/10 rounded-xl border border-white/10 mt-8"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+              <span className="text-xs font-semibold text-primary">Testimonials</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Universities Say</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Trusted by leading institutions worldwide</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: 'Dr. Sarah Mitchell',
+                role: 'Dean of Operations',
+                university: 'Tech University',
+                quote: 'SmartUni Portal transformed how we manage our 200+ facilities. Bookings are now seamless.',
+                rating: 5
+              },
+              {
+                name: 'Prof. James Chen',
+                role: 'IT Director',
+                university: 'State College',
+                quote: 'The automation features saved us 20 hours per week. Incredible platform with excellent support.',
+                rating: 5
+              },
+              {
+                name: 'Maria Rodriguez',
+                role: 'Facilities Manager',
+                university: 'Metro University',
+                quote: 'Maintenance requests are resolved 3x faster. Our campus has never run smoother.',
+                rating: 5
+              }
+            ].map((testimonial, index) => (
+              <div key={index} className="bg-white p-8 rounded-2xl border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <FaStar key={i} className="text-yellow-400 w-4 h-4" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
+                <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                    <p className="text-sm text-gray-600">{testimonial.role}, {testimonial.university}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-sm font-semibold text-primary uppercase tracking-wide mb-3">Getting Started</h2>
+            <p className="text-4xl font-bold text-gray-900">Simple Setup, Powerful Results</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              {
+                step: '01',
+                title: 'Sign Up & Configure',
+                description: 'Create your account and configure your campus layout, resources, and user roles in minutes.',
+                icon: FaRocket
+              },
+              {
+                step: '02',
+                title: 'Invite Your Team',
+                description: 'Add staff, faculty, and students with role-based access controls and permissions.',
+                icon: FaUsers
+              },
+              {
+                step: '03',
+                title: 'Launch & Optimize',
+                description: 'Go live and use real-time analytics to continuously optimize campus resource utilization.',
+                icon: FaChartLine
+              }
+            ].map((item, index) => (
+              <div key={index} className="relative">
+                <div className="bg-white p-8 rounded-xl border border-gray-200 hover:shadow-lg transition-all">
+                  <div className="text-6xl font-bold text-primary/10 mb-4">{item.step}</div>
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary mb-6">
+                    <item.icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                </div>
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-6 transform -translate-y-1/2 text-gray-300 text-3xl">
+                    →
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Security & Trust Section */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-12 lg:p-16 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full blur-[100px]"></div>
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 backdrop-blur-sm rounded-lg border border-green-500/30">
+                  <FaShieldAlt className="text-green-400" />
+                  <span className="text-xs font-medium text-green-400">Enterprise-Grade Security</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">Your Data is Safe With Us</h2>
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  We use bank-level 256-bit encryption and comply with international data protection standards to ensure your institutional data remains secure.
+                </p>
+                <div className="space-y-3 pt-4">
+                  {['256-bit SSL Encryption', 'GDPR Compliant', '99.9% Uptime SLA', 'Daily Automated Backups'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <FaCheckCircle className="text-green-400" />
+                      <span className="text-gray-300 font-medium">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+                    <div className="text-3xl font-bold text-white mb-1">256-bit</div>
+                    <div className="text-sm text-gray-400">Encryption</div>
+                  </div>
+                  <div className="bg-primary/20 backdrop-blur-sm border border-primary/30 rounded-xl p-6">
+                    <div className="text-3xl font-bold text-white mb-1">99.9%</div>
+                    <div className="text-sm text-gray-400">Uptime</div>
+                  </div>
+                </div>
+                <div className="space-y-4 mt-8">
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+                    <div className="text-3xl font-bold text-white mb-1">24/7</div>
+                    <div className="text-sm text-gray-400">Monitoring</div>
+                  </div>
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+                    <div className="text-3xl font-bold text-white mb-1">SOC2</div>
+                    <div className="text-sm text-gray-400">Certified</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -100,15 +312,27 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-40">
-        <div className="max-w-4xl mx-auto px-6 text-center italic relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
-          <h2 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter mb-12 relative z-10">
-            Interface <span className="text-primary flex items-center justify-center gap-4 mt-4">Now <span className="w-16 h-1 bg-primary/20 rounded-full"></span></span>
+      <section className="py-20 bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl"></div>
+        </div>
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+            Ready to Transform Your Campus?
           </h2>
-          <Link to="/login" className="inline-block relative z-10 bg-primary text-white px-16 py-6 rounded-2xl font-black text-[13px] uppercase tracking-[0.3em] shadow-2xl shadow-primary/40 hover:-translate-y-2 hover:shadow-primary/60 transition-all active:scale-95">
-            Log into Portal
-          </Link>
+          <p className="text-lg text-gray-300 mb-10 max-w-2xl mx-auto">
+            Join thousands of universities already using SmartUni Portal to streamline their operations
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/login" className="inline-flex items-center gap-2 bg-primary text-white px-10 py-4 rounded-xl font-semibold text-base hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5">
+              Get Started Free
+              <FaArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/contact" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-10 py-4 rounded-xl font-semibold text-base hover:bg-white/20 transition-all hover:-translate-y-0.5">
+              Contact Sales
+            </Link>
+          </div>
         </div>
       </section>
     </div>
