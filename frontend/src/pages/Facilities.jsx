@@ -253,7 +253,17 @@ export default function Facilities() {
 
                 <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
                   <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest italic truncate">{resource.resourceType?.replace('_', ' ')}</span>
-                  <button className="bg-primary text-white px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-gray-900 transition-colors whitespace-nowrap" onClick={(e) => { e.stopPropagation(); handleBookNow(resource); }}>Book Now</button>
+                  <button 
+                    disabled={resource.status !== 'ACTIVE'}
+                    className={`px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                      resource.status === 'ACTIVE' 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20 hover:bg-gray-900' 
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed grayscale opacity-50'
+                    }`} 
+                    onClick={(e) => { e.stopPropagation(); handleBookNow(resource); }}
+                  >
+                    {resource.status === 'ACTIVE' ? 'Book Now' : 'Unavailable'}
+                  </button>
                 </div>
               </div>
             </div>
