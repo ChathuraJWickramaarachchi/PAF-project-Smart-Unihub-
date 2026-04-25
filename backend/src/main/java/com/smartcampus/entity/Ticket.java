@@ -20,6 +20,10 @@ public class Ticket {
     private TicketStatus status = TicketStatus.OPEN;
 
     private TicketPriority priority = TicketPriority.MEDIUM;
+    
+    private String category;
+    
+    private String preferredContact;
 
     @DBRef
     private User reportedBy;
@@ -51,6 +55,12 @@ public class Ticket {
     public enum TicketPriority {
         LOW, MEDIUM, HIGH, URGENT
     }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public String getPreferredContact() { return preferredContact; }
+    public void setPreferredContact(String preferredContact) { this.preferredContact = preferredContact; }
 
     // Getters and Setters
     public String getId() { return id; }

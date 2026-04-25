@@ -35,6 +35,8 @@ public class TicketService {
         ticket.setTitle(ticketDTO.getTitle());
         ticket.setDescription(ticketDTO.getDescription());
         ticket.setPriority(ticketDTO.getPriority());
+        ticket.setCategory(ticketDTO.getCategory());
+        ticket.setPreferredContact(ticketDTO.getPreferredContact());
         ticket.setStatus(TicketStatus.OPEN);
         ticket.setResource(resourceRepository.findById(ticketDTO.getResourceId())
                 .orElseThrow(() -> new RuntimeException("Resource not found")));
@@ -170,6 +172,8 @@ public class TicketService {
             dto.setAssignedToId(ticket.getAssignedTo().getId());
         }
         dto.setResolutionNotes(ticket.getResolutionNotes());
+        dto.setCategory(ticket.getCategory());
+        dto.setPreferredContact(ticket.getPreferredContact());
         dto.setCreatedAt(ticket.getCreatedAt());
         dto.setUpdatedAt(ticket.getUpdatedAt());
         dto.setResolvedAt(ticket.getResolvedAt());

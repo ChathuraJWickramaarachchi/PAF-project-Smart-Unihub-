@@ -13,12 +13,14 @@ export default function PublicTickets() {
     title: '',
     description: '',
     priority: 'MEDIUM',
-    resourceId: ''
+    resourceId: '',
+    category: '',
+    preferredContact: ''
   })
   const [selectedFiles, setSelectedFiles] = useState([])
   const [activeTab, setActiveTab] = useState('ALL') // ALL, OPEN, RESOLVED
 
-  const userId = user?.userId ? parseInt(user.userId) : 1
+  const userId = user?.userId || user?.id || "1"
 
   useEffect(() => {
     fetchMyTickets()
@@ -56,7 +58,7 @@ export default function PublicTickets() {
     try {
       const response = await TicketAPI.create({
         ...newTicket,
-        resourceId: parseInt(newTicket.resourceId),
+        resourceId: newTicket.resourceId,
         reportedById: userId
       })
 
@@ -68,7 +70,7 @@ export default function PublicTickets() {
       }
 
       setShowCreateModal(false)
-      setNewTicket({ title: '', description: '', priority: 'MEDIUM', resourceId: '' })
+      setNewTicket({ title: '', description: '', priority: 'MEDIUM', resourceId: '', category: '', preferredContact: '' })
       setSelectedFiles([])
       fetchMyTickets()
     } catch (err) {
@@ -182,113 +184,148 @@ export default function PublicTickets() {
 
       {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-gray-900/20 animate-fade-in" onClick={() => setShowCreateModal(false)}>
-           <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl border border-gray-100 p-12 space-y-10 animate-zoom-in overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
-              <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none"></div>
-              
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-3xl font-black text-gray-900 tracking-tighter italic">Report <span className="text-primary not-italic">Anomaly</span></h2>
-                  <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mt-2">Initializing new incident protocol...</p>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-gray-900/40 animate-fade-in" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden animate-zoom-in" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white">
+              <h2 className="text-[18px] font-bold text-gray-800 tracking-tight">Report an Issue</h2>
+              <button 
+                onClick={() => setShowCreateModal(false)} 
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-all"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleCreateTicket} className="p-8 space-y-6 max-h-[85vh] overflow-y-auto custom-scrollbar">
+              {/* Row 1: Category & Priority */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Category</label>
+                  <select
+                    required
+                    value={newTicket.category}
+                    onChange={(e) => setNewTicket({ ...newTicket, category: e.target.value })}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                  >
+                    <option value="">Select category...</option>
+                    <option value="IT">IT Support</option>
+                    <option value="MAINTENANCE">Maintenance</option>
+                    <option value="SECURITY">Security</option>
+                    <option value="FACILITY">Facility Management</option>
+                    <option value="OTHER">Other</option>
+                  </select>
                 </div>
-                <button onClick={() => setShowCreateModal(false)} className="text-gray-300 hover:text-gray-900 transition-colors text-xl">✕</button>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Priority</label>
+                  <select
+                    value={newTicket.priority}
+                    onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value })}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                  >
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
+                </div>
               </div>
 
-              <form onSubmit={handleCreateTicket} className="space-y-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Identifier Group</label>
+              {/* Row 2: Location / Resource */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Location / Resource</label>
+                <select
+                  required
+                  value={newTicket.resourceId}
+                  onChange={(e) => setNewTicket({ ...newTicket, resourceId: e.target.value, title: resources.find(r => r.id === e.target.value)?.resourceName || '' })}
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                >
+                  <option value="">e.g. Hall A-101, Lab B-202...</option>
+                  {resources.map(r => (
+                    <option key={r.id} value={r.id}>{r.resourceName} · {r.location}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Row 3: Description */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Description</label>
+                <textarea
+                  required
+                  rows="4"
+                  placeholder="Describe the issue in detail..."
+                  value={newTicket.description}
+                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all min-h-[120px] resize-none"
+                />
+              </div>
+
+              {/* Row 4: Attach Evidence */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Attach Evidence (Up to 3 Images)</label>
+                <div className="relative">
                   <input
-                    type="text"
-                    required
-                    placeholder="e.g. Lab 4 network failure"
-                    value={newTicket.title}
-                    onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
-                    className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-gray-300"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-upload"
                   />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Target Mapping</label>
-                    <select
-                      required
-                      value={newTicket.resourceId}
-                      onChange={(e) => setNewTicket({ ...newTicket, resourceId: e.target.value })}
-                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all italic"
-                    >
-                      <option value="">Select Resource Node...</option>
-                      {resources.map(r => (
-                        <option key={r.id} value={r.id}>{r.resourceName} · {r.location}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Flow Frequency</label>
-                    <select
-                      value={newTicket.priority}
-                      onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value })}
-                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary outline-none transition-all italic"
-                    >
-                      <option value="LOW">Low (Trival)</option>
-                      <option value="MEDIUM">Medium (Stable)</option>
-                      <option value="HIGH">High (Impact)</option>
-                      <option value="URGENT">Urgent (Breakback)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Telemetry Details</label>
-                  <textarea
-                    required
-                    rows="4"
-                    placeholder="Provide specific incident telemetry..."
-                    value={newTicket.description}
-                    onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                    className="w-full bg-gray-50 border-none rounded-2xl px-6 py-5 text-sm font-medium text-gray-600 focus:ring-2 focus:ring-primary outline-none transition-all min-h-[120px] italic placeholder:text-gray-300"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] pl-1">Evidence Capture (Images)</label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="file-upload"
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="flex flex-col items-center justify-center w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-[2rem] cursor-pointer hover:bg-gray-100 hover:border-primary/30 transition-all group"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">📸</span>
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                          {selectedFiles.length > 0 ? `${selectedFiles.length} files selected` : 'Drop evidence or click to upload'}
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-                  {selectedFiles.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {selectedFiles.map((f, i) => (
-                        <div key={i} className="px-3 py-1 bg-primary/5 border border-primary/10 rounded-lg text-[9px] font-black text-primary uppercase tracking-tighter italic">
-                          {f.name.length > 15 ? f.name.substring(0, 15) + '...' : f.name}
-                        </div>
-                      ))}
+                  <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center w-full min-h-[160px] bg-gray-50/50 border-2 border-dashed border-gray-100 rounded-2xl cursor-pointer hover:bg-gray-100/80 hover:border-primary/20 transition-all group"
+                  >
+                    <div className="flex flex-col items-center justify-center py-6 text-center">
+                      <span className="text-3xl mb-3 opacity-60 group-hover:scale-110 transition-transform">📎</span>
+                      <p className="text-[13px] font-bold text-gray-600">Click or drag images here</p>
+                      <p className="text-[11px] text-gray-400 mt-1">PNG, JPG up to 5MB each · max 3 files</p>
                     </div>
-                  )}
+                  </label>
                 </div>
+                {selectedFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {selectedFiles.map((f, i) => (
+                      <div key={i} className="px-3 py-1 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold text-gray-500 italic">
+                        {f.name.length > 25 ? f.name.substring(0, 25) + '...' : f.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                <div className="flex gap-4 pt-6">
-                  <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 bg-gray-50 text-[11px] font-black text-gray-400 py-5 rounded-2xl uppercase tracking-widest hover:bg-gray-100 transition-all">Abort Proc</button>
-                  <button type="submit" className="flex-2 bg-primary text-white text-[11px] font-black py-5 rounded-2xl uppercase tracking-widest shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all">Engage Portal</button>
-                </div>
-              </form>
-           </div>
+              {/* Row 5: Preferred Contact */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Preferred Contact</label>
+                <input
+                  type="text"
+                  placeholder="Phone or email for follow-up..."
+                  value={newTicket.preferredContact}
+                  onChange={(e) => setNewTicket({ ...newTicket, preferredContact: e.target.value })}
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4 border-t border-gray-50 bg-gray-50/30 -mx-8 -mb-8 p-8">
+                <button 
+                  type="button" 
+                  onClick={() => setShowCreateModal(false)} 
+                  className="flex-1 bg-white border border-gray-200 text-[12px] font-bold text-gray-600 py-3 rounded-xl hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="flex-1 bg-primary text-white text-[12px] font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-50"
+                >
+                  {loading ? 'Submitting...' : 'Submit Ticket'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
