@@ -71,15 +71,6 @@ public class AuthController {
             return ResponseEntity.status(403).body(errorResponse);
         }
         
-        // Check if email is verified
-        if (user.getEmailVerified() == null || !user.getEmailVerified()) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Email not verified. Please verify your email first.");
-            errorResponse.put("requiresVerification", "true");
-            errorResponse.put("email", email);
-            return ResponseEntity.status(403).body(errorResponse);
-        }
-        
         // Check approval status for MANAGER/TECHNICIAN
         if (user.getApprovalStatus() == User.ApprovalStatus.PENDING_APPROVAL) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -92,6 +83,18 @@ public class AuthController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Your account has been rejected. Please contact admin for more information.");
             errorResponse.put("approvalStatus", "REJECTED");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+        
+        // Check if email is verified (ONLY for USER role - not for ADMIN/MANAGER/TECHNICIAN)
+        String userRole = resolvePrimaryRole(user);
+        boolean isUserRole = userRole == null || userRole.equalsIgnoreCase("USER") || userRole.isEmpty();
+        
+        if (isUserRole && (user.getEmailVerified() == null || !user.getEmailVerified())) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Email not verified. Please verify your email first.");
+            errorResponse.put("requiresVerification", "true");
+            errorResponse.put("email", email);
             return ResponseEntity.status(403).body(errorResponse);
         }
         
