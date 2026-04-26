@@ -48,6 +48,13 @@ public class User {
     private String totpSecret;
     private Boolean twoFactorEnabled = false;
 
+    // Email Verification fields
+    private Boolean emailVerified = false;
+
+    // Password Reset Token
+    private String resetToken;
+    private LocalDateTime resetTokenExpiry;
+
     // Approval status enum
     public enum ApprovalStatus {
         APPROVED, PENDING_APPROVAL, REJECTED
@@ -104,4 +111,13 @@ public class User {
 
     public Boolean getTwoFactorEnabled() { return twoFactorEnabled; }
     public void setTwoFactorEnabled(Boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
+
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public String getResetToken() { return resetToken; }
+    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+
+    public LocalDateTime getResetTokenExpiry() { return resetTokenExpiry; }
+    public void setResetTokenExpiry(LocalDateTime resetTokenExpiry) { this.resetTokenExpiry = resetTokenExpiry; }
 }

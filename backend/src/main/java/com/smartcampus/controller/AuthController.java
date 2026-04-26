@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import com.smartcampus.repository.RoleRepository;
 import com.smartcampus.repository.UserRepository;
 import com.smartcampus.service.GoogleOAuthService;
 import com.smartcampus.service.TotpService;
+import com.smartcampus.service.OtpService;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,6 +48,9 @@ public class AuthController {
     @Autowired
     private TotpService totpService;
 
+    @Autowired
+    private OtpService otpService;
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
@@ -63,6 +68,15 @@ public class AuthController {
         if (!user.getIsActive()) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Account is deactivated");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+        
+        // Check if email is verified
+        if (user.getEmailVerified() == null || !user.getEmailVerified()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Email not verified. Please verify your email first.");
+            errorResponse.put("requiresVerification", "true");
+            errorResponse.put("email", email);
             return ResponseEntity.status(403).body(errorResponse);
         }
         
@@ -231,13 +245,23 @@ public class AuthController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
         
-        // Create new user
+        // Send OTP to email for verification
+        boolean otpSent = otpService.sendOtp(email, "SIGNUP");
+        if (!otpSent) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Failed to send verification OTP. Please try again.");
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+        
+        // Store user data temporarily (you can use a temporary store or session)
+        // For now, we'll create the user but mark as not verified
         User newUser = new User();
         newUser.setFullName(fullName);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setPhoneNumber(phoneNumber);
-        newUser.setIsActive(true);
+        newUser.setIsActive(false); // Inactive until email verified
+        newUser.setEmailVerified(false);
         newUser.setCreatedAt(java.time.LocalDateTime.now());
         newUser.setUpdatedAt(java.time.LocalDateTime.now());
         
@@ -268,16 +292,175 @@ public class AuthController {
         userRepository.save(newUser);
         
         Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully");
+        response.put("message", "OTP sent to your email. Please verify to complete registration.");
         response.put("email", email);
-        response.put("fullName", fullName);
-        if ("MANAGER".equals(userRole) || "TECHNICIAN".equals(userRole)) {
-            response.put("approvalRequired", "true");
-            response.put("approvalMessage", "Your account requires admin approval. You will be notified once approved.");
-        } else {
-            response.put("approvalRequired", "false");
-            response.put("approvalMessage", "Your account is active. You can login immediately.");
+        response.put("requiresVerification", "true");
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<Map<String, String>> verifyEmail(@RequestBody Map<String, String> verificationData) {
+        String email = verificationData.get("email");
+        String otp = verificationData.get("otp");
+        
+        // Verify OTP
+        boolean isValid = otpService.verifyOtp(email, otp, "SIGNUP");
+        if (!isValid) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid or expired OTP. Please try again.");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+        
+        // Find user and activate account
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "User not found");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+        
+        // Mark email as verified and activate account
+        user.setEmailVerified(true);
+        user.setIsActive(true);
+        user.setUpdatedAt(java.time.LocalDateTime.now());
+        userRepository.save(user);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Email verified successfully. You can now login.");
+        response.put("email", email);
+        response.put("emailVerified", "true");
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<Map<String, String>> resendOtp(@RequestBody Map<String, String> data) {
+        String email = data.get("email");
+        String purpose = data.get("purpose"); // SIGNUP or FORGOT_PASSWORD
+        
+        if (email == null || purpose == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Email and purpose are required");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        boolean otpSent = otpService.sendOtp(email, purpose);
+        if (!otpSent) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Failed to resend OTP. Please try again.");
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "OTP resent successfully");
+        response.put("email", email);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password/request")
+    public ResponseEntity<Map<String, String>> forgotPasswordRequest(@RequestBody Map<String, String> data) {
+        String email = data.get("email");
+        
+        // Check if user exists
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            // Don't reveal if email exists or not for security
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "If an account exists with this email, an OTP has been sent.");
+            return ResponseEntity.ok(response);
+        }
+        
+        // Send OTP for password reset
+        boolean otpSent = otpService.sendOtp(email, "FORGOT_PASSWORD");
+        if (!otpSent) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Failed to send OTP. Please try again.");
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "OTP sent to your email for password reset.");
+        response.put("email", email);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password/verify-otp")
+    public ResponseEntity<Map<String, String>> forgotPasswordVerifyOtp(@RequestBody Map<String, String> data) {
+        String email = data.get("email");
+        String otp = data.get("otp");
+        
+        // Verify OTP
+        boolean isValid = otpService.verifyOtp(email, otp, "FORGOT_PASSWORD");
+        if (!isValid) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid or expired OTP. Please try again.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        // Generate a reset token valid for 30 minutes
+        String resetToken = System.currentTimeMillis() + "_" + email;
+        LocalDateTime expiryTime = java.time.LocalDateTime.now().plusMinutes(30);
+        
+        // Find user and store reset token
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "User not found");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+        
+        user.setResetToken(resetToken);
+        user.setResetTokenExpiry(expiryTime);
+        userRepository.save(user);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "OTP verified. You can now reset your password.");
+        response.put("resetToken", resetToken);
+        response.put("email", email);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password/reset")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> data) {
+        String email = data.get("email");
+        String resetToken = data.get("resetToken");
+        String newPassword = data.get("newPassword");
+        
+        // Find user
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "User not found");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+        
+        // Verify reset token
+        if (user.getResetToken() == null || !user.getResetToken().equals(resetToken)) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid reset token");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        // Check if token is expired
+        if (user.getResetTokenExpiry() != null && java.time.LocalDateTime.now().isAfter(user.getResetTokenExpiry())) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Reset token has expired");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        
+        // Update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null); // Clear reset token
+        user.setResetTokenExpiry(null);
+        user.setUpdatedAt(java.time.LocalDateTime.now());
+        userRepository.save(user);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Password reset successfully. You can now login with your new password.");
         
         return ResponseEntity.ok(response);
     }
@@ -331,6 +514,7 @@ public class AuthController {
                         newUser.setProfilePictureUrl(pictureUrl);
                         newUser.setPassword(""); // No password for Google users
                         newUser.setIsActive(true);
+                        newUser.setEmailVerified(true); // Google accounts are pre-verified
                         return newUser;
                     });
             

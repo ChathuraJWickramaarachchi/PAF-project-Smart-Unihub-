@@ -24,6 +24,13 @@ export const AuthProvider = ({ children }) => {
         return data
       }
       
+      // If email verification is required, throw error to be handled by login page
+      if (data.requiresVerification === 'true') {
+        const error = new Error('Email not verified')
+        error.response = { data }
+        throw error
+      }
+      
       const { token } = data
       localStorage.setItem('authToken', token)
       

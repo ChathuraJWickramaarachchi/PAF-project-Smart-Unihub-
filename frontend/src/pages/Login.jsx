@@ -112,6 +112,17 @@ export default function Login() {
         localStorage.removeItem('authUser')
         return
       }
+      
+      // Check if email verification is required
+      if (responseData && responseData.requiresVerification) {
+        setError('Email not verified. Please verify your email first.')
+        // Redirect to verification page after 2 seconds
+        setTimeout(() => {
+          navigate('/verify-email', { state: { email: responseData.email } })
+        }, 2000)
+        return
+      }
+      
       setError(err.response?.data?.message || err.message || 'Invalid credentials. Please try again.')
     } finally {
       setLoading(false)
@@ -415,7 +426,7 @@ export default function Login() {
                 <input type="checkbox" className="rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                 <span className="font-medium">Remember me</span>
               </label>
-              <button type="button" className="text-primary hover:text-primary-dark font-medium transition-colors">Forgot Password?</button>
+              <button type="button" className="text-primary hover:text-primary-dark font-medium transition-colors" onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
             </div>
             <button type="submit" disabled={loading} className="w-full bg-primary text-white py-3 rounded-xl font-semibold text-sm shadow-lg shadow-primary/25 hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
               {loading ? (<><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div><span>Authenticating...</span></>) : (<span>Continue</span>)}

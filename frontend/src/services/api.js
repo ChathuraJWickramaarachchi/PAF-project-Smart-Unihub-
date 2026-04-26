@@ -110,6 +110,11 @@ export const NotificationAPI = {
 export const AuthAPI = {
   login: (email, password) => apiClient.post('/auth/login', { email, password }),
   signup: (userData) => apiClient.post('/auth/signup', userData),
+  verifyEmail: (email, otp) => apiClient.post('/auth/verify-email', { email, otp }),
+  resendOtp: (email, purpose) => apiClient.post('/auth/resend-otp', { email, purpose }),
+  forgotPasswordRequest: (email) => apiClient.post('/auth/forgot-password/request', { email }),
+  forgotPasswordVerifyOtp: (email, otp) => apiClient.post('/auth/forgot-password/verify-otp', { email, otp }),
+  resetPassword: (email, resetToken, newPassword) => apiClient.post('/auth/forgot-password/reset', { email, resetToken, newPassword }),
   googleLogin: (idToken, requestedRole = 'USER') => apiClient.post('/auth/google-login', {
     idToken: typeof idToken === 'string' ? idToken : null,
     requestedRole,

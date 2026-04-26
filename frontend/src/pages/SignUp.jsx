@@ -16,6 +16,8 @@ export default function SignUp() {
     confirmPassword: '',
     phoneNumber: ''
   })
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -35,28 +37,172 @@ export default function SignUp() {
   }, [isAuthenticated, user, navigate])
 
   const handleChange = (e) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     })
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ''
+      })
+    }
+  }
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    setTouched({ ...touched, [name]: true })
+    validateField(name, value)
+  }
+
+  const validateField = (name, value) => {
+    let error = ''
+
+    switch (name) {
+      case 'fullName':
+        if (!value.trim()) {
+          error = 'Full name is required'
+        } else if (value.trim().length < 2) {
+          error = 'Name must be at least 2 characters'
+        } else if (value.trim().length > 50) {
+          error = 'Name must be less than 50 characters'
+        } else if (!/^[a-zA-Z\s'-]+$/.test(value)) {
+          error = 'Name can only contain letters, spaces, hyphens, and apostrophes'
+        }
+        break
+
+      case 'email':
+        if (!value) {
+          error = 'Email address is required'
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = 'Please enter a valid email address'
+        } else if (!/\.[a-z]{2,}$/i.test(value)) {
+          error = 'Please enter a valid email address with proper domain'
+        }
+        break
+
+      case 'phoneNumber':
+        if (value && !/^[\d\s+()-]+$/.test(value)) {
+          error = 'Please enter a valid phone number'
+        } else if (value && value.replace(/\D/g, '').length < 7) {
+          error = 'Phone number must be at least 7 digits'
+        } else if (value && value.replace(/\D/g, '').length > 15) {
+          error = 'Phone number must be less than 15 digits'
+        }
+        break
+
+      case 'password':
+        if (!value) {
+          error = 'Password is required'
+        } else if (value.length < 6) {
+          error = 'Password must be at least 6 characters'
+        } else if (value.length > 128) {
+          error = 'Password must be less than 128 characters'
+        } else if (!/(?=.*[a-z])/.test(value)) {
+          error = 'Password must contain at least one lowercase letter'
+        } else if (!/(?=.*[A-Z])/.test(value)) {
+          error = 'Password must contain at least one uppercase letter'
+        } else if (!/(?=.*\d)/.test(value)) {
+          error = 'Password must contain at least one number'
+        }
+        break
+
+      case 'confirmPassword':
+        if (!value) {
+          error = 'Please confirm your password'
+        } else if (value !== formData.password) {
+          error = 'Passwords do not match'
+        }
+        break
+
+      default:
+        break
+    }
+
+    setErrors({ ...errors, [name]: error })
+    return !error
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+    let isValid = true
+
+    // Validate full name
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full name is required'
+      isValid = false
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = 'Name must be at least 2 characters'
+      isValid = false
+    } else if (!/^[a-zA-Z\s'-]+$/.test(formData.fullName)) {
+      newErrors.fullName = 'Name can only contain letters, spaces, hyphens, and apostrophes'
+      isValid = false
+    }
+
+    // Validate email
+    if (!formData.email) {
+      newErrors.email = 'Email address is required'
+      isValid = false
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address'
+      isValid = false
+    }
+
+    // Validate phone (optional but must be valid if provided)
+    if (formData.phoneNumber && !/^[\d\s+()-]+$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Please enter a valid phone number'
+      isValid = false
+    }
+
+    // Validate password
+    if (!formData.password) {
+      newErrors.password = 'Password is required'
+      isValid = false
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters'
+      isValid = false
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'Password must contain uppercase, lowercase, and number'
+      isValid = false
+    }
+
+    // Validate confirm password
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password'
+      isValid = false
+    } else if (formData.confirmPassword !== formData.password) {
+      newErrors.confirmPassword = 'Passwords do not match'
+      isValid = false
+    }
+
+    // Validate role
+    if (!selectedRole) {
+      newErrors.role = 'Please select a role'
+      isValid = false
+    }
+
+    setErrors(newErrors)
+    return isValid
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     
-    if (!selectedRole) {
-      setError('Please select a role')
-      return
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-    
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    // Validate all fields
+    if (!validateForm()) {
+      // Mark all fields as touched to show errors
+      setTouched({
+        fullName: true,
+        email: true,
+        phoneNumber: true,
+        password: true,
+        confirmPassword: true,
+        role: true
+      })
       return
     }
 
@@ -71,10 +217,12 @@ export default function SignUp() {
       })
       
       setSuccess(true)
-      setSuccessMessage(response.data?.approvalMessage || 'Account created successfully!')
+      setSuccessMessage(response.data?.message || 'OTP sent to your email!')
+      
+      // Redirect to email verification page
       setTimeout(() => {
-        navigate('/login')
-      }, 2500)
+        navigate('/verify-email', { state: { email: formData.email } })
+      }, 2000)
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.')
     } finally {
@@ -148,11 +296,19 @@ export default function SignUp() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                onBlur={handleBlur}
+                className={`w-full bg-gray-50 border rounded-lg pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:ring-2 outline-none transition-all ${
+                  errors.fullName && touched.fullName
+                    ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                    : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                }`}
                 placeholder="John Doe"
                 required
               />
             </div>
+            {errors.fullName && touched.fullName && (
+              <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -165,11 +321,19 @@ export default function SignUp() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                onBlur={handleBlur}
+                className={`w-full bg-gray-50 border rounded-lg pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:ring-2 outline-none transition-all ${
+                  errors.email && touched.email
+                    ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                    : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                }`}
                 placeholder="you@university.edu"
                 required
               />
             </div>
+            {errors.email && touched.email && (
+              <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+            )}
           </div>
 
           {/* Phone Number */}
@@ -184,10 +348,18 @@ export default function SignUp() {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                onBlur={handleBlur}
+                className={`w-full bg-gray-50 border rounded-lg pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:ring-2 outline-none transition-all ${
+                  errors.phoneNumber && touched.phoneNumber
+                    ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                    : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                }`}
                 placeholder="+1 (555) 000-0000"
               />
             </div>
+            {errors.phoneNumber && touched.phoneNumber && (
+              <p className="mt-1 text-xs text-red-600">{errors.phoneNumber}</p>
+            )}
           </div>
 
           {/* Role Selection Dropdown */}
@@ -196,7 +368,12 @@ export default function SignUp() {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none cursor-pointer"
+              onBlur={() => setTouched({ ...touched, role: true })}
+              className={`w-full bg-gray-50 border rounded-lg px-4 py-2.5 text-sm focus:bg-white focus:ring-2 outline-none transition-all appearance-none cursor-pointer ${
+                errors.role && touched.role
+                  ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+              }`}
               required
             >
               <option value="">Select your role...</option>
@@ -204,6 +381,9 @@ export default function SignUp() {
               <option value="MANAGER">Manager (Admin approval required)</option>
               <option value="TECHNICIAN">Technician (Admin approval required)</option>
             </select>
+            {errors.role && touched.role && (
+              <p className="mt-1 text-xs text-red-600">{errors.role}</p>
+            )}
           </div>
 
           {/* Approval Status Note */}
@@ -225,7 +405,12 @@ export default function SignUp() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg pl-10 pr-10 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                onBlur={handleBlur}
+                className={`w-full bg-gray-50 border rounded-lg pl-10 pr-10 py-2.5 text-sm focus:bg-white focus:ring-2 outline-none transition-all ${
+                  errors.password && touched.password
+                    ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                    : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                }`}
                 placeholder="Minimum 6 characters"
                 required
               />
@@ -237,6 +422,25 @@ export default function SignUp() {
                 {showPassword ? <FaEyeSlash className="text-sm" /> : <FaEye className="text-sm" />}
               </button>
             </div>
+            {errors.password && touched.password && (
+              <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+            )}
+            {!errors.password && formData.password && (
+              <div className="mt-2 space-y-1">
+                <p className={`text-xs ${formData.password.length >= 6 ? 'text-green-600' : 'text-gray-500'}`}>
+                  {formData.password.length >= 6 ? '✓' : '○'} At least 6 characters
+                </p>
+                <p className={`text-xs ${/(?=.*[a-z])/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}`}>
+                  {/(?=.*[a-z])/.test(formData.password) ? '✓' : '○'} One lowercase letter
+                </p>
+                <p className={`text-xs ${/(?=.*[A-Z])/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}`}>
+                  {/(?=.*[A-Z])/.test(formData.password) ? '✓' : '○'} One uppercase letter
+                </p>
+                <p className={`text-xs ${/(?=.*\d)/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}`}>
+                  {/(?=.*\d)/.test(formData.password) ? '✓' : '○'} One number
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -249,7 +453,12 @@ export default function SignUp() {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-300 rounded-lg pl-10 pr-10 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                onBlur={handleBlur}
+                className={`w-full bg-gray-50 border rounded-lg pl-10 pr-10 py-2.5 text-sm focus:bg-white focus:ring-2 outline-none transition-all ${
+                  errors.confirmPassword && touched.confirmPassword
+                    ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                    : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                }`}
                 placeholder="Re-enter your password"
                 required
               />
@@ -261,6 +470,12 @@ export default function SignUp() {
                 {showConfirmPassword ? <FaEyeSlash className="text-sm" /> : <FaEye className="text-sm" />}
               </button>
             </div>
+            {errors.confirmPassword && touched.confirmPassword && (
+              <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>
+            )}
+            {formData.confirmPassword && !errors.confirmPassword && (
+              <p className="mt-1 text-xs text-green-600">✓ Passwords match</p>
+            )}
           </div>
 
           {/* Submit Button */}

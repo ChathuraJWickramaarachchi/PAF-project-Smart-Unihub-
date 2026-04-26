@@ -11,6 +11,8 @@ import UserLayout from './layouts/UserLayout'
 // Pages
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
+import EmailVerification from './pages/EmailVerification'
+import ForgotPassword from './pages/ForgotPassword'
 import Home from './pages/Home'
 import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
@@ -69,6 +71,16 @@ function AppContent() {
           <Route path="/signup" element={
             <NavigateIfAuthenticated>
               <SignUp />
+            </NavigateIfAuthenticated>
+          } />
+          <Route path="/verify-email" element={
+            <NavigateIfAuthenticated>
+              <EmailVerification />
+            </NavigateIfAuthenticated>
+          } />
+          <Route path="/forgot-password" element={
+            <NavigateIfAuthenticated>
+              <ForgotPassword />
             </NavigateIfAuthenticated>
           } />
 
