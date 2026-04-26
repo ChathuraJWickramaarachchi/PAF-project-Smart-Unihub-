@@ -95,11 +95,15 @@ public class DataInitializer implements CommandLineRunner {
             tech.setPassword(passwordEncoder.encode("password123"));
             tech.setIsActive(true);
             tech.setRoles(Set.of(technicianRole));
+            tech.setApprovalStatus(User.ApprovalStatus.APPROVED); // Auto-approve for testing
+            tech.setEmailVerified(true); // Mark as verified for testing
             
             userRepository.save(tech);
             System.out.println("✅ Sample technician created:");
             System.out.println("   Email: tech@smartuni.edu");
             System.out.println("   Password: password123");
+            System.out.println("   Role: TECHNICIAN");
+            System.out.println("   Status: APPROVED (2FA setup required on first login)");
         }
 
         // Create sample manager user
@@ -110,11 +114,15 @@ public class DataInitializer implements CommandLineRunner {
             manager.setPassword(passwordEncoder.encode("password123"));
             manager.setIsActive(true);
             manager.setRoles(Set.of(managerRole));
+            manager.setApprovalStatus(User.ApprovalStatus.APPROVED); // Auto-approve for testing
+            manager.setEmailVerified(true); // Mark as verified for testing
             
             userRepository.save(manager);
             System.out.println("✅ Sample manager created:");
             System.out.println("   Email: faculty@smartuni.edu");
             System.out.println("   Password: password123");
+            System.out.println("   Role: MANAGER");
+            System.out.println("   Status: APPROVED (2FA setup required on first login)");
         }
     }
 }
