@@ -1,19 +1,133 @@
 import React, { useState, useEffect } from 'react'
 import AdminSidebar from '../../components/AdminSidebar'
+import { ResourceAPI, BookingAPI, TicketAPI } from '../../services/api'
 
 export default function Analytics() {
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
-    ticketResolution: [65, 80, 45, 90, 75, 85, 95], // Mock weekly data
-    resourceUsage: [55, 70, 85, 40], // Mock usage for different resource types
-    activeUsers: 142
+    efficiency: 0,
+    successfulOps: 0,
+    activeNodes: 0,
+    ticketResolution: [0, 0, 0, 0, 0, 0, 0],
+    facilityEntropy: [
+      { name: 'LABORATORY', total: 0, inUse: 0, color: 'bg-amber-400' },
+      { name: 'AUDITORIUM', total: 0, inUse: 0, color: 'bg-primary' },
+      { name: 'MEETING ROOM', total: 0, inUse: 0, color: 'bg-emerald-400' },
+      { name: 'SPORTS FACILITY', total: 0, inUse: 0, color: 'bg-rose-400' },
+      { name: 'LECTURE HALL', total: 0, inUse: 0, color: 'bg-rose-400' }
+    ]
   })
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 800)
-    return () => clearTimeout(timer)
+    const fetchAnalytics = async () => {
+      try {
+        const [resourcesRes, ticketsRes, bookingsRes] = await Promise.all([
+          ResourceAPI.getAll(),
+          TicketAPI.getAll(),
+          BookingAPI.getAll()
+        ])
+        
+        const resources = resourcesRes.data || []
+        const tickets = ticketsRes.data || []
+        const bookings = bookingsRes.data || []
+
+        // Calculate Successful Ops (Resolved Tickets)
+        const resolvedTickets = tickets.filter(t => t.status === 'RESOLVED')
+        const successfulOps = resolvedTickets.length
+
+        // Calculate Active Nodes (Total Resources)
+        const activeNodes = resources.length
+
+        // Calculate Efficiency (Active Resources / Total Resources)
+        const totalActiveResources = resources.filter(r => r.status === 'ACTIVE').length
+        const efficiency = resources.length > 0 
+          ? ((totalActiveResources / resources.length) * 100).toFixed(1) 
+          : 0
+
+        // Weekly Resolution Cycle (Tickets resolved per day of week)
+        const weeklyData = [0, 0, 0, 0, 0, 0, 0] // Mon-Sun
+        resolvedTickets.forEach(ticket => {
+          if (ticket.updatedAt) {
+            const date = new Date(ticket.updatedAt)
+            // getDay() is 0 (Sun) to 6 (Sat)
+            const dayIdx = date.getDay() === 0 ? 6 : date.getDay() - 1 // Shift so Mon=0, Sun=6
+            weeklyData[dayIdx]++
+          }
+        })
+        const maxWeekly = Math.max(...weeklyData, 1) // Prevent division by zero
+        const normalizedWeekly = weeklyData.map(val => (val / maxWeekly) * 100)
+
+        // Facility Entropy
+        const categories = [
+          { key: 'LABORATORY', name: 'LABORATORY' },
+          { key: 'AUDITORIUM', name: 'AUDITORIUM' },
+          { key: 'MEETING_ROOM', name: 'MEETING ROOM' },
+          { key: 'SPORTS_FACILITY', name: 'SPORTS FACILITY' },
+          { key: 'LECTURE_HALL', name: 'LECTURE HALL' },
+          { key: 'PROJECTOR', name: 'PROJECTOR' },
+          { key: 'SMART_BOARD', name: 'SMART BOARD' },
+          { key: 'WHITEBOARD', name: 'WHITEBOARD' },
+          { key: 'SOUND_SYSTEM', name: 'SOUND SYSTEM' },
+          { key: 'MICROPHONE', name: 'MICROPHONE' },
+          { key: 'VR_BOX', name: 'VR BOX' }
+        ]
+        
+        const now = new Date()
+        const activeBookings = bookings.filter(b => 
+          b.status === 'APPROVED' && 
+          new Date(b.startTime) <= now && 
+          new Date(b.endTime) >= now
+        )
+
+        const aliasMap = {
+          'LABORATORY': ['LAB', 'LABS', 'LABORATORY', 'LABORATORIES'],
+          'AUDITORIUM': ['AUDITORIUM', 'AUDI'],
+          'MEETING ROOM': ['MEETING ROOM', 'MEETING', 'MEETING_ROOM'],
+          'SPORTS FACILITY': ['SPORTS FACILITY', 'SPORTS', 'SPORT', 'GYM'],
+          'LECTURE HALL': ['LECTURE HALL', 'LECTURE', 'HALL', 'CLASSROOM', 'CLASS'],
+          'PROJECTOR': ['PROJECTOR'],
+          'SMART BOARD': ['SMART BOARD', 'SMARTBOARD'],
+          'WHITEBOARD': ['WHITEBOARD', 'WHITE BOARD'],
+          'SOUND SYSTEM': ['SOUND SYSTEM', 'SOUND', 'SPEAKER', 'AUDIO'],
+          'MICROPHONE': ['MICROPHONE', 'MIC'],
+          'VR BOX': ['VR BOX', 'VR', 'VR_BOX']
+        }
+
+        const facilityEntropy = categories.map(cat => {
+          const catNameUpper = cat.name.toUpperCase()
+          const aliases = aliasMap[catNameUpper] || [catNameUpper]
+          
+          const catResources = resources.filter(r => {
+            const type = (r.resourceType || '').toUpperCase().trim()
+            return aliases.includes(type) || aliases.some(alias => type.includes(alias) || alias.includes(type.length >= 3 ? type : '---'))
+          })
+          
+          const actualTotal = catResources.length
+          const actualActive = catResources.filter(r => r.status === 'ACTIVE').length
+          
+          return {
+            name: cat.name,
+            total: actualTotal,
+            inUse: actualActive
+          }
+        })
+
+        setStats({
+          efficiency: isNaN(parseFloat(efficiency)) ? 0 : parseFloat(efficiency), 
+          successfulOps: successfulOps,
+          activeNodes: activeNodes,
+          ticketResolution: weeklyData, 
+          facilityEntropy: facilityEntropy
+        })
+
+      } catch (error) {
+        console.error("Failed to load analytics", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
   }, [])
 
   if (loading) return (
@@ -49,7 +163,7 @@ export default function Analytics() {
                 <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Efficiency</div>
                 <div className="text-xl">⚡</div>
               </div>
-              <div className="text-4xl font-black text-gray-900 tracking-tighter italic mb-2">99.9%</div>
+              <div className="text-4xl font-black text-gray-900 tracking-tighter italic mb-2">{stats.efficiency}%</div>
               <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Uptime Stabilized</div>
             </div>
 
@@ -58,7 +172,7 @@ export default function Analytics() {
                 <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Successful Ops</div>
                 <div className="text-xl">✅</div>
               </div>
-              <div className="text-4xl font-black text-gray-900 tracking-tighter italic mb-2">482</div>
+              <div className="text-4xl font-black text-gray-900 tracking-tighter italic mb-2">{stats.successfulOps}</div>
               <div className="text-[10px] font-bold text-primary uppercase tracking-widest">Tickets Resolved</div>
             </div>
 
@@ -67,89 +181,64 @@ export default function Analytics() {
                 <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Active Nodes</div>
                 <div className="text-xl">👥</div>
               </div>
-              <div className="text-4xl font-black text-gray-900 tracking-tighter italic mb-2">{stats.activeUsers}</div>
-              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Current Sessions</div>
+              <div className="text-4xl font-black text-gray-900 tracking-tighter italic mb-2">{stats.activeNodes}</div>
+              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hardware / Facility Nodes</div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            {/* Bar Chart Mockup */}
+            {/* Bar Chart */}
             <div className="lg:col-span-2 bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm space-y-10">
               <div className="flex justify-between items-end">
                 <h3 className="text-lg font-black text-gray-900 tracking-tight italic">Weekly <span className="text-primary not-italic">Resolution</span> Cycle</h3>
                 <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Success Probability</div>
               </div>
               <div className="flex items-end justify-between h-64 gap-6 px-4">
-                {stats.ticketResolution.map((val, idx) => (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-4 h-full">
-                    <div className="flex-1 w-full flex items-end">
-                      <div 
-                        className={`w-full rounded-2xl transition-all duration-1000 ${val > 80 ? 'bg-emerald-400 shadow-lg shadow-emerald-400/20' : val > 50 ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-rose-400 shadow-lg shadow-rose-400/20'}`}
-                        style={{ height: `${val}%` }}
-                      ></div>
+                {stats.ticketResolution.map((val, idx) => {
+                  const maxVal = Math.max(...stats.ticketResolution, 1);
+                  const heightPercent = (val / maxVal) * 100;
+                  return (
+                    <div key={idx} className="flex-1 flex flex-col items-center gap-4 h-full relative group">
+                      <div className="flex-1 w-full flex items-end relative">
+                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-black text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                          {val}
+                        </span>
+                        <div 
+                          className={`w-full rounded-2xl transition-all duration-1000 bg-rose-400 shadow-lg shadow-rose-400/20`}
+                          style={{ height: `${Math.max(heightPercent, 5)}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][idx]}</span>
                     </div>
-                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][idx]}</span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
-            {/* Progress Bars Mockup */}
+            {/* Progress Bars */}
             <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm space-y-10">
               <h3 className="text-lg font-black text-gray-900 tracking-tight italic">Facility <span className="text-primary not-italic">Entropy</span></h3>
               <div className="space-y-8">
-                {[
-                  { name: 'Classrooms', val: stats.resourceUsage[0], color: 'bg-primary' },
-                  { name: 'Laboratories', val: stats.resourceUsage[1], color: 'bg-emerald-400' },
-                  { name: 'Auditoriums', val: stats.resourceUsage[2], color: 'bg-amber-400' },
-                  { name: 'Hardware', val: stats.resourceUsage[3], color: 'bg-rose-400' }
-                ].map(item => (
-                  <div key={item.name} className="space-y-3">
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                      <span className="text-gray-900">{item.name}</span>
-                      <span className="text-gray-300 italic">{item.val}% Load</span>
+                {stats.facilityEntropy.map(item => {
+                  const loadPercent = item.total > 0 ? Math.round((item.inUse / item.total) * 100) : 0;
+                  const getLoadColor = (percent) => {
+                    if (percent >= 100) return 'bg-emerald-500'; // All active
+                    if (percent >= 50) return 'bg-amber-400';    // Some active
+                    return 'bg-rose-500';                        // Few/none active
+                  };
+                  return (
+                    <div key={item.name} className="space-y-3">
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                        <span className="text-gray-900">{item.name}</span>
+                        <span className="text-primary font-bold">{item.inUse}/{item.total} NODES <span className="text-gray-300 ml-1 font-medium">{loadPercent}% ACTIVE</span></span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
+                        <div className={`h-full ${getLoadColor(loadPercent)} rounded-full transition-all duration-1000`} style={{ width: `${loadPercent}%` }}></div>
+                      </div>
                     </div>
-                    <div className="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
-                      <div className={`h-full ${item.color} rounded-full transition-all duration-1000`} style={{ width: `${item.val}%` }}></div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            </div>
-          </div>
-
-          {/* Logs Table */}
-          <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm space-y-8">
-            <h3 className="text-lg font-black text-gray-900 tracking-tight italic">Audit <span className="text-primary not-italic">Telemetry</span></h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-gray-50">
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest">Sequence</th>
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest">Identifier</th>
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest">Description</th>
-                    <th className="px-4 py-5 text-[9px] font-black text-gray-300 uppercase tracking-widest text-right">State</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {[
-                    { time: '10:45 AM', id: 'EVT-9092', desc: 'Auth protocol success. Global backup stable.', status: 'SUCCESS', color: 'bg-emerald-400' },
-                    { time: '09:12 AM', id: 'EVT-9091', desc: 'Illegal access attempt at firewall node 4.', status: 'WARNING', color: 'bg-amber-400' },
-                    { time: '08:30 AM', id: 'EVT-9090', desc: 'Optimizing resource indexing in database.', status: 'INFO', color: 'bg-primary' }
-                  ].map((log, i) => (
-                    <tr key={i} className="group hover:bg-gray-50/50 transition-colors">
-                      <td className="px-4 py-6 text-[11px] font-black text-gray-400 uppercase italic">{log.time}</td>
-                      <td className="px-4 py-6 text-sm font-black text-gray-900 tracking-tighter">{log.id}</td>
-                      <td className="px-4 py-6 text-sm font-medium text-gray-500 italic">{log.desc}</td>
-                      <td className="px-4 py-6 text-right">
-                        <span className={`text-[9px] font-black text-white uppercase tracking-widest px-3 py-1 rounded-lg ${log.color} shadow-lg shadow-opacity-20`}>
-                          {log.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
         </div>

@@ -284,13 +284,17 @@ public class BookingService {
     private BookingDTO convertToDTO(Booking booking) {
         BookingDTO dto = new BookingDTO();
         dto.setId(booking.getId());
-        dto.setResourceId(booking.getResource().getId());
-        dto.setResourceName(booking.getResource().getResourceName());
-        dto.setLocation(booking.getResource().getLocation());
-        dto.setResourceCapacity(booking.getResource().getCapacity());
-        dto.setUserId(booking.getUser().getId());
-        dto.setUserFullName(booking.getUser().getFullName());
-        dto.setUserEmail(booking.getUser().getEmail());
+        if (booking.getResource() != null) {
+            dto.setResourceId(booking.getResource().getId());
+            dto.setResourceName(booking.getResource().getResourceName());
+            dto.setLocation(booking.getResource().getLocation());
+            dto.setResourceCapacity(booking.getResource().getCapacity());
+        }
+        if (booking.getUser() != null) {
+            dto.setUserId(booking.getUser().getId());
+            dto.setUserFullName(booking.getUser().getFullName());
+            dto.setUserEmail(booking.getUser().getEmail());
+        }
         dto.setBookingPurpose(booking.getBookingPurpose());
         dto.setExpectedAttendees(booking.getExpectedAttendees());
         dto.setAdditionalNotes(booking.getAdditionalNotes());
