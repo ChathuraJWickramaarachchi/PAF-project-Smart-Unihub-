@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
-    
+
     @Autowired
     private NotificationRepository notificationRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
-    public NotificationDTO createNotification(String userId, String title, String message, 
-                                             NotificationType type, String entityType, String entityId) {
+    public NotificationDTO createNotification(String userId, String title, String message,
+            NotificationType type, String entityType, String entityId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setTitle(title);
@@ -35,7 +35,7 @@ public class NotificationService {
         notification.setRelatedEntityId(entityId);
         notification.setIsRead(false);
         notification.setCreatedAt(LocalDateTime.now());
-        
+
         Notification saved = notificationRepository.save(notification);
         return convertToDTO(saved);
     }
@@ -43,10 +43,10 @@ public class NotificationService {
     public NotificationDTO markAsRead(String notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
-        
+
         notification.setIsRead(true);
         notification.setReadAt(LocalDateTime.now());
-        
+
         Notification updated = notificationRepository.save(notification);
         return convertToDTO(updated);
     }
@@ -68,14 +68,14 @@ public class NotificationService {
     }
 
     public List<NotificationDTO> getUnreadNotifications(String userId) {
-        return notificationRepository.findUnreadNotifications(userId)
+        return notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public Long getUnreadCount(String userId) {
-        return notificationRepository.countUnreadNotifications(userId);
+        return notificationRepository.countByUserIdAndIsReadFalse(userId);
     }
 
     public void deleteNotification(String notificationId) {
