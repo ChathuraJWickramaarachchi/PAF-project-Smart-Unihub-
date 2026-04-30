@@ -43,6 +43,9 @@ public class TicketService {
         ticket.setReportedBy(userRepository.findById(ticketDTO.getReportedById())
                 .orElseThrow(() -> new RuntimeException("User not found")));
         
+        ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setUpdatedAt(LocalDateTime.now());
+        
         Ticket saved = ticketRepository.save(ticket);
         return convertToDTO(saved);
     }
@@ -57,6 +60,7 @@ public class TicketService {
         if (newStatus.equals(TicketStatus.RESOLVED) || newStatus.equals(TicketStatus.CLOSED)) {
             ticket.setResolvedAt(LocalDateTime.now());
         }
+        ticket.setUpdatedAt(LocalDateTime.now());
         
         Ticket updated = ticketRepository.save(ticket);
         
@@ -84,6 +88,7 @@ public class TicketService {
         
         ticket.setAssignedTo(technician);
         // Status remains unchanged (e.g. OPEN) until technician accepts
+        ticket.setUpdatedAt(LocalDateTime.now());
         
         Ticket updated = ticketRepository.save(ticket);
         
@@ -107,6 +112,7 @@ public class TicketService {
         ticket.setAssignedTo(null);
         // If status was somehow changed, we could revert to OPEN here if needed.
         ticket.setStatus(TicketStatus.OPEN);
+        ticket.setUpdatedAt(LocalDateTime.now());
         
         Ticket updated = ticketRepository.save(ticket);
         return convertToDTO(updated);
@@ -117,6 +123,7 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         
         ticket.setResolutionNotes(notes);
+        ticket.setUpdatedAt(LocalDateTime.now());
         Ticket updated = ticketRepository.save(ticket);
         return convertToDTO(updated);
     }

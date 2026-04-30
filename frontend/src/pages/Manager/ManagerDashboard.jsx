@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { BookingAPI, ResourceAPI, TicketAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 
 export default function ManagerDashboard() {
-   const { user } = useAuth()
+   const { user, logout } = useAuth()
+   const navigate = useNavigate()
    const [stats, setStats] = useState({
       pendingBookings: 0,
       activeBookings: 0,
@@ -53,27 +54,27 @@ export default function ManagerDashboard() {
             @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
             :root {
-               --navy: #07101f;
-               --navy-2: #0d1b2e;
-               --navy-3: #112035;
-               --navy-4: #0a1525;
+               --navy: #f8fafc;
+               --navy-2: #ffffff;
+               --navy-3: #f1f5f9;
+               --navy-4: #ffffff;
                --blue: #1a6cf0;
                --blue-light: #3d87ff;
-               --blue-glow: rgba(26,108,240,0.15);
-               --accent: #00e5ff;
-               --white: #ffffff;
-               --muted: rgba(255,255,255,0.45);
-               --muted2: rgba(255,255,255,0.65);
-               --border: rgba(255,255,255,0.07);
-               --border2: rgba(255,255,255,0.12);
-               --card: rgba(255,255,255,0.04);
-               --card-hover: rgba(255,255,255,0.07);
-               --sans: 'DM Sans', sans-serif;
+               --blue-glow: rgba(26,108,240,0.1);
+               --accent: #0ea5e9;
+               --white: #0f172a;
+               --muted: #64748b;
+               --muted2: #475569;
+               --border: #e2e8f0;
+               --border2: #cbd5e1;
+               --card: #ffffff;
+               --card-hover: #f1f5f9;
+               --sans: 'Inter', 'DM Sans', sans-serif;
                --display: 'Syne', sans-serif;
-               --green: #00d084;
-               --amber: #f5a623;
-               --red: #ff4d6a;
-               --sidebar-w: 240px;
+               --green: #10b981;
+               --amber: #f59e0b;
+               --red: #ef4444;
+               --sidebar-w: 260px;
             }
 
             * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -207,11 +208,11 @@ export default function ManagerDashboard() {
             .nav-arrow { margin-left: auto; color: var(--muted); font-size: 12px; }
 
             .sidebar-user {
-               padding: 14px 16px;
+               padding: 18px 16px;
                border-top: 1px solid var(--border);
                display: flex;
-               align-items: center;
-               gap: 10px;
+               flex-direction: column;
+               gap: 4px;
             }
 
             .user-av {
@@ -249,17 +250,27 @@ export default function ManagerDashboard() {
 
             .signout-btn {
                background: none;
-               border: none;
+               border: 1px solid var(--border);
                color: var(--muted);
                cursor: pointer;
-               padding: 4px;
-               border-radius: 6px;
-               transition: color 0.2s;
+               padding: 8px 12px;
+               border-radius: 8px;
+               transition: all 0.2s;
                display: flex;
                align-items: center;
+               gap: 8px;
+               font-size: 11px;
+               font-weight: 600;
+               width: 100%;
+               justify-content: center;
+               margin-top: 10px;
             }
 
-            .signout-btn:hover { color: var(--red); }
+            .signout-btn:hover { 
+               color: var(--red); 
+               background: rgba(239, 68, 68, 0.05);
+               border-color: rgba(239, 68, 68, 0.2);
+            }
 
             /* MAIN */
             .main {
@@ -278,8 +289,8 @@ export default function ManagerDashboard() {
                align-items: center;
                justify-content: space-between;
                padding: 0 28px;
-               background: rgba(7,16,31,0.6);
-               backdrop-filter: blur(12px);
+               background: rgba(255,255,255,0.9);
+               backdrop-filter: blur(8px);
                flex-shrink: 0;
             }
 
@@ -467,7 +478,7 @@ export default function ManagerDashboard() {
             .usage-bar {
                height: 5px;
                border-radius: 10px;
-               background: rgba(255,255,255,0.08);
+               background: rgba(0,0,0,0.08);
                overflow: hidden;
             }
 
@@ -623,7 +634,7 @@ export default function ManagerDashboard() {
 
             .booking-date {
                padding: 2px 6px;
-               background: rgba(255,255,255,0.06);
+               background: rgba(0,0,0,0.06);
                border-radius: 4px;
                font-size: 10px;
             }
@@ -697,7 +708,7 @@ export default function ManagerDashboard() {
             <nav className="nav-section">
                <div className="nav-label">Main Menu</div>
 
-               <Link to="/manager/dashboard" className="nav-item active">
+               <Link to="/manager-dashboard" className="nav-item active">
                   <div className="nav-icon">
                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                   </div>
@@ -705,11 +716,19 @@ export default function ManagerDashboard() {
                   <span className="nav-arrow">›</span>
                </Link>
 
-               <Link to="/manager/bookings" className="nav-item">
+               <Link to="/manager/resources" className="nav-item">
                   <div className="nav-icon">
                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                   </div>
                   Facility Management
+                  <span className="nav-arrow">›</span>
+               </Link>
+
+               <Link to="/bookings" className="nav-item">
+                  <div className="nav-icon">
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </div>
+                  Booking Control
                   <span className="nav-arrow">›</span>
                </Link>
 
@@ -723,13 +742,20 @@ export default function ManagerDashboard() {
             </nav>
 
             <div className="sidebar-user">
-               <div className="user-av">{user?.fullName?.charAt(0) || 'M'}</div>
-               <div className="user-meta">
-                  <div className="user-name">{user?.fullName || 'Manager'}</div>
-                  <div className="user-email">{user?.email || 'manager@smartuni.edu'}</div>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                  <div className="user-av">{user?.fullName?.charAt(0) || 'M'}</div>
+                  <div className="user-meta">
+                     <div className="user-name">{user?.fullName || 'Manager'}</div>
+                     <div className="user-email">{user?.email || 'manager@smartuni.edu'}</div>
+                  </div>
                </div>
-               <button className="signout-btn" title="Sign Out">
+               
+               <button 
+                  className="signout-btn" 
+                  onClick={() => { logout(); navigate('/login'); }}
+               >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  Sign Out
                </button>
             </div>
          </aside>
@@ -904,8 +930,8 @@ export default function ManagerDashboard() {
                         <div className="qa-divider"></div>
 
                         <a href="#" className="qa-item">
-                           <div className="qa-icon-box" style={{background:'rgba(255,255,255,0.06)'}}>
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+                           <div className="qa-icon-box" style={{background:'rgba(100,116,139,0.1)'}}>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
                            </div>
                            <div className="qa-label">Portal Settings</div>
                            <div className="qa-arrow">›</div>

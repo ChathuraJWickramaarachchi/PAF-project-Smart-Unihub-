@@ -47,11 +47,14 @@ export default function Analytics() {
         // Weekly Resolution Cycle (Tickets resolved per day of week)
         const weeklyData = [0, 0, 0, 0, 0, 0, 0] // Mon-Sun
         resolvedTickets.forEach(ticket => {
-          if (ticket.updatedAt) {
-            const date = new Date(ticket.updatedAt)
+          const dateStr = ticket.resolvedAt || ticket.updatedAt || ticket.createdAt
+          if (dateStr) {
+            const date = new Date(dateStr)
             // getDay() is 0 (Sun) to 6 (Sat)
             const dayIdx = date.getDay() === 0 ? 6 : date.getDay() - 1 // Shift so Mon=0, Sun=6
-            weeklyData[dayIdx]++
+            if (dayIdx >= 0 && dayIdx < 7) {
+              weeklyData[dayIdx]++
+            }
           }
         })
         const maxWeekly = Math.max(...weeklyData, 1) // Prevent division by zero

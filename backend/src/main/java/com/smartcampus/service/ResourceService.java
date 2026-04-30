@@ -8,15 +8,17 @@ import com.smartcampus.repository.ResourceRepository;
 import com.smartcampus.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ResourceService {
-    
+
     @Autowired
     private ResourceRepository resourceRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -31,11 +33,14 @@ public class ResourceService {
         resource.setAvailableFrom(resourceDTO.getAvailableFrom());
         resource.setAvailableUntil(resourceDTO.getAvailableUntil());
         resource.setFeatures(resourceDTO.getFeatures());
-        
+
         User createdBy = userRepository.findById(createdById)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         resource.setCreatedBy(createdBy);
-        
+
+        resource.setCreatedAt(LocalDateTime.now());
+        resource.setUpdatedAt(LocalDateTime.now());
+
         Resource saved = resourceRepository.save(resource);
         return convertToDTO(saved);
     }
@@ -43,7 +48,7 @@ public class ResourceService {
     public ResourceDTO updateResource(String id, ResourceDTO resourceDTO) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
-        
+
         if (resourceDTO.getResourceName() != null) {
             resource.setResourceName(resourceDTO.getResourceName());
         }
@@ -74,7 +79,8 @@ public class ResourceService {
         if (resourceDTO.getFeatures() != null) {
             resource.setFeatures(resourceDTO.getFeatures());
         }
-        
+        resource.setUpdatedAt(LocalDateTime.now());
+
         Resource updated = resourceRepository.save(resource);
         return convertToDTO(updated);
     }
@@ -131,6 +137,7 @@ public class ResourceService {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
         resource.setStatus(status);
+        resource.setUpdatedAt(LocalDateTime.now());
         Resource updated = resourceRepository.save(resource);
         return convertToDTO(updated);
     }
